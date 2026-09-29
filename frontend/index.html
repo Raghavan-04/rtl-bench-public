@@ -165,6 +165,17 @@
       max-width: 720px;
       margin: 0 auto 36px auto;
     }
+
+    .hero-tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #6e7681;
+      margin: -16px auto 36px auto;
+      letter-spacing: 0.3px;
+      text-align: center;
+    }
+    .hero-tagline::before { content: "▸ "; color: #3fb950; }
+
     .hero-actions {
       display: flex;
       justify-content: center;
@@ -316,16 +327,11 @@
       100% { filter: drop-shadow(0 0 3px rgba(88,166,255,0.7)); }
     }
 
-    /* sceneFade — full duration is 14s:
-       0%–82%   (0 → 11.48s)  visible
-       82%–86%  (11.48 → 12.04s)  fade to black
-       86%–100% (12.04 → 14.00s)  2-second black hold */
     @keyframes sceneFade {
       0%, 82%   { opacity: 1; }
       86%, 100% { opacity: 0; }
     }
 
-    /* Scene-wide fade with 2s black hold at the end */
     .animated-schematic.playing .scene {
       animation: sceneFade 14s linear forwards;
     }
@@ -381,6 +387,237 @@
     .animated-schematic.playing .tag-analysis {
       animation: fadeIn 0.4s ease-out 8.8s forwards;
     }
+
+    /* =========================================================
+       WHY section — founder story
+       ========================================================= */
+    .why-section {
+      max-width: 780px;
+      margin: 0 auto 72px auto;
+      padding: 0 24px;
+      z-index: 5;
+      position: relative;
+    }
+    .why-inner {
+      background: rgba(13, 17, 23, 0.6);
+      border: 1px solid #21262d;
+      border-left: 3px solid #58a6ff;
+      border-radius: 10px;
+      padding: 28px 32px;
+      backdrop-filter: blur(10px);
+    }
+    .why-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #58a6ff;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .why-heading {
+      font-size: 26px;
+      font-weight: 800;
+      color: #f0f6fc;
+      letter-spacing: -0.6px;
+      line-height: 1.3;
+      margin-bottom: 18px;
+    }
+    .why-body {
+      font-size: 15px;
+      color: #c9d1d9;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .why-body em { color: #f0f6fc; font-style: italic; }
+    .why-signature {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #21262d;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #8b949e;
+    }
+    .why-signature a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .why-signature a:hover { text-decoration: underline; }
+    .why-signature-role { color: #6e7681; }
+
+    /* =========================================================
+       WHO section — audience buckets
+       ========================================================= */
+    .who-section {
+      max-width: 1100px;
+      margin: 0 auto 72px auto;
+      padding: 0 24px;
+      z-index: 5;
+      position: relative;
+    }
+    .who-inner { text-align: center; }
+    .who-heading {
+      font-size: 28px;
+      font-weight: 800;
+      color: #f0f6fc;
+      letter-spacing: -0.6px;
+      margin-bottom: 32px;
+    }
+    .who-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      text-align: left;
+    }
+    .who-card {
+      background: rgba(17, 20, 24, 0.75);
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .who-card:hover {
+      border-color: #30363d;
+      transform: translateY(-2px);
+    }
+    .who-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .who-card h3 {
+      font-size: 16px;
+      color: #f0f6fc;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .who-card p {
+      font-size: 13px;
+      color: #8b949e;
+      line-height: 1.65;
+    }
+
+    /* =========================================================
+       COMPARE section — positioning table
+       ========================================================= */
+    .compare-section {
+      max-width: 1000px;
+      margin: 0 auto 72px auto;
+      padding: 0 24px;
+      z-index: 5;
+      position: relative;
+    }
+    .compare-inner {
+      background: rgba(13, 17, 23, 0.6);
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 28px 24px 24px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .compare-heading {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .compare-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #a371f7;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .compare-heading h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #f0f6fc;
+      letter-spacing: -0.6px;
+      margin-bottom: 8px;
+    }
+    .compare-heading p {
+      font-size: 14px;
+      color: #8b949e;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .compare-table-wrap {
+      overflow-x: auto;
+      margin: 0 -4px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+    .compare-table thead th {
+      padding: 12px 10px;
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid #21262d;
+      white-space: nowrap;
+    }
+    .compare-table thead th:first-child {
+      text-align: left;
+      padding-left: 16px;
+    }
+    .compare-table thead th.us {
+      color: #3fb950;
+      background: rgba(63, 185, 80, 0.06);
+    }
+    .compare-table tbody td {
+      padding: 11px 10px;
+      text-align: center;
+      border-bottom: 1px solid #161b22;
+      color: #c9d1d9;
+      font-size: 13px;
+    }
+    .compare-table tbody td:first-child {
+      text-align: left;
+      padding-left: 16px;
+      color: #e6edf3;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr.highlight-row td {
+      background: rgba(63, 185, 80, 0.05);
+    }
+    .compare-table tbody tr.highlight-row td:first-child {
+      color: #3fb950;
+    }
+    .compare-table .yes { color: #3fb950; font-weight: 700; }
+    .compare-table .no  { color: #6e7681; }
+    .compare-table .partial { color: #e3b341; font-weight: 600; font-size: 11.5px; }
+    .compare-table .us-col {
+      background: rgba(63, 185, 80, 0.05);
+      font-weight: 600;
+    }
+    .compare-note {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #161b22;
+      font-size: 11.5px;
+      color: #6e7681;
+      line-height: 1.6;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .compare-note b { color: #8b949e; }
 
     /* Features */
     .features-section {
@@ -449,15 +686,15 @@
     }
     .section-heading p { font-size: 14.5px; color: #8b949e; line-height: 1.6; }
 
-    /* Stepper */
+    /* Stepper — 5 columns */
     .stepper-section { max-width: 1100px; margin: 0 auto 80px auto; padding: 0 20px; }
     .stepper-track {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 20px; position: relative;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 16px; position: relative;
     }
     .stepper-track::before {
       content: ""; position: absolute; top: 19px; left: 6%; right: 6%; height: 1px;
-      background: linear-gradient(to right, #21262d, #388bfd, #3fb950, #21262d);
+      background: linear-gradient(to right, #21262d, #388bfd, #3fb950, #a371f7, #21262d);
       opacity: 0.5; z-index: 0;
     }
     .step-item {
@@ -537,9 +774,26 @@
       85%, 100% { opacity: 0.9; }
     }
 
+    /* Waveform step visual */
+    .anim-wave .wave-clk    { stroke-dasharray: 200; stroke-dashoffset: 200; animation: waveDraw 2.4s ease-in-out infinite; }
+    .anim-wave .wave-data   { stroke-dasharray: 200; stroke-dashoffset: 200; animation: waveDraw 2.4s ease-in-out 0.3s infinite; }
+    .anim-wave .wave-cursor { animation: waveCursor 2.4s ease-in-out infinite; }
+    @keyframes waveDraw {
+      0% { stroke-dashoffset: 200; opacity: 0.4; }
+      40% { stroke-dashoffset: 0; opacity: 1; }
+      85% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0.4; }
+    }
+    @keyframes waveCursor {
+      0% { transform: translateX(0); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateX(96px); opacity: 0; }
+    }
+
     .stepper-progress {
       max-width: 1100px; margin: 20px auto 0 auto; padding: 0 20px;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
     }
     .progress-track { height: 3px; background: #21262d; border-radius: 2px; overflow: hidden; }
     .progress-fill { height: 100%; width: 0%; background: #388bfd; border-radius: 2px; }
@@ -587,6 +841,7 @@
       .hero { padding: 40px 16px 16px; }
       .hero p { font-size: 15px; margin-bottom: 28px; }
       .hero-chip { font-size: 11px; padding: 5px 12px; }
+      .hero-tagline { font-size: 10.5px; margin-bottom: 28px; }
       .hero-actions { flex-direction: column; align-items: stretch; padding: 0 16px; gap: 10px; }
       .btn-primary-hero { justify-content: center; padding: 12px 20px; font-size: 14px; }
       .hero-preview-window { margin: 0 16px 48px; border-radius: 10px; }
@@ -594,6 +849,26 @@
       .window-code-pane { display: none; }
       .window-schematic-pane { width: 100%; height: 100%; }
       .preview-badge-overlay { font-size: 9.5px; padding: 3px 8px; }
+
+      .why-section { padding: 0 16px; margin-bottom: 48px; }
+      .why-inner { padding: 22px 20px; }
+      .why-heading { font-size: 20px; }
+      .why-body { font-size: 14px; }
+
+      .who-section { padding: 0 16px; margin-bottom: 48px; }
+      .who-heading { font-size: 22px; margin-bottom: 24px; }
+      .who-grid { grid-template-columns: 1fr; }
+
+      .compare-section { padding: 0 16px; margin-bottom: 48px; }
+      .compare-inner { padding: 22px 16px 18px; }
+      .compare-heading h2 { font-size: 20px; }
+      .compare-heading p { font-size: 13px; }
+      .compare-table { font-size: 12px; }
+      .compare-table thead th { padding: 10px 6px; font-size: 10.5px; }
+      .compare-table tbody td { padding: 10px 6px; font-size: 12px; }
+      .compare-table tbody td:first-child,
+      .compare-table thead th:first-child { padding-left: 10px; }
+
       .section-heading { margin-bottom: 28px; padding: 0 16px; }
       .section-heading h2 { font-size: 22px; }
       .section-heading p { font-size: 13.5px; }
@@ -638,7 +913,7 @@
     <main class="hero">
       <div class="hero-chip">
         <span class="pulse-dot"></span>
-        <span>Yosys-backed synthesis · Gate-level STA · In-browser</span>
+        <span>Yosys-backed synthesis · Auto-TB simulation · Gate-level STA · In-browser</span>
       </div>
 
       <h1>
@@ -649,9 +924,14 @@
       </h1>
 
       <p>
-        Compile multi-file RTL projects into interactive gate schematics. Hierarchy-preserving
-        submodule blocks, real vector bus collapsing, and on-demand gate-level timing analysis
-        with per-process-node estimation — no install, no license, right in your browser.
+  Compile multi-file SystemVerilog and VHDL projects into interactive gate schematics — then simulate them.
+  Hierarchy-preserving submodule blocks, real vector bus collapsing, auto-generated
+  testbenches, in-browser waveforms, and on-demand gate-level timing analysis with
+  per-process-node estimation. No install, no license, right in your browser.
+</p>
+
+      <p class="hero-tagline">
+        Free · Open-core · Runs on Yosys + Icarus + ELK 
       </p>
 
       <div class="hero-actions">
@@ -689,56 +969,26 @@
             <svg class="animated-schematic" viewBox="0 0 420 170" xmlns="http://www.w3.org/2000/svg">
               <g class="scene">
 
-                <!-- ==================================================
-                     PHASE A — HYBRID
-                     ================================================== -->
+                <!-- PHASE A — HYBRID -->
+                <path class="hw draw" pathLength="100" d="M 48 41 L 68 41 L 68 60" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 0.35s;"/>
+                <path class="hw draw" pathLength="100" d="M 48 73 L 68 73 L 68 72" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 0.55s;"/>
+                <path class="hw draw" pathLength="100" d="M 150 55 L 180 55" stroke="#9da7b3" stroke-width="1.8" fill="none" style="--d: 1.55s;"/>
+                <path class="hw draw" pathLength="100" d="M 245 55 L 275 55" stroke="#9da7b3" stroke-width="1.8" fill="none" style="--d: 2.25s;"/>
+                <path class="hw draw" pathLength="100" d="M 213 85 L 213 115 L 275 115" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 2.45s;"/>
+                <path class="hw draw" pathLength="100" d="M 340 55 L 363 55" stroke="#38bdf8" stroke-width="1.5" fill="none" style="--d: 2.85s;"/>
+                <path class="hw draw" pathLength="100" d="M 340 115 L 363 115" stroke="#38bdf8" stroke-width="1.5" fill="none" style="--d: 3.05s;"/>
 
-                <!-- Hybrid wires -->
-                <path class="hw draw" pathLength="100"
-                      d="M 48 41 L 68 41 L 68 60"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 0.35s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 48 73 L 68 73 L 68 72"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 0.55s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 150 55 L 180 55"
-                      stroke="#9da7b3" stroke-width="1.8" fill="none"
-                      style="--d: 1.55s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 245 55 L 275 55"
-                      stroke="#9da7b3" stroke-width="1.8" fill="none"
-                      style="--d: 2.25s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 213 85 L 213 115 L 275 115"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 2.45s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 340 55 L 363 55"
-                      stroke="#38bdf8" stroke-width="1.5" fill="none"
-                      style="--d: 2.85s;"/>
-                <path class="hw draw" pathLength="100"
-                      d="M 340 115 L 363 115"
-                      stroke="#38bdf8" stroke-width="1.5" fill="none"
-                      style="--d: 3.05s;"/>
-
-                <!-- Input ports -->
                 <g class="hp pop" style="--d: 0s;">
-                  <path d="M 8 30 L 38 30 L 48 41 L 38 52 L 8 52 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 30 L 38 30 L 48 41 L 38 52 L 8 52 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="44" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">clk</text>
                 </g>
                 <g class="hp pop" style="--d: 0.15s;">
-                  <path d="M 8 62 L 38 62 L 48 73 L 38 84 L 8 84 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 62 L 38 62 L 48 73 L 38 84 L 8 84 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="76" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">rst_n</text>
                 </g>
 
-                <!-- Submodule blocks -->
                 <g class="submod pop" style="--d: 0.75s;">
-                  <rect x="85" y="25" width="65" height="65" rx="3"
-                        fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
+                  <rect x="85" y="25" width="65" height="65" rx="3" fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
                   <line x1="85" y1="45" x2="150" y2="45" stroke="#30363d" stroke-width="1"/>
                   <text x="117" y="37" fill="#e3b341" font-family="'JetBrains Mono'" font-size="8" font-weight="700" text-anchor="middle">u_cpu</text>
                   <text x="117" y="57" fill="#8b949e" font-family="'JetBrains Mono'" font-size="6.5" font-style="italic" text-anchor="middle">cpu_top</text>
@@ -748,8 +998,7 @@
                 </g>
 
                 <g class="submod pop" style="--d: 1.05s;">
-                  <rect x="180" y="30" width="65" height="55" rx="3"
-                        fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
+                  <rect x="180" y="30" width="65" height="55" rx="3" fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
                   <line x1="180" y1="50" x2="245" y2="50" stroke="#30363d" stroke-width="1"/>
                   <text x="212" y="42" fill="#e3b341" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700" text-anchor="middle">u_bus_router</text>
                   <text x="212" y="62" fill="#8b949e" font-family="'JetBrains Mono'" font-size="6.5" font-style="italic" text-anchor="middle">axi_router</text>
@@ -759,8 +1008,7 @@
                 </g>
 
                 <g class="submod pop" style="--d: 1.35s;">
-                  <rect x="275" y="30" width="65" height="45" rx="3"
-                        fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
+                  <rect x="275" y="30" width="65" height="45" rx="3" fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
                   <line x1="275" y1="50" x2="340" y2="50" stroke="#30363d" stroke-width="1"/>
                   <text x="307" y="42" fill="#e3b341" font-family="'JetBrains Mono'" font-size="8" font-weight="700" text-anchor="middle">u_audio</text>
                   <text x="307" y="62" fill="#8b949e" font-family="'JetBrains Mono'" font-size="6.5" font-style="italic" text-anchor="middle">audio_pwm</text>
@@ -769,8 +1017,7 @@
                 </g>
 
                 <g class="submod pop" style="--d: 1.65s;">
-                  <rect x="275" y="93" width="65" height="45" rx="3"
-                        fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
+                  <rect x="275" y="93" width="65" height="45" rx="3" fill="#0f1319" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="5,3"/>
                   <line x1="275" y1="113" x2="340" y2="113" stroke="#30363d" stroke-width="1"/>
                   <text x="307" y="105" fill="#e3b341" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700" text-anchor="middle">u_apb_dec</text>
                   <text x="307" y="125" fill="#8b949e" font-family="'JetBrains Mono'" font-size="6.5" font-style="italic" text-anchor="middle">apb_decoder</text>
@@ -778,19 +1025,15 @@
                   <circle cx="340" cy="115" r="2.2" fill="#38bdf8"/>
                 </g>
 
-                <!-- Output ports (hybrid) -->
                 <g class="hp pop" style="--d: 1.95s;">
-                  <path d="M 363 44 L 393 44 L 403 55 L 393 66 L 363 66 Z"
-                        fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
+                  <path d="M 363 44 L 393 44 L 403 55 L 393 66 L 363 66 Z" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
                   <text x="370" y="58" fill="#38bdf8" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700">audio_out</text>
                 </g>
                 <g class="hp pop" style="--d: 2.15s;">
-                  <path d="M 363 104 L 393 104 L 403 115 L 393 126 L 363 126 Z"
-                        fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
+                  <path d="M 363 104 L 393 104 L 403 115 L 393 126 L 363 126 Z" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
                   <text x="370" y="118" fill="#38bdf8" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700">gpio_pins</text>
                 </g>
 
-                <!-- Bus slashes -->
                 <g class="hf fade" style="--d: 1.7s;">
                   <line x1="159" y1="60" x2="165" y2="50" stroke="#8b949e" stroke-width="1.4"/>
                   <text x="162" y="47" fill="#8b949e" font-family="'JetBrains Mono'" font-size="7.5" text-anchor="middle">32</text>
@@ -804,107 +1047,54 @@
                   <text x="227" y="107" fill="#8b949e" font-family="'JetBrains Mono'" font-size="7.5" text-anchor="middle">8</text>
                 </g>
 
-                <!-- Phase tag: HYBRID -->
                 <g class="tag-hybrid fade">
-                  <rect x="330" y="8" width="60" height="16" rx="3"
-                        fill="rgba(227,179,65,0.10)" stroke="rgba(227,179,65,0.4)" stroke-width="1"/>
-                  <text x="360" y="20" fill="#e3b341" font-family="'JetBrains Mono'" font-size="8" font-weight="700"
-                        text-anchor="middle" letter-spacing="0.6">HYBRID</text>
+                  <rect x="330" y="8" width="60" height="16" rx="3" fill="rgba(227,179,65,0.10)" stroke="rgba(227,179,65,0.4)" stroke-width="1"/>
+                  <text x="360" y="20" fill="#e3b341" font-family="'JetBrains Mono'" font-size="8" font-weight="700" text-anchor="middle" letter-spacing="0.6">HYBRID</text>
                 </g>
 
-                <!-- ==================================================
-                     PHASE B — FLAT (gate-level)
-                     ================================================== -->
+                <!-- PHASE B — FLAT -->
+                <path class="fw draw" pathLength="100" d="M 48 31 L 58 31 L 58 40 L 85 40" stroke="#9da7b3" stroke-width="1.4" fill="none" style="--d: 5.6s;"/>
+                <path class="fw draw" pathLength="100" d="M 58 31 L 58 119 L 86 119" stroke="#9da7b3" stroke-width="1.4" fill="none" style="--d: 5.7s;"/>
+                <path class="fw draw" pathLength="100" d="M 48 66 L 70 66 L 70 60 L 85 60" stroke="#9da7b3" stroke-width="1.4" fill="none" style="--d: 5.85s;"/>
+                <path class="fw draw" pathLength="100" d="M 115 50 L 160 50" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 6.35s;"/>
+                <path class="fw draw" pathLength="100" d="M 190 50 L 235 50" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 6.85s;"/>
+                <path class="fw draw" pathLength="100" d="M 265 50 L 295 50" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 7.35s;"/>
+                <path class="fw draw" pathLength="100" d="M 135 119 L 114 119" stroke="#9da7b3" stroke-width="1.3" fill="none" style="--d: 6.55s;"/>
+                <path class="fw draw" pathLength="100" d="M 100 105 L 100 90 L 175 90 L 175 65" stroke="#9da7b3" stroke-width="1.3" fill="none" style="--d: 6.7s;"/>
+                <path class="fw draw" pathLength="100" d="M 48 154 L 317 154 L 317 74" stroke="#9da7b3" stroke-width="1.3" fill="none" style="--d: 5.95s;"/>
+                <path class="fw draw" pathLength="100" d="M 339 50 L 348 50" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 7.6s;"/>
+                <path class="fw draw" pathLength="100" d="M 348 50 L 363 50" stroke="#38bdf8" stroke-width="1.5" fill="none" style="--d: 7.75s;"/>
+                <path class="fw draw" pathLength="100" d="M 348 50 L 348 121 L 363 121" stroke="#38bdf8" stroke-width="1.3" fill="none" style="--d: 7.85s;"/>
 
-                <!-- Flat wires -->
-                <path class="fw draw" pathLength="100"
-                      d="M 48 31 L 58 31 L 58 40 L 85 40"
-                      stroke="#9da7b3" stroke-width="1.4" fill="none"
-                      style="--d: 5.6s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 58 31 L 58 119 L 86 119"
-                      stroke="#9da7b3" stroke-width="1.4" fill="none"
-                      style="--d: 5.7s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 48 66 L 70 66 L 70 60 L 85 60"
-                      stroke="#9da7b3" stroke-width="1.4" fill="none"
-                      style="--d: 5.85s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 115 50 L 160 50"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 6.35s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 190 50 L 235 50"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 6.85s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 265 50 L 295 50"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 7.35s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 135 119 L 114 119"
-                      stroke="#9da7b3" stroke-width="1.3" fill="none"
-                      style="--d: 6.55s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 100 105 L 100 90 L 175 90 L 175 65"
-                      stroke="#9da7b3" stroke-width="1.3" fill="none"
-                      style="--d: 6.7s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 48 154 L 317 154 L 317 74"
-                      stroke="#9da7b3" stroke-width="1.3" fill="none"
-                      style="--d: 5.95s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 339 50 L 348 50"
-                      stroke="#9da7b3" stroke-width="1.5" fill="none"
-                      style="--d: 7.6s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 348 50 L 363 50"
-                      stroke="#38bdf8" stroke-width="1.5" fill="none"
-                      style="--d: 7.75s;"/>
-                <path class="fw draw" pathLength="100"
-                      d="M 348 50 L 348 121 L 363 121"
-                      stroke="#38bdf8" stroke-width="1.3" fill="none"
-                      style="--d: 7.85s;"/>
-
-                <!-- Fan-out solder dots -->
                 <circle class="fp pop" cx="58" cy="31" r="2.2" fill="#c9d1d9" style="--d: 5.5s;"/>
                 <circle class="fp pop" cx="348" cy="50" r="2.2" fill="#c9d1d9" style="--d: 7.55s;"/>
 
-                <!-- Flat input ports -->
                 <g class="fp pop" style="--d: 5.2s;">
-                  <path d="M 8 20 L 38 20 L 48 31 L 38 42 L 8 42 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 20 L 38 20 L 48 31 L 38 42 L 8 42 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="34" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">a[7:0]</text>
                 </g>
                 <g class="fp pop" style="--d: 5.3s;">
-                  <path d="M 8 55 L 38 55 L 48 66 L 38 77 L 8 77 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 55 L 38 55 L 48 66 L 38 77 L 8 77 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="69" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">b[7:0]</text>
                 </g>
                 <g class="fp pop" style="--d: 5.4s;">
-                  <path d="M 8 108 L 38 108 L 48 119 L 38 130 L 8 130 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 108 L 38 108 L 48 119 L 38 130 L 8 130 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="122" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">rst_n</text>
                 </g>
                 <g class="fp pop" style="--d: 5.5s;">
-                  <path d="M 8 143 L 38 143 L 48 154 L 38 165 L 8 165 Z"
-                        fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
+                  <path d="M 8 143 L 38 143 L 48 154 L 38 165 L 8 165 Z" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.2"/>
                   <text x="14" y="157" fill="#3fb950" font-family="'JetBrains Mono'" font-size="9" font-weight="700">clk</text>
                 </g>
 
-                <!-- Flat output ports -->
                 <g class="fp pop" style="--d: 8.0s;">
-                  <path d="M 363 39 L 393 39 L 403 50 L 393 61 L 363 61 Z"
-                        fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
+                  <path d="M 363 39 L 393 39 L 403 50 L 393 61 L 363 61 Z" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
                   <text x="370" y="53" fill="#38bdf8" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700">audio_out</text>
                 </g>
                 <g class="fp pop" style="--d: 8.15s;">
-                  <path d="M 363 110 L 393 110 L 403 121 L 393 132 L 363 132 Z"
-                        fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
+                  <path d="M 363 110 L 393 110 L 403 121 L 393 132 L 363 132 Z" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.2"/>
                   <text x="370" y="124" fill="#38bdf8" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700">gpio_pins</text>
                 </g>
 
-                <!-- Flat gates -->
                 <g class="gate pop crit" style="--d: 6.15s;">
                   <circle cx="100" cy="50" r="15" fill="#111418" stroke="#7d8590" stroke-width="1.2"/>
                   <text x="100" y="55" fill="#3fb950" font-family="'JetBrains Mono'" font-size="15" font-weight="700" text-anchor="middle">×</text>
@@ -941,32 +1131,23 @@
                   <text x="152" y="122" fill="#58a6ff" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" text-anchor="middle">0xA5</text>
                 </g>
 
-                <!-- Phase tag: FLAT -->
                 <g class="tag-flat fade">
-                  <rect x="330" y="8" width="60" height="16" rx="3"
-                        fill="rgba(56,189,248,0.10)" stroke="rgba(56,189,248,0.4)" stroke-width="1"/>
-                  <text x="360" y="20" fill="#58a6ff" font-family="'JetBrains Mono'" font-size="8" font-weight="700"
-                        text-anchor="middle" letter-spacing="0.6">FLAT</text>
+                  <rect x="330" y="8" width="60" height="16" rx="3" fill="rgba(56,189,248,0.10)" stroke="rgba(56,189,248,0.4)" stroke-width="1"/>
+                  <text x="360" y="20" fill="#58a6ff" font-family="'JetBrains Mono'" font-size="8" font-weight="700" text-anchor="middle" letter-spacing="0.6">FLAT</text>
                 </g>
 
-                <!-- ==================================================
-                     PHASE C — ANALYSIS
-                     ================================================== -->
-
+                <!-- PHASE C — ANALYSIS -->
                 <rect class="scan-line" x="-4" y="0" width="6" height="170" fill="#58a6ff" opacity="0"/>
 
                 <g class="timing-badge fade">
-                  <rect x="10" y="140" width="180" height="24" rx="4"
-                        fill="rgba(17,20,24,0.95)" stroke="rgba(56,189,248,0.5)" stroke-width="1"/>
+                  <rect x="10" y="140" width="180" height="24" rx="4" fill="rgba(17,20,24,0.95)" stroke="rgba(56,189,248,0.5)" stroke-width="1"/>
                   <text x="18" y="150" fill="#58a6ff" font-family="'JetBrains Mono'" font-size="7.5" font-weight="700">⏱ STA @ 45nm</text>
                   <text x="18" y="160" fill="#3fb950" font-family="'JetBrains Mono'" font-size="8" font-weight="600">Critical 8 gates · Slack +9.88 ns</text>
                 </g>
 
                 <g class="tag-analysis fade">
-                  <rect x="318" y="8" width="72" height="16" rx="3"
-                        fill="rgba(63,185,80,0.10)" stroke="rgba(63,185,80,0.4)" stroke-width="1"/>
-                  <text x="354" y="20" fill="#3fb950" font-family="'JetBrains Mono'" font-size="8" font-weight="700"
-                        text-anchor="middle" letter-spacing="0.6">ANALYSIS</text>
+                  <rect x="318" y="8" width="72" height="16" rx="3" fill="rgba(63,185,80,0.10)" stroke="rgba(63,185,80,0.4)" stroke-width="1"/>
+                  <text x="354" y="20" fill="#3fb950" font-family="'JetBrains Mono'" font-size="8" font-weight="700" text-anchor="middle" letter-spacing="0.6">ANALYSIS</text>
                 </g>
 
               </g>
@@ -976,6 +1157,76 @@
         </div>
       </a>
     </main>
+
+    <!-- ===================================================
+         WHY — origin story
+         =================================================== -->
+    <section class="why-section">
+      <div class="why-inner">
+        <div class="why-label">Why I built this</div>
+        <h2 class="why-heading">
+          Digital design shouldn't need<br/>
+          a 20&nbsp;GB install and a $10,000 license.
+        </h2>
+        <p class="why-body">
+          I kept watching people who wanted to learn Verilog hit the same wall: the tool
+          needed to <em>see</em> their logic was harder to install than the logic itself.
+          So I built RTL Bench — a browser-based EDA workbench that compiles, simulates,
+          and times real RTL against open-source process libraries, with zero setup.
+        </p>
+        <p class="why-body">
+          It runs on Yosys, Icarus Verilog, and Eclipse Layout Kernel — the same open
+          tools professional flows are built on — and it runs entirely on free-tier
+          infrastructure. If you can open a URL, you can design a chip.
+        </p>
+        <div class="why-signature">
+          — <a href="https://www.linkedin.com/in/raghavan-su-04r/" target="_blank" rel="noopener">Raghavan</a>,
+          <span class="why-signature-role">creator of RTL Bench</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         WHO — audience clarity
+         =================================================== -->
+    <section class="who-section">
+      <div class="who-inner">
+        <div class="why-label">Who it's for</div>
+        <h2 class="who-heading">Built for three kinds of people</h2>
+
+        <div class="who-grid">
+
+          <div class="who-card">
+            <div class="who-icon">🎓</div>
+            <h3>Students &amp; self-learners</h3>
+            <p>
+              Learn RTL without fighting toolchains. Paste SystemVerilog, see it turn into
+              gates, run a testbench, watch the waveform — all before your first coffee.
+            </p>
+          </div>
+
+          <div class="who-card">
+            <div class="who-icon">⚙️</div>
+            <h3>Hardware engineers</h3>
+            <p>
+              Quick sanity checks on a module you're working on. Real sky130, GF180, and
+              IHP SG13G2 cell timing, per-cell critical-path breakdown, and vector SVG export
+              for design reviews.
+            </p>
+          </div>
+
+          <div class="who-card">
+            <div class="who-icon">🧪</div>
+            <h3>Researchers &amp; educators</h3>
+            <p>
+              Share a link instead of a repo. Every design loads a live synthesis, STA report,
+              and waveform — reproducible from any browser, no lab setup required.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
 
     <section class="metrics-strip">
       <div class="metric-item">
@@ -987,12 +1238,127 @@
         <div class="metric-label">Dual graph model from a single compile</div>
       </div>
       <div class="metric-item">
-        <div class="metric-value accent-orange">4 Process Nodes</div>
-        <div class="metric-label">180 nm · 90 nm · 45 nm · 7 nm for STA</div>
-      </div>
+        <div class="metric-value accent-orange">Real PDK Timing</div>
+        <div class="metric-label">SkyWater 130 nm · GF180MCU 180 nm · IHP SG13G2 · per-cell Liberty</div>      </div>
       <div class="metric-item">
         <div class="metric-value accent-purple">Yosys + ELK</div>
         <div class="metric-label">Open-source toolchain, fully in-browser</div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         COMPARE — positioning table
+         =================================================== -->
+    <section class="compare-section">
+      <div class="compare-inner">
+        <div class="compare-heading">
+          <div class="compare-label">Compare to X</div>
+          <h2>What makes RTL Bench different</h2>
+          <p>
+            Most browser EDA tools either show you a diagram or run a simulation.
+            RTL Bench does the whole pipeline — synthesis, simulation, waveform, and
+            real-process timing — in one place, for free.
+          </p>
+        </div>
+
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>EDA Playground</th>
+                <th>HDLBits</th>
+                <th>DigitalJS</th>
+                <th class="us">RTL Bench</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Multi-file RTL projects</td>
+                <td class="yes">✓</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>Interactive gate schematic</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="partial">Basic</td>
+                <td class="us-col yes">✓ Hybrid · Flat</td>
+              </tr>
+              <tr>
+  <td>SystemVerilog &amp; VHDL support</td>
+  <td class="partial">Verilog only</td>
+  <td class="partial">Subset</td>
+  <td class="no">—</td>
+  <td class="us-col yes">✓ Both</td>
+</tr>
+              <tr class="highlight-row">
+                <td>Real PDK timing (sky130 / GF180 / IHP)</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>Gate-level STA report</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>Auto-generated testbenches</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>In-browser waveforms</td>
+                <td class="partial">via EPWave</td>
+                <td class="no">—</td>
+                <td class="partial">Basic</td>
+                <td class="us-col yes">✓ Built-in</td>
+              </tr>
+              <tr>
+                <td>Vector SVG export</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="partial">Limited</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>Click-to-trace nets</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="yes">✓</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>No account required</td>
+                <td class="no">—</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>Free to use</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="us-col yes">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="compare-note">
+          <b>Note:</b> Each tool has its own strengths — EDA Playground for full simulator breadth,
+          HDLBits for guided practice, DigitalJS for teaching digital logic. RTL Bench focuses on
+          the synthesis-to-timing pipeline that the others don't cover.
+        </div>
       </div>
     </section>
 
@@ -1003,12 +1369,11 @@
 
     <section class="features-section">
       <div class="feature-card">
-        <div class="feature-icon">📁</div>
-        <h3>Multi-file projects with $readmemh</h3>
-        <p>Drop a folder of <code>.sv</code> / <code>.v</code> sources and data files; relative paths
-          are preserved so <code>$readmemh("dv/hex/fw.hex")</code> finds its files. Top module is
-          auto-detected or overridden from a dropdown.</p>
-      </div>
+  <div class="feature-icon">📁</div>
+  <h3>Multi-file SystemVerilog &amp; VHDL projects</h3>
+  <p>Drop a folder of <code>.sv</code>, <code>.v</code>, or <code>.vhd</code> sources and data files; relative paths 
+    are preserved so <code>$readmemh</code> finds its files. Top modules and entities are auto-detected.</p>
+</div>
       <div class="feature-card">
         <div class="feature-icon">🧩</div>
         <h3>Hierarchy-preserving synthesis</h3>
@@ -1024,11 +1389,12 @@
           a nanosecond estimate with top-K critical paths and a cell-by-cell breakdown.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🔍</div>
-        <h3>Semantic LOD zooming</h3>
-        <p>No dropdown to switch views — the tool watches your zoom and cross-fades between
-          macro block diagrams and detailed gate schematics. Submodule boxes reveal their
-          internals as you zoom in past a threshold.</p>
+        <div class="feature-icon">📈</div>
+        <h3>Auto-generated testbenches &amp; waveforms</h3>
+        <p>Every design gets a testbench on demand — the backend probes your top module's
+          real ports with Yosys, auto-detects clock and reset by name, and drives the rest
+          with a stimulus sweep. Simulate, then inspect the VCD in the built-in waveform
+          drawer. No manual <code>$dumpvars</code> required.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🧵</div>
@@ -1058,19 +1424,12 @@
           Wires travel only on horizontal and vertical lanes with clean 90° corners — the
           same visual convention used by commercial EDA tools.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">⤓</div>
-        <h3>Vector SVG export</h3>
-        <p>Export the current view as a clean, resolution-independent SVG — no rasterization,
-          no watermarks. Suitable for design reviews, IEEE figures, or embedding in
-          documentation.</p>
-      </div>
     </section>
 
     <section class="stepper-section">
       <div class="section-heading">
-        <h2>RTL to netlist, in four stages</h2>
-        <p>The pipeline below runs on every compile — the same flow your synthesis toolchain uses.</p>
+        <h2>RTL to waveform, in five stages</h2>
+        <p>The pipeline below runs on every compile and simulate — the same flow your commercial toolchain uses.</p>
       </div>
       <div class="stepper-track" id="stepper-track">
         <div class="step-item" data-step="0">
@@ -1128,8 +1487,26 @@
             </svg>
           </div>
           <div class="step-head"><div class="step-index">4</div></div>
-          <h3>Inspect, trace &amp; time</h3>
-          <p>Zoom through the hierarchy, click nets to trace them, run gate-level STA on demand, and export the view as a vector SVG.</p>
+          <h3>Inspect &amp; trace</h3>
+          <p>Zoom through the hierarchy, click nets to trace them, and export the current view as a clean vector SVG.</p>
+        </div>
+        <div class="step-item" data-step="4">
+          <div class="step-visual">
+            <svg width="120" height="56" viewBox="0 0 120 56" class="anim-wave">
+              <line x1="8" y1="20" x2="112" y2="20" stroke="#1f242c" stroke-width="0.8"/>
+              <line x1="8" y1="36" x2="112" y2="36" stroke="#1f242c" stroke-width="0.8"/>
+              <path class="wave-clk"
+                    d="M 8 26 L 18 26 L 18 14 L 28 14 L 28 26 L 38 26 L 38 14 L 48 14 L 48 26 L 58 26 L 58 14 L 68 14 L 68 26 L 78 26 L 78 14 L 88 14 L 88 26 L 98 26 L 98 14 L 108 14"
+                    fill="none" stroke="#3fb950" stroke-width="1.6"/>
+              <path class="wave-data"
+                    d="M 8 48 L 22 48 L 22 42 L 40 42 L 40 48 L 56 48 L 56 42 L 74 42 L 74 48 L 92 48 L 92 42 L 108 42"
+                    fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+              <line class="wave-cursor" x1="10" y1="8" x2="10" y2="52" stroke="#e3b341" stroke-width="1.2" opacity="0"/>
+            </svg>
+          </div>
+          <div class="step-head"><div class="step-index">5</div></div>
+          <h3>Simulate &amp; inspect</h3>
+          <p>Run an auto-generated testbench, watch signals toggle in the waveform drawer, and verify behaviour before sign-off.</p>
         </div>
       </div>
       <div class="stepper-progress" id="stepper-progress">
@@ -1137,6 +1514,7 @@
         <div class="progress-track"><div class="progress-fill" data-fill="1"></div></div>
         <div class="progress-track"><div class="progress-fill" data-fill="2"></div></div>
         <div class="progress-track"><div class="progress-fill" data-fill="3"></div></div>
+        <div class="progress-track"><div class="progress-fill" data-fill="4"></div></div>
       </div>
     </section>
   </div>
@@ -1148,11 +1526,15 @@
         <span class="badge-pro">PRO</span>
       </div>
       <div class="footer-links">
+        <a href="/about">About</a>
         <a href="mailto:contact@rtlbench.com">Contact</a>
         <a href="https://www.linkedin.com/in/raghavan-su-04r/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://github.com/Raghavan-04/" target="_blank" rel="noopener">GitHub</a>
         <a href="/studio">Open RTL Bench</a>
+        <a href="/learn">Learn</a>
+
         <a href="/privacy">Privacy</a>
+
         <span class="footer-license">MIT License</span>
       </div>
     </div>
@@ -1164,10 +1546,12 @@
   <script>
     /* Typewriter */
     const phrases = [
+      "SystemVerilog & VHDL Support",
       "Real Gate-Level Schematics",
       "Timing Analysis at 45nm / 90nm",
       "Multi-File RTL Projects, Unified",
-      "Click-to-Trace Netlist Exploration"
+      "Click-to-Trace Netlist Exploration",
+      "Auto-Generated Testbenches"
     ];
     let phraseIndex = 0, charIndex = 0, isDeleting = false;
     const typewriterEl = document.getElementById("typewriter-text");
@@ -1182,7 +1566,7 @@
     }
     document.addEventListener("DOMContentLoaded", typeWriterLoop);
 
-    /* Stepper */
+    /* Stepper — 5 steps */
     const STEP_DURATION = 2600;
     const stepItems = Array.from(document.querySelectorAll(".step-item"));
     const progressFills = Array.from(document.querySelectorAll(".progress-fill"));
@@ -1203,28 +1587,16 @@
       }, STEP_DURATION);
     }
 
-    /* ==========================================================
-       Animated schematic — infinite loop driven by rAF
-       ----------------------------------------------------------
-       requestAnimationFrame-based timer is more reliable than
-       setTimeout: it never drifts, it can't be throttled to a
-       standstill, and it silently pauses when the tab is hidden
-       and resumes cleanly on return.
-       ========================================================== */
+    /* Animated schematic — infinite loop driven by rAF */
     (function () {
       const svg = document.querySelector(".animated-schematic");
       if (!svg) return;
-
-      const CYCLE_MS = 14000;    // must match CSS animation duration of .scene
+      const CYCLE_MS = 14000;
       let lastRestart = 0;
 
       function restart() {
-        // Remove the class → all animation rules go away → elements revert
-        // to their base (hidden) states. Then force a reflow so the browser
-        // commits that reset before we re-add the class. Re-adding starts
-        // every animation from frame 0.
         svg.classList.remove("playing");
-        void svg.getBoundingClientRect().width;   // force synchronous reflow
+        void svg.getBoundingClientRect().width;
         svg.classList.add("playing");
         lastRestart = performance.now();
       }
@@ -1236,9 +1608,6 @@
         requestAnimationFrame(tick);
       }
 
-      // Kick off the loop. This never stops — even if the tab is hidden
-      // for an hour, rAF resumes on return and the next tick restarts
-      // the animation cleanly.
       restart();
       requestAnimationFrame(tick);
     })();

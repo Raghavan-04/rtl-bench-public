@@ -15,587 +15,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background-color: #080a0d;
-      color: #c9d1d9;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      touch-action: none;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #navbar {
-      height: 48px;
-      min-height: 48px;
-      background: #111418;
-      border-bottom: 1px solid #262c36;
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      gap: 8px;
-      z-index: 20;
-      overflow-x: auto;
-    }
-    #navbar::-webkit-scrollbar { display: none; }
-
-    /* Back button — prominent, works on both desktop and mobile */
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #1c2128;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .back-btn .arrow {
-      font-size: 13px;
-      line-height: 1;
-      color: #58a6ff;
-      transition: transform 0.15s ease;
-    }
-    .back-btn:hover {
-      background: #262c36;
-      color: #fff;
-      border-color: #58a6ff;
-    }
-    .back-btn:hover .arrow {
-      transform: translateX(-2px);
-    }
-    .back-btn:active {
-      background: #1f6feb;
-      border-color: #388bfd;
-      color: #fff;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
-      color: #e6edf3;
-      font-size: 13px;
-      text-decoration: none;
-      white-space: nowrap;
-      padding: 0 2px;
-      letter-spacing: 0.3px;
-    }
-    .badge-pro {
-      background: #ff9800;
-      color: #000;
-      font-size: 9px;
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-weight: 800;
-    }
-
-    .btn {
-      background: #1c2128;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      padding: 5px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn:hover { background: #262c36; color: #fff; }
-    .btn.active { background: #1f6feb; border-color: #388bfd; color: #fff; }
-    .btn-run { background: #e38800; border-color: #f0950c; color: #0d1117; font-weight: 700; }
-    .btn-run:hover { background: #ff9f1a; }
-
-    .divider { height: 18px; min-width: 1px; background: #30363d; margin: 0 2px; }
-
-    #examples-popover {
-      display: none;
-      position: fixed;
-      width: 320px;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
-      z-index: 9999;
-      padding: 6px;
-    }
-    #examples-popover.open { display: block; }
-    .example-option {
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .example-option:hover { background: #21262d; }
-    .example-title { font-size: 12px; font-weight: 700; color: #58a6ff; margin-bottom: 2px; }
-    .example-desc { font-size: 10.5px; color: #8b949e; line-height: 1.35; }
-
-    #mobile-tab-switch {
-      display: none;
-      background: #161b22;
-      border-radius: 6px;
-      padding: 2px;
-      border: 1px solid #30363d;
-    }
-    .tab-btn {
-      padding: 4px 10px;
-      font-size: 11px;
-      border: none;
-      background: transparent;
-      color: #8b949e;
-      border-radius: 4px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .tab-btn.active { background: #30363d; color: #fff; }
-
-    #workspace {
-      flex: 1;
-      display: flex;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #editor-container {
-      width: 40%;
-      height: 100%;
-      border-right: 1px solid #262c36;
-      background: #0b0d10;
-      display: flex;
-      flex-direction: column;
-    }
-    .pane-header {
-      height: 30px;
-      background: #111418;
-      border-bottom: 1px solid #1f242c;
-      padding: 0 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 10px;
-      font-weight: 600;
-      color: #8b949e;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .file-strip {
-      background: #0d1017;
-      border-bottom: 1px solid #1f242c;
-      padding: 6px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .file-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-    .file-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #1c2128;
-      border: 1px solid #30363d;
-      border-radius: 5px;
-      padding: 3px 8px;
-      font-size: 10.5px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #c9d1d9;
-    }
-    .file-chip .file-remove {
-      cursor: pointer;
-      color: #f85149;
-      font-weight: 700;
-      font-size: 12px;
-      line-height: 1;
-    }
-    .file-chip .file-remove:hover { color: #ff7b72; }
-    .file-strip-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .strip-label {
-      color: #8b949e;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      margin-right: 2px;
-    }
-    .btn-mini {
-      background: #1c2128;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.15s ease;
-    }
-    .btn-mini:hover { background: #262c36; }
-    .btn-mini.active { background: #1f6feb; border-color: #388bfd; color: #fff; }
-    .btn-mini.danger { color: #f85149; border-color: #5c1e1e; }
-    .btn-mini.danger:hover { background: #3d1111; }
-    .top-select {
-      background: #1c2128;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      border-radius: 4px;
-      padding: 2px 4px;
-      font-size: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      cursor: pointer;
-      outline: none;
-    }
-    .top-select:focus { border-color: #388bfd; }
-
-    #code-input {
-      flex: 1;
-      background: transparent;
-      color: #58a6ff;
-      border: none;
-      outline: none;
-      padding: 14px;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-size: 11.5px;
-      line-height: 1.6;
-      resize: none;
-      white-space: pre;
-    }
-.eda-node-active rect,
-.eda-node-active path,
-.eda-node-active circle {
-  filter: drop-shadow(0 0 6px #58a6ff);
-  stroke: #58a6ff !important;
-}
-
-    #canvas-container {
-      width: 60%;
-      height: 100%;
-      background: #080a0d;
-      position: relative;
-      cursor: grab;
-      overflow: hidden;
-    }
-    #canvas-container:active { cursor: grabbing; }
-
-    #canvas-controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(22, 27, 34, 0.85);
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      display: flex;
-      gap: 3px;
-      padding: 3px;
-      backdrop-filter: blur(8px);
-      z-index: 10;
-    }
-    .ctrl-btn {
-      background: transparent;
-      border: none;
-      color: #c9d1d9;
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .ctrl-btn:hover { background: #30363d; color: #fff; }
-
-    #discovery-hud {
-      position: absolute;
-      top: 12px;
-      left: 14px;
-      background: rgba(22, 27, 34, 0.9);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 11px;
-      color: #e6edf3;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(8px);
-      z-index: 10;
-      transition: opacity 0.5s ease;
-      pointer-events: none;
-    }
-    #discovery-hud span.pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: #38bdf8;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #38bdf8;
-    }
-
-    #stats-panel {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(17, 20, 24, 0.92);
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-size: 10px;
-      backdrop-filter: blur(8px);
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #8b949e;
-      user-select: none;
-      white-space: nowrap;
-    }
-
-    .stats-sep { width: 1px; height: 14px; background: #30363d; margin: 0 2px; }
-
-    .sta-run-btn {
-      background: #1c2128;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      border-radius: 4px;
-      padding: 3px 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.15s ease;
-    }
-    .sta-run-btn:hover:not(:disabled) {
-      background: #262c36;
-      border-color: #58a6ff;
-      color: #fff;
-    }
-    .sta-run-btn:disabled {
-      opacity: 0.65;
-      cursor: wait;
-    }
-    .sta-run-btn.running {
-      color: #58a6ff;
-      border-color: rgba(88, 166, 255, 0.4);
-    }
-    .sta-run-btn.has-data {
-      color: #3fb950;
-      border-color: rgba(63, 185, 80, 0.4);
-    }
-    .sta-run-btn.has-data:hover:not(:disabled) {
-      border-color: rgba(63, 185, 80, 0.7);
-    }
-    .sta-run-btn .sta-icon { color: #58a6ff; font-size: 11px; }
-
-    .sta-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #c9d1d9;
-      padding: 2px 8px;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background 0.15s ease, border-color 0.15s ease;
-      border: 1px solid transparent;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-    }
-    .sta-chip.clickable { cursor: pointer; }
-    .sta-chip.clickable:hover {
-      background: rgba(56, 189, 248, 0.10);
-      border-color: rgba(56, 189, 248, 0.35);
-    }
-    .sta-chip.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .sta-chip b { font-weight: 700; color: #c9d1d9; }
-    .sta-chip.ok   b { color: #3fb950; }
-    .sta-chip.warn b { color: #e3b341; }
-    .sta-chip.bad  b { color: #f85149; }
-
-    #loading-overlay {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(8, 10, 13, 0.78);
-      backdrop-filter: blur(5px);
-      z-index: 5000;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 14px;
-    }
-    #loading-overlay.active { display: flex; }
-    .eda-spinner {
-      width: 38px;
-      height: 38px;
-      border: 3px solid rgba(88, 166, 255, 0.2);
-      border-top-color: #58a6ff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    .loading-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: #e6edf3;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    svg#schematic-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      font-family: 'JetBrains Mono', monospace !important;
-    }
-    svg#schematic-canvas text {
-      font-family: 'JetBrains Mono', monospace !important;
-      letter-spacing: -0.2px;
-    }
-    .eda-label { font-family: 'JetBrains Mono', monospace !important; font-size: 10px; font-weight: 600; }
-    .eda-subtext { font-family: 'JetBrains Mono', monospace !important; font-size: 9px; font-weight: 500; }
-    .eda-component { fill: #111418; stroke: #7d8590; stroke-width: 1.2px; }
-    .net-wire { fill: none; stroke: #6e7681; stroke-width: 1.2px; }
-    .net-bus { fill: none; stroke: #9da7b3; stroke-width: 1.8px; }
-
-    /* Mobile warning popup */
-    .mobile-warning {
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 10, 13, 0.85);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .mobile-warning-card {
-      position: relative;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 32px 24px 24px;
-      max-width: 340px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
-      animation: mwPop 0.25s ease-out;
-    }
-    @keyframes mwPop {
-      from { transform: scale(0.92); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
-    }
-    .mobile-warning-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      background: transparent;
-      border: none;
-      color: #8b949e;
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-    .mobile-warning-close:hover,
-    .mobile-warning-close:active {
-      background: #1c2128;
-      color: #fff;
-    }
-    .mobile-warning-icon {
-      font-size: 44px;
-      line-height: 1;
-      margin-bottom: 14px;
-    }
-    .mobile-warning-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: #f0f6fc;
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
-    }
-    .mobile-warning-text {
-      font-size: 13px;
-      line-height: 1.55;
-      color: #8b949e;
-      margin-bottom: 20px;
-    }
-    .mobile-warning-cta {
-      background: #1f6feb;
-      border: 1px solid #388bfd;
-      color: #fff;
-      padding: 10px 22px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-      width: 100%;
-    }
-    .mobile-warning-cta:hover,
-    .mobile-warning-cta:active {
-      background: #388bfd;
-    }
-
-    @media (max-width: 900px) {
-      #mobile-tab-switch { display: flex; }
-
-      /* Back button: hide the "Home" label, keep just the arrow */
-      .back-btn { padding: 5px 10px; }
-      .back-btn .label { display: none; }
-
-      /* Brand: slightly smaller on mobile */
-      .brand { font-size: 12px; }
-
-      #workspace { flex-direction: column; }
-      #editor-container { width: 100% !important; height: 100% !important; border-right: none; }
-      #canvas-container { width: 100% !important; height: 100% !important; display: none; }
-      body.show-schematic #editor-container { display: none; }
-      body.show-schematic #canvas-container { display: block; }
-      #stats-panel { font-size: 8.5px; gap: 6px; left: 6px; right: 6px; }
-      #privacy-link { display: none; }
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/elkjs@0.9.3/lib/elk.bundled.js"></script>
+  <link rel="stylesheet" href="/static/src/studio.min.css?v=2.0.1" />
+  <script src="https://cdn.jsdelivr.net/npm/elkjs@0.12.0/lib/elk.bundled.js"></script>
 </head>
 <body>
 
   <div id="loading-overlay">
     <div class="eda-spinner"></div>
     <div class="loading-text">⚡ Synthesizing gate-level netlist with Yosys...</div>
+  </div>
+
+  <div id="error-modal">
+    <div class="error-modal-card">
+      <div class="error-modal-header">
+        <div class="error-modal-title">⚠ Compilation Error</div>
+        <button class="error-modal-close" onclick="document.getElementById('error-modal').style.display='none'">×</button>
+      </div>
+      <div id="error-modal-meta" class="error-modal-meta" style="display:none;"></div>
+      <div id="error-modal-body" class="error-modal-body"></div>
+    </div>
   </div>
 
   <div id="navbar">
@@ -610,7 +48,7 @@
     </a>
 
     <div class="divider"></div>
-    <button class="btn btn-run" onclick="compileAndRender()">▷ Generate</button>
+    <button class="btn btn-run" onclick="handleGenerate()">▷ Generate</button>
 
     <button class="btn" onclick="document.getElementById('file-input').click()">📎 Files</button>
     <input type="file" id="file-input" multiple
@@ -629,9 +67,9 @@
           <div class="example-title">Accumulator & Decoders</div>
           <div class="example-desc">Sequential accumulator loop with magnitude comparators & decoder trees.</div>
         </div>
-        <div class="example-option" onclick="selectPreset('rv32_alu')">
-          <div class="example-title">RISC-V 32-bit ALU</div>
-          <div class="example-desc">32-bit arithmetic operations, SLT logic, and Zero branch condition flag.</div>
+        <div class="example-option" onclick="selectPreset('rv32_alu_multi')">
+          <div class="example-title">RISC-V 32-bit ALU <span style="color:#3fb950; font-size:10px; font-weight:700;">(multi-file)</span></div>
+          <div class="example-desc">Same ALU, split into 4 submodules: adder/sub, logic ops, SLT, top. Demonstrates hierarchy view + file chips.</div>
         </div>
         <div class="example-option" onclick="selectPreset('fsm_seq')">
           <div class="example-title">4-State Sequence Detector</div>
@@ -649,26 +87,43 @@
       </div>
     </div>
 
+    <div class="divider"></div>
+
+   <select id="lang-select" class="lang-select" title="Select HDL Language">
+  <option value="sv">SystemVerilog (.sv)</option>
+  <option value="v">Verilog (.v)</option>
+  <option value="vhd">VHDL (.vhd)</option>
+</select>
+
     <div id="mobile-tab-switch">
       <button id="tab-code" class="tab-btn active" onclick="switchMobileTab('code')">Code</button>
       <button id="tab-canvas" class="tab-btn" onclick="switchMobileTab('canvas')">Schematic</button>
     </div>
 
     <div class="divider"></div>
-    <button id="btn-simple" class="btn" onclick="setMode('simple')">Simple</button>
+    <button id="btn-simple" class="btn" onclick="setMode('simple')">Block view</button>
     <button id="btn-hybrid" class="btn active" onclick="setMode('hybrid')">Hybrid</button>
-    <button id="btn-detailed" class="btn" onclick="setMode('detailed')">Detailed</button>
+    <button id="btn-detailed" class="btn" onclick="setMode('detailed')">Gate view</button>
 
     <div style="flex: 1;"></div>
     <button class="btn" onclick="exportSVG()">⬇ Export SVG</button>
+    <a href="/learn" class="btn" style="text-decoration:none;">📖 Learn</a>
     <a href="/privacy" id="privacy-link" class="btn" style="text-decoration:none;">Privacy</a>
+    <button class="btn" id="btn-report" onclick="openReportModal(event)">Report</button>
   </div>
 
   <div id="workspace">
+
     <div id="editor-container">
       <div class="pane-header">
-        <span>• SystemVerilog Source</span>
-        <span style="font-size:9px; color:#58a6ff;">IEEE 1800 SYNTHESIZABLE</span>
+        <span>• HDL Source</span>
+        <div class="pane-header-controls">
+          <span class="strip-label" style="margin:0;">TOP:</span>
+          <select id="top-module-select" class="top-select" onchange="onTopModuleChange(this.value)">
+            <option value="">auto-detect</option>
+          </select>
+          <span style="font-size:9px; color:#58a6ff;" id="lang-indicator">SYSTEMVERILOG</span>
+        </div>
       </div>
 
       <div id="file-strip" class="file-strip" style="display:none;">
@@ -677,10 +132,6 @@
           <span class="strip-label">Structure:</span>
           <button id="btn-hierarchy" class="btn-mini active" onclick="setStructure('hierarchy')">Hierarchy</button>
           <button id="btn-flatten" class="btn-mini" onclick="setStructure('flatten')">Flat</button>
-          <span class="strip-label" style="margin-left:8px;">Top:</span>
-          <select id="top-module-select" class="top-select" onchange="setTopModule(this.value)">
-            <option value="">auto</option>
-          </select>
           <button class="btn-mini danger" style="margin-left:auto;" onclick="clearAllFiles()">Clear All</button>
         </div>
       </div>
@@ -688,41 +139,40 @@
       <textarea id="code-input" spellcheck="false"></textarea>
     </div>
 
+    <div id="splitter" title="Drag to resize"></div>
+
     <div id="canvas-container">
+
       <div id="canvas-controls">
         <button class="ctrl-btn" title="Zoom Out" onclick="stepZoom(-1)">−</button>
         <button class="ctrl-btn" title="Zoom In" onclick="stepZoom(1)">+</button>
-        <button class="ctrl-btn" title="Fit to View" onclick="fitView()">⛶</button>
+        <button class="ctrl-btn" title="Fit to View" onclick="fitView()">⌖</button>
+        <button class="ctrl-btn" id="btn-canvas-fullscreen"
+                title="Toggle fullscreen schematic"
+                onclick="toggleCanvasFullscreen()">⤢</button>
       </div>
 
+      <div id="canvas-mode-menu" class="canvas-mode-menu">
+        <button class="fs-mode-btn" data-mode="simple" onclick="setModeFromMenu('simple')">Block view</button>
+        <button class="fs-mode-btn" data-mode="hybrid" onclick="setModeFromMenu('hybrid')">Hybrid</button>
+        <button class="fs-mode-btn" data-mode="detailed" onclick="setModeFromMenu('detailed')">Gate view</button>
+      </div>
+<!-- First-Time Prompt Overlay -->
+      <div id="first-time-prompt" class="first-time-prompt" style="display: none;">
+        <div class="prompt-card">
+          <div class="prompt-icon">⚡</div>
+          <div class="prompt-text">
+            <strong>Ready to visualize?</strong>
+            <span>Click <b>▷ Generate</b> in the toolbar above to synthesize your RTL netlist and waveforms.</span>
+          </div>
+          <button class="btn-mini btn-run" onclick="document.getElementById('first-time-prompt').style.display='none'; handleGenerate();">
+            ▷ Generate Now
+          </button>
+        </div>
+      </div>
       <div id="discovery-hud">
         <span class="pulse-dot"></span>
         <span>Live Netlist (Hybrid LOD) — Click nets to trace • Pan & zoom freely</span>
-      </div>
-
-      <div id="stats-panel">
-        <div><span style="color:#58a6ff; font-weight:700;" id="stat-regs">0</span> Regs</div>
-        <div><span style="color:#e3b341; font-weight:700;" id="stat-muxes">0</span> MUX</div>
-        <div><span style="color:#3fb950; font-weight:700;" id="stat-arith">0</span> ALU</div>
-        <div><span style="color:#f0883e; font-weight:700;" id="stat-cmps">0</span> Cmp</div>
-        <div><span style="color:#c9d1d9; font-weight:700;" id="stat-gates">0</span> Logic</div>
-        <div><span style="color:#a371f7; font-weight:700;" id="stat-total">0</span> Total</div>
-
-        <div class="stats-sep"></div>
-
-        <button id="sta-run-btn" class="sta-run-btn" onclick="runSTA()"
-                title="Run gate-level timing analysis on this circuit">
-          <span class="sta-icon">⏱</span>
-          <span id="sta-run-btn-text">Calculate STA</span>
-        </button>
-
-        <a id="sta-chip" class="sta-chip disabled" data-has-data="0"
-           onclick="openSTAPage(event)"
-           title="Run STA first to see the report">
-          <span>Critical&nbsp;<b id="stat-crit">–</b>&nbsp;ns</span>
-          <span style="color:#484f58;">·</span>
-          <span>Slack&nbsp;<b id="stat-slack">–</b>&nbsp;ns</span>
-        </a>
       </div>
 
       <svg id="schematic-canvas">
@@ -734,12 +184,122 @@
         <rect width="100%" height="100%" fill="url(#eda-grid)" />
         <g id="viewport"></g>
       </svg>
+
     </div>
+
+    <!-- Sim Drawer (Waveforms & STA Tabs) -->
+    <div id="sim-drawer" class="sim-drawer collapsed">
+      <div id="drawer-resizer" title="Drag to resize height"></div>
+
+      <div class="drawer-header" onclick="toggleSimDrawer()">
+        <div class="drawer-title">
+          <span class="drawer-arrow">▲</span>
+          <div class="drawer-tab-switch" onclick="event.stopPropagation()">
+            <button id="tab-drawer-waves" class="drawer-tab active" onclick="switchDrawerTab('waves')">SIMULATION &amp; WAVES</button>
+            <button id="tab-drawer-sta" class="drawer-tab" onclick="switchDrawerTab('sta')">TIMING PATHS (STA)</button>
+          </div>
+          <span id="sim-status-badge" class="badge-idle">IDLE</span>
+         <div class="wave-cursor-inline" id="wave-cursor-hud">
+            <span class="cursor-item"><span class="cursor-label-a">A</span> <span id="cursor-a-val">–</span></span>
+            <span class="cursor-item"><span class="cursor-label-b">B</span> <span id="cursor-b-val">–</span></span>
+            <span class="cursor-item"><span style="color:#8b949e;">Δ</span> <span class="cursor-delta" id="cursor-delta-val">–</span></span>
+            <span class="cursor-item" id="cursor-freq-wrap" style="display:none;"><span style="color:#8b949e;">f</span> <span class="cursor-freq" id="cursor-freq-val" style="color:#38bdf8; font-weight:600;">–</span></span>
+            <button class="cursor-clear" id="cursor-clear-btn" onclick="event.stopPropagation(); clearWaveformCursors();">Clear</button>
+          </div>
+        </div>
+        <div class="drawer-actions" onclick="event.stopPropagation()">
+          <button class="ctrl-btn" id="drawer-expand-btn" title="Maximize / Restore" onclick="toggleDrawerMaximize(event)">🗖</button>
+          <button class="btn-mini btn-run" onclick="runSimulation(true)">▶ Run Testbench</button>
+          <button class="ctrl-btn" style="display:inline-flex; width:22px; height:22px;" onclick="toggleSimDrawer()">✕</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Waveforms -->
+      <div id="waveform-viewport">
+        <div id="wave-sidebar-col">
+          <div class="wave-sidebar-header">
+            <span>Signal</span>
+            <span id="wave-sidebar-mode-label">Value @ A</span>
+          </div>
+          <div id="wave-signal-list"></div>
+        </div>
+        <div id="wave-timeline-container">
+          <canvas id="waveform-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Tab 2: Grouped STA Paths Inspector -->
+      <div id="sta-paths-view" style="display:none;">
+        <div class="sta-class-tabs">
+          <button class="sta-tab-pill active" data-group="reg2reg" onclick="selectSTAPathClass('reg2reg')">
+            Reg → Reg <span id="count-reg2reg" class="sta-tab-count">0</span>
+          </button>
+          <button class="sta-tab-pill" data-group="in2reg" onclick="selectSTAPathClass('in2reg')">
+            In → Reg <span id="count-in2reg" class="sta-tab-count">0</span>
+          </button>
+          <button class="sta-tab-pill" data-group="reg2out" onclick="selectSTAPathClass('reg2out')">
+            Reg → Out <span id="count-reg2out" class="sta-tab-count">0</span>
+          </button>
+          <button class="sta-tab-pill" data-group="in2out" onclick="selectSTAPathClass('in2out')">
+            In → Out <span id="count-in2out" class="sta-tab-count">0</span>
+          </button>
+        </div>
+        <div id="sta-paths-rows" class="sta-paths-rows">
+          <div class="sta-empty-note">Click "Calculate STA" below to inspect and highlight timing paths.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Stats Bar -->
+    <div id="stats-panel">
+      <button id="btn-open-waves" class="btn-mini" onclick="openDrawerTab('waves')" style="color:#58a6ff; border-color:#264566;">
+        <span class="drawer-arrow-waves">▲</span> Waves
+      </button>
+      <button id="btn-open-paths" class="btn-mini" onclick="openDrawerTab('sta')" style="color:#a371f7; border-color:#48326a;">
+        <span class="drawer-arrow-paths">▲</span> Paths
+      </button>
+      <div class="stats-sep"></div>
+
+      <div>Func: <b id="stat-func" style="color:#c9d1d9;">–</b></div>
+      <div style="position: relative;">
+        <button id="stat-lint-btn" class="btn-mini" onclick="toggleLintPopover(event)" 
+                style="border: none; background: transparent; padding: 2px 4px; cursor: pointer;">
+          Lint: <b id="stat-lint" style="color:#3fb950;">0 WARN</b>
+        </button>
+        <div id="lint-popover" class="lint-popover"></div>
+      </div>
+      <div class="stats-sep"></div>
+
+      <div><span style="color:#58a6ff; font-weight:700;" id="stat-regs">0</span> Regs</div>
+      <div><span style="color:#e3b341; font-weight:700;" id="stat-muxes">0</span> MUX</div>
+      <div><span style="color:#3fb950; font-weight:700;" id="stat-arith">0</span> ALU</div>
+      <div><span style="color:#f0883e; font-weight:700;" id="stat-cmps">0</span> Cmp</div>
+      <div><span style="color:#c9d1d9; font-weight:700;" id="stat-gates">0</span> Logic</div>
+      <div><span style="color:#a371f7; font-weight:700;" id="stat-total">0</span> Total</div>
+
+      <div class="stats-sep"></div>
+
+      <button id="sta-run-btn" class="sta-run-btn" onclick="runSTA()"
+              title="Run gate-level timing analysis on this circuit">
+        <span class="sta-icon">⏱</span>
+        <span id="sta-run-btn-text">Calculate STA</span>
+      </button>
+
+      <a id="sta-chip" class="sta-chip disabled" data-has-data="0"
+         onclick="openSTAPage(event)"
+         title="Run STA first to see the report">
+         <span style="color:#a371f7; font-weight:700;" id="stat-pdk" title="PDK Target">sky130</span>
+         <span style="color:#484f58;">·</span>
+         <span>Critical&nbsp;<b id="stat-crit">–</b>&nbsp;ns</span>
+         <span style="color:#484f58;">·</span>
+         <span>Slack&nbsp;<b id="stat-slack">–</b>&nbsp;ns</span>
+      </a>
+    </div>
+
   </div>
 
-  <script src="/static/src/main.js"></script>
+  <script src="/static/src/main.min.js"></script>
 
-  <!-- Mobile warning popup -->
   <div id="mobile-warning" class="mobile-warning" style="display:none;">
     <div class="mobile-warning-card">
       <button class="mobile-warning-close" onclick="dismissMobileWarning()" aria-label="Close">×</button>
@@ -755,64 +315,44 @@
       </button>
     </div>
   </div>
+  <div id="report-modal">
+  <div class="report-modal-card">
+    <div class="report-modal-header">
+      <div class="report-modal-title">🐞 Report a bug or request a feature</div>
+      <button class="report-modal-close" onclick="closeReportModal()">×</button>
+    </div>
 
-  <script>
-    (function () {
-      // In-memory flag only — resets every time the page loads.
-      // Dismissal applies for the current view of /studio, but the popup
-      // reappears if the user navigates away and comes back.
-      let dismissedThisLoad = false;
+    <p class="report-modal-hint">
+      The code and settings from your session are attached automatically
+      — this helps us reproduce the issue without you typing anything.
+    </p>
 
-      function detectMobile() {
-        if (window.innerWidth <= 900) return true;
-        try {
-          if (window.matchMedia &&
-              window.matchMedia("(max-width: 900px)").matches) return true;
-        } catch (e) { /* ignore */ }
-        const ua = navigator.userAgent || "";
-        if (/Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-          return true;
-        }
-        return false;
-      }
+    <label class="report-field">
+      <span>What went wrong?</span>
+      <textarea id="report-text" rows="5" spellcheck="true"
+        placeholder="e.g. The Gate view shows a blank canvas when I load rv32_alu_multi."></textarea>
+    </label>
 
-      function showIfMobile() {
-        if (dismissedThisLoad) return;
-        const isMobile = detectMobile();
-        console.log(
-          "[mobile-warn] innerWidth:", window.innerWidth,
-          "matchMedia:", window.matchMedia && window.matchMedia("(max-width: 900px)").matches,
-          "decided mobile:", isMobile
-        );
-        if (!isMobile) return;
+    <label class="report-field">
+      <span>Your email (optional — only if you want a reply)</span>
+      <input id="report-email" type="email" placeholder="you@example.com">
+    </label>
 
-        const el = document.getElementById("mobile-warning");
-        if (el) {
-          el.style.display = "flex";
-          console.log("[mobile-warn] popup shown");
-        } else {
-          console.log("[mobile-warn] element missing");
-        }
-      }
+    <details class="report-attach">
+      <summary>Attached session snapshot (click to review)</summary>
+      <pre id="report-snapshot"></pre>
+    </details>
 
-      window.dismissMobileWarning = function () {
-        dismissedThisLoad = true;
-        const el = document.getElementById("mobile-warning");
-        if (el) el.style.display = "none";
-      };
+    <div class="report-modal-actions">
+      <button class="btn-mini" onclick="closeReportModal()">Cancel</button>
+      <button class="btn-mini" onclick="copyReport()">📋 Copy</button>
+      <button class="btn-mini btn-run" onclick="submitReport()">Send report</button>
+    </div>
 
-      function init() {
-        requestAnimationFrame(function () {
-          requestAnimationFrame(showIfMobile);
-        });
-      }
+    <div id="report-status" class="report-status"></div>
+  </div>
+</div>
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-      } else {
-        init();
-      }
-    })();
-  </script>
+  <script src="/static/src/studio.min.js?v=2.0.1"></script>
 </body>
 </html>

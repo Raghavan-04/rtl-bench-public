@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RTL Studio — Privacy Policy</title>
+  <title>RTL Bench — Privacy Policy</title>
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -106,6 +106,13 @@
       border-bottom: 1px solid #21262d;
     }
 
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e6edf3;
+      margin: 20px 0 8px;
+    }
+
     p, li {
       font-size: 13.5px;
       line-height: 1.7;
@@ -175,7 +182,7 @@
     }
     .footer-note strong { color: #e3b341; }
 
-    /* Mobile — tables become labelled cards */
+    /* Mobile adjustments */
     @media (max-width: 700px) {
       #navbar { padding: 0 14px; }
       .container { padding: 24px 16px 60px; }
@@ -184,6 +191,7 @@
       .intro { padding: 14px 16px; font-size: 12.5px; }
 
       h2 { font-size: 14.5px; margin: 26px 0 10px; }
+      h3 { font-size: 13px; }
       p, li { font-size: 12.5px; line-height: 1.6; }
       ul { padding-left: 18px; }
       code { font-size: 11px; padding: 1px 5px; }
@@ -218,208 +226,179 @@
 
   <div id="navbar">
     <a href="/" class="brand">
-      <span>RTL STUDIO</span>
+      <span>RTL Bench</span>
       <span class="badge-pro">PRO</span>
     </a>
     <a href="/" id="back-btn" class="back-link">← Back</a>
   </div>
 
   <div class="container">
-    <h1>Privacy Policy</h1>
+    <h1>Privacy Policy &amp; Data Governance Framework</h1>
     <div class="last-updated">Last updated: <span id="last-updated-date">January 2025</span></div>
 
     <div class="intro">
-      RTL Studio is an open-source web-based EDA tool. This page explains what
-      data is collected when you use the site, why it's collected, how long it's
-      kept, and what rights you have over it. No user accounts exist — we don't
-      ask for your name, email, or any personal identifier.
+      RTL Bench operates as an open-source, web-based electronic design automation (EDA) platform. This comprehensive Privacy Policy outlines our stance on user anonymity, the strict lifecycle parameters of technical payloads submitted to our compilation backends, third-party subprocessor relationships, and explicit compliance frameworks including GDPR and CCPA/CPRA guidelines. Because RTL Bench requires no user registration, authentication tokens, or personal identifiers, your browsing and design execution workflows remain structurally decoupled from any persistent identity.
     </div>
 
-    <h2>1. What we collect</h2>
+    <h2>1. Information Architecture &amp; Telemetry Scope</h2>
+    <p>
+      We practice data minimization by design. Successful structural compilations remain entirely ephemeral and unrecorded. We only capture telemetry and technical artifacts when compilation encounters a failure or structural error state.
+    </p>
 
     <table>
       <thead>
         <tr>
-          <th>Data</th>
-          <th>When</th>
-          <th>Purpose</th>
-          <th>Retention</th>
+          <th>Data Category</th>
+          <th>Capture Initiation Point</th>
+          <th>Operational Purpose &amp; Processing Scope</th>
+          <th>Lifecycle Retention Period</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td data-label="Data">HDL source code you paste or upload</td>
-          <td data-label="When">When you click <code>Generate</code></td>
-          <td data-label="Purpose">Compiled by Yosys in a temporary sandbox. Also stored in Google Cloud Firestore for debugging, abuse prevention, and understanding what kinds of designs users submit.</td>
-          <td data-label="Retention">7 days (auto-deleted via Firestore TTL policy)</td>
+          <td data-label="Data Category">Structural Textual Payloads &amp; Asset Bundles</td>
+          <td data-label="Capture Initiation Point">The precise instantaneous event wherein an interactive compilation directive fails or results in an exception status upon dispatch.</td>
+          <td data-label="Operational Purpose &amp; Processing Scope">When a compilation error occurs, the offending payload artifact is registered within a managed logging repository exclusively to diagnose syntax anomalies, isolate parser edge-cases, and safeguard platform utility. Successful compilations generate zero persistent logging records.</td>
+          <td data-label="Lifecycle Retention Period">Managed according to operational diagnostic necessity and maintenance cycles.</td>
         </tr>
         <tr>
-          <td data-label="Data">IP address, browser user-agent, request timestamp</td>
-          <td data-label="When">Every HTTP request</td>
-          <td data-label="Purpose">Standard server request logs for debugging and reliability</td>
-          <td data-label="Retention">Held in the running process's log buffer only; not persisted to disk</td>
+          <td data-label="Data Category">Network Connection Metadata</td>
+          <td data-label="Capture Initiation Point">Every inbound HTTP/HTTPS request sent to our web and API routing layers.</td>
+          <td data-label="Operational Purpose &amp; Processing Scope">Standard reverse-proxy stream logging utilized exclusively for structural routing optimization, volumetric load assessment, and rate-limiting enforcement.</td>
+          <td data-label="Lifecycle Retention Period">Volatile server execution memory buffers only; never written to persistent disk volumes.</td>
         </tr>
         <tr>
-          <td data-label="Data">Google Analytics 4 identifiers (<code>_ga</code>, <code>_ga_LT20GTPEL1</code>)</td>
-          <td data-label="When">Page load</td>
-          <td data-label="Purpose">Anonymised usage statistics — page views, session duration, device type</td>
-          <td data-label="Retention">14 months (Google default)</td>
+          <td data-label="Data Category">Analytics Telemetry Identifiers</td>
+          <td data-label="Capture Initiation Point">Initial DOM document load and subsequent client-side view navigation.</td>
+          <td data-label="Operational Purpose &amp; Processing Scope">Google Analytics 4 event tracking measuring aggregate engagement metrics, browser capabilities, and regional page-load performance.</td>
+          <td data-label="Lifecycle Retention Period">14 months, complying with Google Analytics default rolling expiration parameters.</td>
         </tr>
         <tr>
-          <td data-label="Data">Browser <code>sessionStorage</code></td>
-          <td data-label="When">While a tab is open</td>
-          <td data-label="Purpose">Remembers your uploaded files, circuit, and zoom state across page navigations (e.g. when returning from the STA report)</td>
-          <td data-label="Retention">Cleared automatically when the browser tab closes</td>
+          <td data-label="Data Category">Local Client State Cache</td>
+          <td data-label="Capture Initiation Point">Active browser session usage and tool configuration adjustments.</td>
+          <td data-label="Operational Purpose &amp; Processing Scope">Maintains workspace continuity (active zoom scale, pan coordinates, syntax editor buffers, cached file arrays) during deep multi-page navigation contexts.</td>
+          <td data-label="Lifecycle Retention Period">Instantly wiped upon termination or closure of the browser tab/window.</td>
         </tr>
       </tbody>
     </table>
 
-    <h2>2. What we do NOT collect</h2>
+    <h2>2. Categories of Information We Do Explicitly Exclude</h2>
+    <p>To provide absolute clarity on our boundaries, RTL Bench architecture ensures zero ingestion of the following data types:</p>
     <ul>
-      <li>No name, email, phone number, or account credentials — there are no user accounts</li>
-      <li>No payment information — the tool is free and open-source</li>
-      <li>No location data beyond the city-level granularity that Google Analytics derives from IP</li>
-      <li>No cross-site tracking — GA4 is configured without advertising features enabled by default</li>
+      <li><strong>Personal Identifiers:</strong> We do not request, process, or retain real names, personal email addresses, phone numbers, billing coordinates, or password hashes. No user account database exists.</li>
+      <li><strong>Financial Data:</strong> As an open-core, freely accessible platform, we handle zero payment card transactions or banking information.</li>
+      <li><strong>Precise Geolocation:</strong> We track no device-level GPS or localized Wi-Fi positioning parameters.</li>
+      <li><strong>Behavioral Advertising Profiles:</strong> We build no cross-context behavioral advertising profiles, nor do we ingest data for programmatic ad networks.</li>
     </ul>
 
-    <h2>3. How the source code you submit is handled</h2>
+    <h2>3. Lifecycle Management of Uploaded Hardware Descriptions</h2>
     <p>
-      When you click <strong>Generate</strong>, your HDL source is sent over HTTPS
-      to the backend server, written to a temporary directory that exists only for
-      the duration of that request, compiled by Yosys, and deleted as soon as
-      compilation finishes. The temporary directory is destroyed immediately after.
+      When you push code into our compilation pipeline via text paste or directory tree upload, the transmission travels exclusively over TLS 1.3 encrypted channels. Once received by our FastAPI backend framework:
     </p>
-    <p>
-      In addition, the submitted source code and basic request metadata (IP
-      address, user-agent, top module name, timestamp) are written to a Google
-      Cloud Firestore database. This is used to diagnose compilation failures,
-      investigate abuse, and understand what kinds of designs users are
-      submitting. Each entry is automatically deleted <strong>7 days</strong>
-      after it is written via Firestore's TTL policy.
-    </p>
-    <p>
-      The compiled result (netlist JSON) is returned to your browser and cached
-      only in your browser's <code>sessionStorage</code> for the duration of your
-      visit. It is not stored on the server beyond the duration of the request.
-    </p>
+    <ul>
+      <li><strong>Sandboxing:</strong> The raw files are written into a temporary, restricted Unix directory sandbox assigned zero outbound network socket permissions and bound to a strict 30-second execution watchdog timer.</li>
+      <li><strong>Ephemeral Processing:</strong> Yosys, GHDL, and Icarus Verilog execute within this isolated context to generate simulation VCD outputs and structural netlists. Upon request completion, the temporary directory is scrubbed from disk.</li>
+      <li><strong>Conditional Diagnostic Logging:</strong> If a compilation request successfully passes, the source files leave no persistent trace outside your active browser session. If compilation faults or triggers an error, execution diagnostics and payload snapshots are mirrored to Google Cloud Firestore strictly for debugging and error-handling analysis.</li>
+      <li><strong>Client Caching:</strong> The calculated JSON netlist representation is returned to your browser client and stored exclusively within volatile browser memory (`sessionStorage`), leaving no permanent server footprint.</li>
+    </ul>
 
-    <h2>4. Third parties</h2>
+    <h2>4. Third-Party Infrastructure &amp; Subprocessor Disclosures</h2>
+    <p>RTL Bench relies on industry-standard, high-reliability cloud subprocessors to maintain availability, high-speed asset distribution, and deep logic analytics:</p>
     <ul>
       <li>
-        <strong>Google Cloud Firestore</strong> — submitted code and request
-        metadata are stored in a managed database operated by Google. Entries
-        are auto-deleted after 7 days via Firestore's TTL policy. See
-        <a href="https://cloud.google.com/terms/data-processing-addendum" target="_blank" rel="noopener">Google Cloud's Data Processing Addendum</a>.
+        <strong>Google Cloud Platform (Firestore):</strong> Provides managed, enterprise-grade NoSQL database structures for logging diagnostic error artifacts when compilation faults occur. Governed by <a href="https://cloud.google.com/terms/data-processing-addendum" target="_blank" rel="noopener">Google Cloud's Data Processing Addendum (DPA)</a>.
       </li>
       <li>
-        <strong>Google Analytics 4</strong> — used for aggregate usage statistics.
-        Google may process your IP address and set the cookies listed above.
-        See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>
-        and <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses information from sites that use its services</a>.
+        <strong>Google Analytics 4 (GA4):</strong> Collects anonymized traffic statistics. Google utilizes cookies to evaluate engagement patterns. Review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a> and <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">how Google handles site telemetry data</a>.
       </li>
       <li>
-        <strong>Google Fonts</strong> — Inter and JetBrains Mono are loaded from
-        <code>fonts.googleapis.com</code>. Google receives your IP as part of serving
-        these fonts.
+        <strong>Google Fonts:</strong> Typography assets (Inter and JetBrains Mono) are dynamically requested from Google Content Delivery Networks, transmitting basic client IP connection metadata necessary for asset delivery.
       </li>
       <li>
-        <strong>jsDelivr CDN</strong> — the ELK graph layout library is loaded from
-        <code>cdn.jsdelivr.net</code>.
+        <strong>jsDelivr CDN:</strong> Supplies external script bundles (such as the Eclipse Layout Kernel — ELK.js) directly to the client browser environment for local graph coordinate calculations.
       </li>
       <li>
-        <strong>Render</strong> — this site is hosted on Render's infrastructure.
-        Render may collect request metadata (IP address, request path, timestamp)
-        as part of operating its platform, subject to
-        <a href="https://render.com/privacy" target="_blank" rel="noopener">Render's Privacy Policy</a>.
+        <strong>Render Infrastructure:</strong> Hosts our containerized FastAPI backend and static frontend distribution network. Render captures basic operational HTTP ingress metrics in alignment with <a href="https://render.com/privacy" target="_blank" rel="noopener">Render's Corporate Privacy Policy</a>.
       </li>
     </ul>
-    <p>
-      We do not sell, rent, or trade any data. No data is shared with advertisers.
-    </p>
 
-    <h2>5. Cookies</h2>
-    <p>The following cookies may be set when you visit this site:</p>
+    <h2>5. Cookie Transparency Matrix</h2>
+    <p>Our cookie footprint is strictly limited to core operational measurements and analytics validation:</p>
     <table>
       <thead>
         <tr>
-          <th>Cookie</th>
-          <th>Set by</th>
-          <th>Purpose</th>
-          <th>Duration</th>
+          <th>Cookie Identifier</th>
+          <th>Originating Provider</th>
+          <th>Functional Description</th>
+          <th>Expiration Span</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td data-label="Cookie"><code>_ga</code></td>
-          <td data-label="Set by">Google Analytics</td>
-          <td data-label="Purpose">Distinguishes unique users</td>
-          <td data-label="Duration">2 years</td>
+          <td data-label="Cookie Identifier"><code>_ga</code></td>
+          <td data-label="Originating Provider">Google Analytics</td>
+          <td data-label="Functional Description">Computes unique visitor tallies by generating a randomly seeded client instance identifier.</td>
+          <td data-label="Expiration Span">2 years from initialization</td>
         </tr>
         <tr>
-          <td data-label="Cookie"><code>_ga_LT20GTPEL1</code></td>
-          <td data-label="Set by">Google Analytics</td>
-          <td data-label="Purpose">Persists session state for this specific property</td>
-          <td data-label="Duration">2 years</td>
+          <td data-label="Cookie Identifier"><code>_ga_LT20GTPEL1</code></td>
+          <td data-label="Originating Provider">Google Analytics</td>
+          <td data-label="Functional Description">Maintains session continuity and activity state across page hits for this specific property container.</td>
+          <td data-label="Expiration Span">2 years from initialization</td>
         </tr>
       </tbody>
     </table>
     <p>
-      You can block these cookies in your browser settings or with an ad blocker.
-      The site will continue to function normally.
+      Visitors retain complete autonomy over tracking cookies. You may configure your browser software to block or purge all third-party cookies. Doing so will restrict none of RTL Bench's core EDA, simulation, or schematic visualization capabilities.
     </p>
 
-    <h2>6. Your rights</h2>
+    <h2>6. Statutory Rights &amp; Regulatory Compliance</h2>
+    
+    <h3>A. European Union &amp; UK Users (GDPR Compliance)</h3>
     <p>
-      Depending on where you live, you may have the right to:
+      For individuals accessing RTL Bench from within the European Economic Area (EEA) or United Kingdom, processing of technical request metadata is executed under the lawful basis of <em>legitimate interests</em> (ensuring software stability, preventing service abuse, and providing real-time hardware design compilation). Because we maintain no user profiles or account repositories:
     </p>
     <ul>
-      <li>Know what data is held about you</li>
-      <li>Request deletion of that data</li>
-      <li>Object to processing</li>
-      <li>Withdraw consent for analytics cookies at any time</li>
+      <li>The right of access and data portability can typically be managed instantly by inspecting your local browser session storage.</li>
+      <li>Requests to scrub specific diagnostic log iterations from our transient error logs can be submitted directly through our repository issue tracker.</li>
+      <li>You retain the absolute right to lodge a complaint with your local supervisory data protection authority.</li>
     </ul>
+
+    <h3>B. California Residents (CCPA / CPRA Compliance)</h3>
     <p>
-      Because we don't store any per-user data (no accounts, no user profiles),
-      most requests can be satisfied simply by clearing your browser cookies and
-      session storage. For anything else, or to request deletion of a specific
-      submitted design from our Firestore logs, contact us using the address below.
+      Under the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA), users are entitled to know what categories of personal data are gathered. Because RTL Bench collects zero consumer personal data, sells no user information to third-party data brokers, and engages in no cross-context behavioral tracking for monetary consideration, we naturally maintain full operational compliance. We do not honor "Do Not Track" (DNT) browser header flags differently than standard operations because our baseline analytics already run without persistent cross-site behavioral tracking profiles.
     </p>
 
-    <h2>7. Data security</h2>
+    <h2>7. Technical Data Security Controls</h2>
     <p>
-      All traffic to and from RTL Studio uses HTTPS. Submitted code is compiled
-      in a sandboxed subprocess with a 30-second timeout and no network access.
-      Firestore access is restricted to project maintainers via Google Cloud IAM,
-      and Firestore security rules block all browser-side reads. Server request
-      logs are not persisted to disk on our hosting platform.
+      We implement stringent defense-in-depth measures to protect runtime infrastructure:
+    </p>
+    <ul>
+      <li><strong>In-Transit Encryption:</strong> Absolute enforcement of HTTPS protocols utilizing strong cipher suites and modern TLS configurations across all domain entry points.</li>
+      <li><strong>Execution Isolation:</strong> Automated compilation scripts run inside heavily isolated process containers with zero filesystem persistence beyond the instant build window.</li>
+      <li><strong>Database Access Restrictions:</strong> Google Cloud Firestore endpoints are locked down behind strict Identity and Access Management (IAM) controls, rejecting all unauthenticated or client-side direct socket queries.</li>
+    </ul>
+
+    <h2>8. Children's Online Privacy Protection (COPPA)</h2>
+    <p>
+      RTL Bench is structured as an engineering utility tool intended for academic, professional, and experimental hardware design. We do not target, market to, or knowingly solicit data interaction from minors under the age of 13. If you believe a minor has improperly transmitted code artifacts containing identifying metadata, please reach out via our repository channels for immediate removal.
     </p>
 
-    <h2>8. Children's privacy</h2>
+    <h2>9. Policy Modifications &amp; Notification Protocol</h2>
     <p>
-      RTL Studio is not directed at children under 13. We do not knowingly
-      collect personal information from children.
+      We reserve the right to amend this Privacy Policy dynamically as platform features, subprocessors, or regulatory landscapes evolve. Substantive modifications will be indicated by adjusting the "Last updated" timestamp stamped at the head of this document. Continued engagement with RTL Bench subsequent to any modification confirms your ongoing acknowledgment of the revised governance terms.
     </p>
 
-    <h2>9. Changes to this policy</h2>
+    <h2>10. Dispute Resolution &amp; Communications Channel</h2>
     <p>
-      This policy may be updated from time to time. The "Last updated" date at
-      the top of this page reflects the most recent revision. Continued use of
-      the site after a change constitutes acceptance of the updated policy.
-    </p>
-
-    <h2>10. Contact</h2>
-    <p>
-      Questions about this policy or data handling can be raised by opening an
-      issue on the project's repository:
-      <a href="https://github.com/Raghavan-04/rtl-studio/issues" target="_blank" rel="noopener">
-        github.com/Raghavan-04/rtl-studio/issues
+      Inquiries, clarification requests, or statutory compliance notices regarding this privacy framework should be directed to our active engineering maintainers via public or private communication paths on our primary repository interface:
+      <a href="https://github.com/Raghavan-04/rtlbench/issues" target="_blank" rel="noopener">
+        github.com/Raghavan-04/rtlbench/issues
       </a>.
     </p>
 
     <div class="footer-note">
-      <strong>Note:</strong> This document is provided for transparency and is
-      not legal advice. If you operate a fork of this project at scale or in a
-      commercial context, consult a qualified lawyer in your jurisdiction.
+      <strong>Legal Disclaimer:</strong> This text represents a transparent disclosure of our operational telemetry patterns and is provided for informational objectives. It does not constitute formal legal counsel. Entities deploying customized forks of this codebase into commercial production environments must consult certified legal counsel to verify regional regulatory adherence.
     </div>
   </div>
 
@@ -427,23 +406,17 @@
     (function () {
       "use strict";
 
-      // ------------------------------------------------------------------
-      // Smart back button — navigates to wherever the user came from
-      // ------------------------------------------------------------------
       function getBackTarget() {
-        // Priority 1: document.referrer (where they clicked from)
         const ref = document.referrer;
         if (ref) {
           try {
             const url = new URL(ref);
-            // Only trust same-origin referrers — never redirect to external sites
             if (url.origin === window.location.origin) {
-              // Don't bounce back to /privacy itself (edge case)
               if (url.pathname !== "/privacy") {
                 return { href: url.pathname + url.search + url.hash, kind: url.pathname };
               }
             }
-          } catch (e) { /* malformed referrer — fall through */ }
+          } catch (e) { /* malformed referrer */ }
         }
         return null;
       }
@@ -451,7 +424,7 @@
       function humanLabel(pathname) {
         if (!pathname) return "← Back";
         if (pathname === "/" || pathname === "") return "← Back to Home";
-        if (pathname === "/studio") return "← Back to Studio";
+        if (pathname === "/studio") return "← Back to Bench";
         if (pathname === "/sta") return "← Back to STA Report";
         return "← Back";
       }
@@ -465,15 +438,12 @@
           btn.setAttribute("href", target.href);
           btn.textContent = humanLabel(target.kind);
         } else {
-          // No usable referrer. Prefer history.back() if there's history,
-          // otherwise fall back to home.
           btn.setAttribute("href", "/");
           btn.textContent = "← Back";
         }
 
         btn.addEventListener("click", function (e) {
-          if (target) return;                 // href is correct — let browser handle it
-
+          if (target) return;
           e.preventDefault();
           if (window.history.length > 1) {
             window.history.back();
@@ -483,9 +453,6 @@
         });
       }
 
-      // ------------------------------------------------------------------
-      // Auto-update the "Last updated" date
-      // ------------------------------------------------------------------
       function stampDate() {
         const el = document.getElementById("last-updated-date");
         if (!el) return;

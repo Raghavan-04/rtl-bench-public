@@ -14,225 +14,9 @@
   <meta name="robots" content="noindex, nofollow, noai, noimageai" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link rel="stylesheet" href="/static/src/sta.min.css?v=2.0.1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background: #080a0d; color: #c9d1d9;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100%;
-    }
-    #navbar {
-      height: 48px; background: #111418; border-bottom: 1px solid #262c36;
-      display: flex; align-items: center; padding: 0 16px; gap: 10px;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 6px;
-      font-weight: 700; color: #e6edf3; font-size: 13px;
-      text-decoration: none;
-    }
-    .badge-pro {
-      background: #ff9800; color: #000; font-size: 9px;
-      padding: 2px 5px; border-radius: 4px; font-weight: 800;
-    }
-    .back-link {
-      margin-left: auto; color: #58a6ff; text-decoration: none;
-      font-size: 12px; font-weight: 600;
-    }
-    .back-link:hover { text-decoration: underline; }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
-    h1 { font-size: 22px; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
-    .subtitle {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; color: #8b949e; margin-bottom: 22px;
-    }
-    .empty-state {
-      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
-      padding: 40px 24px; text-align: center; color: #8b949e; font-size: 13px;
-    }
-    .empty-state a { color: #58a6ff; text-decoration: none; }
-    .empty-state a:hover { text-decoration: underline; }
-
-    .controls {
-      display: flex; flex-wrap: wrap; gap: 12px 24px;
-      align-items: center; margin-bottom: 20px;
-      background: #0d1117; border: 1px solid #30363d;
-      border-radius: 8px; padding: 14px 18px;
-    }
-    .ctrl-group { display: flex; align-items: center; gap: 8px; }
-    .ctrl-label {
-      font-size: 10.5px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.6px; color: #8b949e;
-    }
-    .ctrl-select, .ctrl-input {
-      background: #161b22; color: #c9d1d9;
-      border: 1px solid #30363d; border-radius: 5px;
-      padding: 5px 8px; font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; outline: none; min-width: 90px;
-    }
-    .ctrl-select:focus, .ctrl-input:focus { border-color: #388bfd; }
-
-    .cards {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px; margin-bottom: 24px;
-    }
-    .card {
-      background: #0d1117; border: 1px solid #30363d;
-      border-radius: 8px; padding: 14px 16px;
-    }
-    .card-label {
-      font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
-      color: #8b949e; font-weight: 600; margin-bottom: 6px;
-    }
-    .card-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 22px; font-weight: 700; color: #e6edf3;
-    }
-    .card-value.ok   { color: #3fb950; }
-    .card-value.warn { color: #e3b341; }
-    .card-value.bad  { color: #f85149; }
-    .card-value small {
-      font-size: 12px; font-weight: 500; color: #8b949e; margin-left: 4px;
-    }
-    .card-sub {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px; color: #8b949e; margin-top: 4px;
-    }
-
-    h2 {
-      font-size: 13px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.6px; color: #8b949e; margin: 24px 0 10px;
-    }
-    h2 span.hint {
-      color: #6e7681; font-weight: 500; text-transform: none;
-      letter-spacing: 0; font-size: 11.5px;
-    }
-
-    .path-table {
-      background: #0d1117; border: 1px solid #30363d;
-      border-radius: 8px; overflow: hidden;
-    }
-    .path-row {
-      display: grid; grid-template-columns: 130px 1fr 110px;
-      align-items: center; gap: 12px; padding: 12px 16px;
-      border-bottom: 1px solid #1f242c; cursor: pointer;
-      transition: background 0.12s ease;
-    }
-    .path-row:last-child { border-bottom: none; }
-    .path-row:hover { background: #161b22; }
-    .path-row.selected {
-      background: #161b22; border-left: 3px solid #58a6ff;
-      padding-left: 13px;
-    }
-    .path-depth {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px; font-weight: 700; color: #e6edf3;
-    }
-    .path-depth small { color: #8b949e; font-weight: 500; font-size: 11px; margin-left: 4px; }
-    .path-ends {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px; color: #c9d1d9;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .path-ends .arrow { color: #6e7681; margin: 0 6px; }
-    .path-time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px; color: #e3b341; text-align: right; font-weight: 700;
-    }
-
-    .breakdown {
-      background: #0d1117; border: 1px solid #30363d;
-      border-radius: 8px; padding: 16px 20px; margin-top: 12px;
-    }
-    .breakdown-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; color: #8b949e; margin-bottom: 12px;
-    }
-    .cell-step {
-      display: grid; grid-template-columns: 32px 1fr 110px 70px;
-      align-items: center; gap: 12px;
-      padding: 6px 0; border-bottom: 1px dashed #1f242c;
-      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
-    }
-    .cell-step:last-child { border-bottom: none; }
-    .cell-step .idx { color: #484f58; }
-    .cell-step .ctype { color: #58a6ff; }
-    .cell-step .cname { color: #c9d1d9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .cell-step .ctime { color: #e3b341; text-align: right; font-weight: 700; }
-
-    .gate-hist {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
-    }
-    .gate-hist .gchip {
-      background: #161b22; border: 1px solid #30363d;
-      border-radius: 4px; padding: 3px 8px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #c9d1d9;
-    }
-    .gate-hist .gchip b { color: #58a6ff; margin-left: 4px; }
-
-    .footer-note {
-      margin-top: 24px; padding: 12px 16px;
-      background: #0d1117; border: 1px solid #21262d;
-      border-left: 3px solid #e3b341; border-radius: 6px;
-      font-size: 11.5px; color: #8b949e; line-height: 1.55;
-    }
-    .footer-note b { color: #e3b341; }
-    .footer-note code {
-      font-family: 'JetBrains Mono', monospace;
-      background: #161b22; padding: 1px 4px; border-radius: 3px;
-    }
-    @media (max-width: 768px) {
-  #navbar { padding: 0 14px; }
-  .container { padding: 20px 14px 60px; }
-  h1 { font-size: 20px; }
-  .subtitle { font-size: 10.5px; margin-bottom: 18px; }
-
-  .controls { padding: 12px 14px; gap: 10px 16px; }
-  .ctrl-group { width: 100%; }
-  .ctrl-select, .ctrl-input { flex: 1; min-width: 0; }
-  .ctrl-group:last-child { font-size: 10px; }
-
-  .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-  .card { padding: 12px 14px; }
-  .card-value { font-size: 18px; }
-  .card-sub { font-size: 9.5px; }
-
-  h2 { font-size: 12px; margin: 20px 0 8px; }
-  h2 span.hint { display: block; margin-top: 3px; font-size: 10.5px; }
-
-  .path-row {
-    grid-template-columns: 1fr;
-    gap: 4px;
-    padding: 10px 12px;
-    row-gap: 6px;
-  }
-  .path-depth { font-size: 13px; }
-  .path-ends { font-size: 11px; }
-  .path-time { font-size: 11px; text-align: left; color: #e3b341; }
-
-  .breakdown { padding: 14px 16px; }
-  .breakdown-title { font-size: 10.5px; }
-
-  .cell-step {
-    grid-template-columns: 24px 1fr 52px;
-    gap: 6px 8px;
-    font-size: 11px;
-  }
-  .cell-step .ctime { text-align: right; }
-  /* hide the redundant type column on mobile since label already says it */
-  .cell-step .ctype { display: none; }
-  .cell-step .cname {
-    font-size: 10px;
-    color: #8b949e;
-  }
-
-  .gate-hist { gap: 6px; }
-  .gate-hist .gchip { font-size: 10px; padding: 2px 6px; }
-
-  .footer-note { padding: 12px 14px; font-size: 11px; line-height: 1.55; }
-}
-  </style>
+  
 </head>
 <body>
 
@@ -250,199 +34,92 @@
     </div>
   </div>
 
-  <script>
-    const NODES = {
-      "180nm": { ps: 80, label: "180 nm" },
-      "90nm":  { ps: 40, label: "90 nm" },
-      "45nm":  { ps: 15, label: "45 nm" },
-      "7nm":   { ps: 5,  label: "7 nm" },
-    };
+  <!-- =========================================================
+       STA LOADING OVERLAY
+       ========================================================= -->
+  <div id="sta-loading-overlay">
+    <div class="sta-loading-card">
 
-    let reportData = null;
-    let currentNode = "45nm";
-    let currentPeriodNs = 10.0;
-    let selectedPathIdx = null;
+      <div class="sta-loading-chip">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer rotating ring -->
+          <circle cx="50" cy="50" r="44" fill="none"
+                  stroke="rgba(56,189,248,0.12)" stroke-width="2"/>
+          <circle cx="50" cy="50" r="44" fill="none"
+                  stroke="#58a6ff" stroke-width="2"
+                  stroke-dasharray="24 240"
+                  stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate"
+                              from="0 50 50" to="360 50 50"
+                              dur="1.4s" repeatCount="indefinite"/>
+          </circle>
 
-    function esc(s) {
-      return String(s == null ? "" : s)
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
+          <!-- Second counter-rotating ring -->
+          <circle cx="50" cy="50" r="36" fill="none"
+                  stroke="rgba(163,113,247,0.15)" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="36" fill="none"
+                  stroke="#a371f7" stroke-width="1.5"
+                  stroke-dasharray="12 200"
+                  stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate"
+                              from="360 50 50" to="0 50 50"
+                              dur="2.1s" repeatCount="indefinite"/>
+          </circle>
 
-    function classifySlack(slack, period) {
-      if (slack < 0) return "bad";
-      if (slack < period * 0.2) return "warn";
-      return "ok";
-    }
+          <!-- Chip body -->
+          <rect x="30" y="30" width="40" height="40" rx="5"
+                fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
 
-    function depthToNs(depth, nodeKey) {
-      const ps = NODES[nodeKey].ps;
-      return depth * ps / 1000;
-    }
+          <!-- Pin stubs -->
+          <line x1="50" y1="22" x2="50" y2="30" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="70" x2="50" y2="78" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="50" x2="30" y2="50" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="70" y1="50" x2="78" y2="50" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="37" y1="22" x2="37" y2="30" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="63" y1="70" x2="63" y2="78" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="22" y1="37" x2="30" y2="37" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="70" y1="63" x2="78" y2="63" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round"/>
 
-    function render() {
-      const container = document.getElementById("sta-content");
-      if (!reportData) {
-        container.innerHTML =
-          '<h1>STA Report</h1>' +
-          '<div class="empty-state">No STA data. ' +
-          'Open <a href="/studio">RTL Studio</a>, click <b>Run STA</b>, then come back.</div>';
-        return;
-      }
+          <!-- Pulsing inner dots (3, staggered) -->
+          <circle cx="40" cy="40" r="3" fill="#3fb950">
+            <animate attributeName="opacity" values="0.25;1;0.25"
+                     dur="1.6s" repeatCount="indefinite" begin="0s"/>
+          </circle>
+          <circle cx="50" cy="50" r="3" fill="#58a6ff">
+            <animate attributeName="opacity" values="0.25;1;0.25"
+                     dur="1.6s" repeatCount="indefinite" begin="0.35s"/>
+          </circle>
+          <circle cx="60" cy="60" r="3" fill="#a371f7">
+            <animate attributeName="opacity" values="0.25;1;0.25"
+                     dur="1.6s" repeatCount="indefinite" begin="0.7s"/>
+          </circle>
+        </svg>
+      </div>
 
-      const sta = reportData.sta;
-      const depth = sta.gate_depth || 0;
-      const gates = sta.total_gates || 0;
-      const paths = sta.paths || [];
-      const gateCounts = sta.gate_counts || {};
+      <div class="sta-loading-title" id="sta-loading-title">Running STA…</div>
+      <div class="sta-loading-subtitle" id="sta-loading-subtitle">
+        Yosys techmap → cell mapping → arrival propagation
+      </div>
 
-      const critNs = depthToNs(depth, currentNode);
-      const slackNs = currentPeriodNs - critNs;
-      const cls = classifySlack(slackNs, currentPeriodNs);
+      <div class="sta-loading-progress">
+        <div class="sta-loading-progress-bar" id="sta-loading-progress-bar"></div>
+      </div>
 
-      let html = "";
-      html += '<h1>Timing Analysis</h1>';
-      html += '<div class="subtitle">Top module: <b>' + esc(sta.top_module || "—") + '</b>'
-            + ' · ' + gates + ' gates in netlist'
-            + ' · ' + paths.length + ' critical paths analysed'
-            + ' · model: techmapped gate depth</div>';
+            <div class="sta-loading-stage" id="sta-loading-stage">Initializing…</div>
 
-      html += '<div class="controls">';
-      html += '<div class="ctrl-group"><span class="ctrl-label">Process node</span>'
-            + '<select class="ctrl-select" id="node-select">';
-      Object.keys(NODES).forEach(k => {
-        const sel = (k === currentNode) ? "selected" : "";
-        html += `<option value="${k}" ${sel}>${NODES[k].label} (${NODES[k].ps} ps/gate)</option>`;
-      });
-      html += '</select></div>';
+      <div class="sta-loading-notice" id="sta-loading-notice">
+        <span class="notice-icon">⏱</span>
+        <span>
+          <b>Hosted on free-tier infrastructure.</b>
+          Large multi-file designs can take <b>2–4 minutes</b> to analyse.
+          <span class="notice-sub">Yosys re-runs techmap on every request; cold-start instances add ~30 s on the first call.</span>
+        </span>
+      </div>
 
-      html += '<div class="ctrl-group"><span class="ctrl-label">Clock period (ns)</span>'
-            + '<input type="number" class="ctrl-input" id="period-input" step="0.1" min="0.1" value="'
-            + currentPeriodNs.toFixed(2) + '"></div>';
+    </div>
+  </div>
+  </div>
 
-      html += '<div class="ctrl-group" style="margin-left:auto; color:#8b949e; font-size:11px; font-family:\'JetBrains Mono\', monospace;">'
-            + '1 gate = ' + NODES[currentNode].ps + ' ps on this node</div>';
-      html += '</div>';
-
-      html += '<div class="cards">';
-      html += '<div class="card"><div class="card-label">Critical gate depth</div>'
-            + '<div class="card-value ' + cls + '">' + depth + '<small>gates</small></div>'
-            + '<div class="card-sub">≈ ' + critNs.toFixed(3) + ' ns @ ' + NODES[currentNode].label + '</div></div>';
-
-      html += '<div class="card"><div class="card-label">Assumed clock period</div>'
-            + '<div class="card-value">' + currentPeriodNs.toFixed(2) + '<small>ns</small></div>'
-            + '<div class="card-sub">' + (1000 / currentPeriodNs).toFixed(2) + ' GHz equivalent</div></div>';
-
-      html += '<div class="card"><div class="card-label">Slack</div>'
-            + '<div class="card-value ' + cls + '">'
-            + (slackNs >= 0 ? "+" : "") + slackNs.toFixed(3) + '<small>ns</small></div>'
-            + '<div class="card-sub">' + (slackNs >= 0 ? "timing met" : "timing violated") + '</div></div>';
-
-      html += '<div class="card"><div class="card-label">Total gates</div>'
-            + '<div class="card-value">' + gates + '</div>'
-            + '<div class="card-sub">' + Object.keys(gateCounts).length + ' distinct types</div></div>';
-      html += '</div>';
-
-      html += '<h2>Top paths <span class="hint">(click to expand)</span></h2>';
-      if (paths.length === 0) {
-        html += '<div class="empty-state">No combinational paths found between registers / IO.</div>';
-      } else {
-        html += '<div class="path-table">';
-        paths.forEach((p, i) => {
-          const pNs = depthToNs(p.depth, currentNode);
-          const rowCls = (i === selectedPathIdx) ? "selected" : "";
-          html += '<div class="path-row ' + rowCls + '" data-idx="' + i + '">'
-                + '<div class="path-depth">' + p.depth + '<small>gates</small></div>'
-                + '<div class="path-ends">' + esc(p.start)
-                + '<span class="arrow">→</span>' + esc(p.end) + '</div>'
-                + '<div class="path-time">' + pNs.toFixed(3) + ' ns</div>'
-                + '</div>';
-        });
-        html += '</div>';
-      }
-
-      if (selectedPathIdx != null && paths[selectedPathIdx]) {
-        const p = paths[selectedPathIdx];
-        const pNs = depthToNs(p.depth, currentNode);
-        html += '<div class="breakdown">';
-        html += '<div class="breakdown-title">Path breakdown — '
-              + esc(p.start) + ' → ' + esc(p.end)
-              + ' (' + p.depth + ' gates · ' + pNs.toFixed(3) + ' ns @ ' + NODES[currentNode].label + ')</div>';
-        (p.cells || []).forEach((c, i) => {
-          html += '<div class="cell-step">'
-                + '<span class="idx">#' + (i + 1) + '</span>'
-                + '<span class="ctype">' + esc(c.label) + '</span>'
-                + '<span class="cname">' + esc((c.id || "").replace(/^cell_/, "")) + '</span>'
-                + '<span class="ctime">' + NODES[currentNode].ps + ' ps</span>'
-                + '</div>';
-        });
-        html += '</div>';
-      }
-
-      const sortedGates = Object.entries(gateCounts).sort((a, b) => b[1] - a[1]);
-      if (sortedGates.length > 0) {
-        html += '<h2>Gate histogram</h2>';
-        html += '<div class="gate-hist">';
-        sortedGates.forEach(([g, n]) => {
-          html += '<div class="gchip">' + esc(g) + '<b>' + n + '</b></div>';
-        });
-        html += '</div>';
-      }
-
-      html += '<div class="footer-note">'
-            + '<b>About this report.</b> The design is techmapped to real gates by Yosys '
-            + '(<code>flatten; techmap</code>) and the critical path is measured as the number of gate levels '
-            + 'between a register/input and the next register/output. '
-            + 'Nanosecond values use a per-node average gate delay ('
-            + NODES[currentNode].ps + ' ps on ' + NODES[currentNode].label + '). '
-            + 'This is a structural estimate, not sign-off STA — real numbers need a Liberty (<code>.lib</code>) '
-            + 'file, wire RC, and PVT corners.'
-            + '</div>';
-
-      container.innerHTML = html;
-
-      const nodeSel = document.getElementById("node-select");
-      if (nodeSel) {
-        nodeSel.addEventListener("change", (e) => {
-          currentNode = e.target.value;
-          render();
-        });
-      }
-      const perInp = document.getElementById("period-input");
-      if (perInp) {
-        perInp.addEventListener("change", (e) => {
-          const v = parseFloat(e.target.value);
-          if (!isNaN(v) && v > 0) {
-            currentPeriodNs = v;
-            render();
-          }
-        });
-      }
-      document.querySelectorAll(".path-row").forEach((row) => {
-        row.addEventListener("click", () => {
-          const idx = parseInt(row.dataset.idx, 10);
-          selectedPathIdx = (idx === selectedPathIdx) ? null : idx;
-          render();
-        });
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const raw = sessionStorage.getItem("rtl_studio_sta");
-      if (!raw) { render(); return; }
-      try {
-        reportData = JSON.parse(raw);
-        if (reportData.default_node && NODES[reportData.default_node]) {
-          currentNode = reportData.default_node;
-        }
-        if (reportData.default_period_ns) {
-          currentPeriodNs = reportData.default_period_ns;
-        }
-      } catch (e) {
-        reportData = null;
-      }
-      render();
-    });
-  </script>
+  <script src="/static/src/sta.min.js?v=2.0.1"></script>
 </body>
 </html>
