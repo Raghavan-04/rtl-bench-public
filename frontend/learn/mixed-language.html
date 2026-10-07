@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+
+  <title>Mixed-Language Projects — Verilog + VHDL in One Design — RTL Bench</title>
+  <meta name="description" content="Combine Verilog, SystemVerilog, and VHDL in a single RTL Bench project. Type mapping, case sensitivity, generics, and the gotchas that break elaboration." />
+  <link rel="canonical" href="https://rtlbench.com/learn/mixed-language" />
+
+  <meta property="og:title" content="Mixed-Language Projects — Verilog + VHDL in One Design" />
+  <meta property="og:description" content="Combine Verilog, SystemVerilog, and VHDL in a single project. Type mapping, gotchas, and a runnable example." />
+  <meta property="og:url" content="https://rtlbench.com/learn/mixed-language" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="RTL Bench" />
+  <meta property="og:image" content="https://rtlbench.com/og-learn.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RTL Bench IDE waveform and schematic preview" />
+  <meta name="author" content="RTL Bench" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@rtlbench" />
+  <meta name="twitter:url" content="https://rtlbench.com/learn/mixed-language" />
+  <meta name="twitter:image" content="https://rtlbench.com/og-learn.png" />
+  <meta name="twitter:title" content="Mixed-Language Projects in RTL Bench" />
+  <meta name="twitter:description" content="Verilog and VHDL in one design — types, case sensitivity, generics." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LT20GTPEL1');
+  </script>
+  <!-- End Google Analytics -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Mixed-Language Projects — Verilog + VHDL in One Design",
+        "description": "Combine Verilog, SystemVerilog, and VHDL in a single RTL Bench project. Type mapping, case sensitivity, generics, and elaboration gotchas.",
+        "author": { "@type": "Organization", "name": "RTL Bench" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "RTL Bench",
+          "logo": { "@type": "ImageObject", "url": "https://rtlbench.com/logo.png" }
+        },
+        "datePublished": "2026-09-29",
+        "dateModified": "2026-09-29",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": "https://rtlbench.com/learn/mixed-language" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://rtlbench.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Learn", "item": "https://rtlbench.com/learn" },
+          { "@type": "ListItem", "position": 3, "name": "Mixed-language projects", "item": "https://rtlbench.com/learn/mixed-language" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can you mix Verilog and VHDL in the same design?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. RTL Bench parses VHDL with GHDL and Verilog or SystemVerilog with Yosys, then stitches the two netlists into a single hierarchy. A Verilog top can instantiate a VHDL entity, and a VHDL top can instantiate a Verilog module."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does VHDL std_logic map to Verilog?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "std_logic maps to a 1-bit logic signal, std_logic_vector maps to a packed vector, and the bit order in the port declaration must match on both sides. VHDL unsigned and signed map to logic vectors as well."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does my VHDL entity not connect to my Verilog instance?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Case sensitivity is the most common cause. VHDL is case-insensitive, so an entity named ALU_Core is the same as alu_core. Verilog is case-sensitive, so the instance must use the exact casing declared in the VHDL file."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #080a0d;
+      color: #c9d1d9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre, kbd { font-family: 'JetBrains Mono', monospace; }
+
+    #navbar {
+      position: sticky; top: 0;
+      height: 48px;
+      background: rgba(17, 20, 24, 0.96);
+      border-bottom: 1px solid #262c36;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 10px;
+      backdrop-filter: blur(8px);
+      z-index: 30;
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1c2128; color: #c9d1d9;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: 5px 12px; font-size: 11px; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover { background: #262c36; color: #fff; border-color: #58a6ff; text-decoration: none; }
+    .nav-btn.primary { background: #1f6feb; border-color: #388bfd; color: #fff; }
+    .nav-btn.primary:hover { background: #388bfd; }
+    .nav-btn .arrow { color: #58a6ff; font-size: 13px; }
+    .brand { font-weight: 700; color: #e6edf3; font-size: 13px; text-decoration: none; }
+    .badge-pro { background: #ff9800; color: #000; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 4px; }
+
+    .learn-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .learn-sidebar {
+      order: 1;
+      flex: 0 0 240px;
+      width: 240px;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 20px 16px 40px 20px;
+      border-right: 1px solid #21262d;
+    }
+    .learn-sidebar::-webkit-scrollbar { width: 5px; }
+    .learn-sidebar::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+
+    .sidebar-search-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+      padding: 7px 11px; color: #8b949e; font-size: 12px;
+      cursor: pointer; margin-bottom: 20px; transition: all 0.15s;
+      font-family: inherit;
+    }
+    .sidebar-search-btn:hover { border-color: #58a6ff; color: #f0f6fc; background: #111418; }
+    .sidebar-search-btn .shortcut-badge {
+      font-size: 9.5px; background: #161b22; border: 1px solid #30363d;
+      padding: 2px 5px; border-radius: 4px; color: #7d8590; font-family: 'JetBrains Mono', monospace;
+    }
+
+    .learn-sidebar .nav-group { margin-bottom: 22px; }
+    .learn-sidebar .nav-group-title {
+      font-size: 10px; font-weight: 700;
+      color: #6e7681; letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px; padding: 0 8px;
+    }
+    .learn-sidebar a {
+      display: block;
+      padding: 5px 8px 5px 10px;
+      font-size: 12.5px;
+      color: #8b949e;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: all 0.12s;
+    }
+    .learn-sidebar a:hover {
+      color: #e6edf3;
+      background: #111418;
+      text-decoration: none;
+    }
+    .learn-sidebar a.active {
+      color: #58a6ff;
+      background: rgba(88, 166, 255, 0.08);
+      border-left-color: #58a6ff;
+      font-weight: 600;
+    }
+
+    .learn-content {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+      max-width: 860px;
+      padding: 40px 40px 80px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: #6e7681;
+      margin-bottom: 20px;
+      display: flex; gap: 6px; align-items: center;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #8b949e; }
+    .breadcrumb a:hover { color: #58a6ff; }
+    .breadcrumb .sep { color: #484f58; }
+
+    h1 {
+      font-size: 30px; font-weight: 700;
+      color: #f0f6fc; letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .lede {
+      font-size: 15px;
+      color: #8b949e;
+      margin-bottom: 32px;
+      max-width: 640px;
+    }
+
+    h2 {
+      font-size: 19px; font-weight: 700; color: #f0f6fc;
+      letter-spacing: -0.2px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #21262d;
+    }
+    h3 {
+      font-size: 14px; font-weight: 700; color: #e6edf3;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { color: #c9d1d9; margin-bottom: 14px; max-width: 720px; }
+    ul, ol { margin: 8px 0 16px 22px; color: #c9d1d9; max-width: 720px; }
+    li { margin-bottom: 6px; }
+
+    code {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12.5px;
+      color: #79c0ff;
+    }
+    pre {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      color: #c9d1d9;
+      line-height: 1.55;
+      margin: 10px 0 18px;
+      max-width: 720px;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .kw  { color: #ff7b72; }
+    .fn  { color: #d2a8ff; }
+    .nu  { color: #79c0ff; }
+    .st  { color: #a5d6ff; }
+    .cm  { color: #6e7681; font-style: italic; }
+    .ty  { color: #7ee787; }
+
+    .run-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px;
+      color: #58a6ff;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .run-link:hover { color: #79c0ff; }
+
+    .callout {
+      display: flex; gap: 12px;
+      background: #0d1117; border: 1px solid #21262d;
+      border-left: 3px solid #58a6ff;
+      border-radius: 6px; padding: 12px 16px;
+      margin: 16px 0; font-size: 13px; color: #c9d1d9;
+      max-width: 720px;
+    }
+    .callout.tip  { border-left-color: #3fb950; }
+    .callout.warn { border-left-color: #e3b341; }
+    .callout-icon { font-size: 15px; line-height: 1.4; }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 20px;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      max-width: 720px;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #21262d; vertical-align: top; }
+    th {
+      color: #8b949e;
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    td code { font-size: 12px; }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1f6feb; color: #fff;
+      padding: 11px 22px; border-radius: 6px;
+      font-size: 13.5px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s;
+      margin-top: 12px;
+    }
+    .cta:hover { background: #388bfd; text-decoration: none; }
+
+    .next-steps {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #21262d;
+    }
+    .next-steps h2 { margin-top: 0; border-bottom: none; padding-bottom: 0; }
+    .next-steps ul { list-style: none; margin-left: 0; }
+    .next-steps li {
+      padding: 10px 0;
+      border-bottom: 1px solid #161b22;
+    }
+    .next-steps li:last-child { border-bottom: none; }
+    .next-steps a { font-weight: 600; }
+    .next-steps .desc { color: #8b949e; font-size: 12.5px; display: block; margin-top: 2px; }
+
+    footer {
+      margin-top: 60px; padding-top: 24px;
+      border-top: 1px solid #21262d;
+      font-size: 12px; color: #484f58;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+
+    /* ========== Search Modal Overlay (inline fallback) ========== */
+    #search-overlay {
+      position: fixed; inset: 0; background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 99999; display: none; align-items: flex-start; justify-content: center;
+      padding: 12vh 16px 20px;
+    }
+    #search-overlay.active { display: flex; }
+    .search-modal {
+      width: 100%; max-width: 600px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; box-shadow: 0 24px 50px rgba(0,0,0,0.9); overflow: hidden;
+      display: flex; flex-direction: column; max-height: 75vh;
+    }
+    .search-modal-header {
+      display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid #21262d;
+      gap: 10px; background: #111418;
+    }
+    .search-modal-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #f0f6fc; font-family: inherit; font-size: 16px;
+    }
+    .search-modal-input::placeholder { color: #6e7681; }
+    .search-close-key {
+      background: #1c2128; border: 1px solid #30363d; border-radius: 4px;
+      padding: 4px 8px; font-size: 11px; color: #8b949e; cursor: pointer;
+    }
+    .search-results-list { overflow-y: auto; padding: 6px; flex: 1; }
+    .search-result-item {
+      display: block; padding: 10px 12px; border-radius: 6px; text-decoration: none;
+      color: inherit; transition: background 0.12s;
+    }
+    .search-result-item:hover { background: #161b22; text-decoration: none; }
+    .search-result-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
+    .search-result-title { color: #58a6ff; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+    .result-icon { font-size: 13px; line-height: 1; }
+    .search-result-cat {
+      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.3px; text-transform: uppercase;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .cat-ide { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .cat-timing { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .cat-hardware { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .cat-cdc { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+    .cat-language { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .cat-feature { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.35); }
+    .cat-guide { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35); }
+    .cat-reference { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .cat-compare { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
+    .cat-default { background: #1f242c; color: #8b949e; border: 1px solid #30363d; }
+
+    .search-result-snippet { font-size: 12px; color: #8b949e; line-height: 1.45; }
+    .search-result-snippet mark { background: rgba(88, 166, 255, 0.22); color: #79c0ff; border-radius: 2px; padding: 0 2px; }
+    .search-empty-msg { padding: 32px 16px; text-align: center; color: #6e7681; font-size: 13px; }
+    .search-modal-footer {
+      padding: 8px 14px; border-top: 1px solid #21262d; background: #090c10;
+      font-size: 11px; color: #6e7681; display: flex; justify-content: space-between;
+    }
+
+    /* Mobile Controls Default (Hidden on Desktop) */
+    .nav-menu-btn, .nav-search-btn, .sidebar-backdrop {
+      display: none !important;
+    }
+
+    /* ============================================================
+       Mobile & Tablet Optimization
+       ============================================================ */
+    @media (max-width: 900px) {
+      .nav-menu-btn {
+        display: inline-flex !important;
+        font-size: 15px;
+        padding: 5px 11px;
+      }
+      .nav-search-btn {
+        display: inline-flex !important;
+        font-size: 14px;
+        padding: 5px 11px;
+      }
+      .nav-back {
+        display: none !important;
+      }
+
+      .learn-layout {
+        display: block !important;
+      }
+      .learn-content {
+        order: 2;
+        padding: 24px 16px 60px !important;
+        max-width: 100% !important;
+      }
+
+      /* Off-Canvas Slide-out Drawer */
+      .learn-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 82% !important;
+        max-width: 320px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        flex: none !important;
+        padding: 16px 14px 40px 16px !important;
+        background: #0d1117 !important;
+        border-right: 1px solid #262c36 !important;
+        border-bottom: none !important;
+        box-shadow: 8px 0 32px rgba(0,0,0,.6) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        white-space: normal !important;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(-102%) !important;
+        transition: transform .25s ease !important;
+        z-index: 1000 !important;
+        display: block !important;
+      }
+      .learn-sidebar.is-open {
+        transform: translateX(0) !important;
+      }
+      .learn-sidebar a {
+        display: block !important;
+        padding: 9px 10px !important;
+        font-size: 14px !important;
+        border-radius: 0 4px 4px 0 !important;
+        border: none !important;
+        border-left: 2px solid transparent !important;
+        background: transparent !important;
+        white-space: normal !important;
+      }
+      .learn-sidebar a:hover {
+        color: #e6edf3 !important;
+        background: #111418 !important;
+      }
+      .learn-sidebar a.active {
+        color: #58a6ff !important;
+        background: rgba(88, 166, 255, 0.08) !important;
+        border-left-color: #58a6ff !important;
+        font-weight: 600 !important;
+      }
+      .learn-sidebar .nav-group {
+        display: block !important;
+        margin-bottom: 22px !important;
+      }
+      .learn-sidebar .nav-group-title {
+        display: block !important;
+      }
+      .learn-sidebar nav {
+        display: block !important;
+        width: 100% !important;
+      }
+      .sidebar-search-btn {
+        display: flex !important;
+        padding: 11px 12px !important;
+        font-size: 14px !important;
+      }
+
+      /* Modal Backdrop */
+      .sidebar-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(5, 7, 10, .72) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity .25s ease !important;
+        z-index: 999 !important;
+      }
+      .sidebar-backdrop.is-open {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      body.menu-open {
+        overflow: hidden !important;
+      }
+
+      #search-overlay {
+        padding-top: 5vh;
+      }
+      .search-modal-footer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+      pre {
+        padding: 12px 14px;
+        font-size: 11.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .learn-sidebar, .sidebar-backdrop {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar" aria-label="Site">
+    <button type="button" class="nav-btn nav-menu-btn" id="menuBtn" aria-label="Open Navigation" aria-expanded="false">
+      ☰
+    </button>
+    <button type="button" class="nav-btn nav-back" onclick="learnGoBack()">
+      <span class="arrow">←</span><span>Back</span>
+    </button>
+    <a href="/" class="brand">RTL Bench<span class="badge-pro">PRO</span></a>
+    <div style="flex:1;"></div>
+    <button type="button" class="nav-btn nav-search-btn" onclick="openRtlSearch()" aria-label="Search">
+      🔍
+    </button>
+    <a href="/studio" class="nav-btn primary">Try it now →</a>
+  </nav>
+
+  <!-- Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="learn-layout">
+
+    <!-- ============================================================
+         Sidebar (left column)
+         ============================================================ -->
+    <aside class="learn-sidebar" id="learnSidebar" aria-label="Learn navigation">
+
+      <!-- Quick Search Button in Sidebar -->
+      <button type="button" class="sidebar-search-btn" onclick="openRtlSearch()">
+        <span style="display:flex; align-items:center; gap:6px;">
+          <span>🔍</span> Quick search...
+        </span>
+        <kbd class="shortcut-badge"></kbd>
+      </button>
+
+      <nav>
+        <div class="nav-group">
+          <div class="nav-group-title">Learn</div>
+          <a href="/learn">Feature tour</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Languages</div>
+          <a href="/learn/verilog">Verilog &amp; SystemVerilog</a>
+          <a href="/learn/vhdl">VHDL</a>
+          <a href="/learn/vhdl-compiler-online">Online VHDL compiler</a>
+          <a href="/learn/mixed-language" class="active" aria-current="page">Mixed-language projects</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Features</div>
+          <a href="/learn/schematic">Schematic &amp; views</a>
+          <a href="/learn/verilog-to-schematic">Verilog to schematic</a>
+          <a href="/learn/simulation">Simulation &amp; waveforms</a>
+          <a href="/learn/online-verilog-simulator">Online simulator guide</a>
+          <a href="/learn/multifile">Multi-file projects</a>
+          <a href="/learn/timing">Timing analysis (STA)</a>
+          <a href="/learn/open-source-sta">Open-source STA</a>
+          <a href="/learn/webserial-fpga-flasher">WebSerial FPGA flasher</a>
+          <a href="/learn/clock-domain-crossing-checker">CDC verification guide</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Reference</div>
+          <a href="/learn/concepts">Concepts &amp; glossary</a>
+          <a href="/learn/active-low-reset">Active-low reset</a>
+          <a href="/learn/sta-path-types">STA path types</a>
+          <a href="/learn/pdk-comparison">PDK comparison</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Comparisons &amp; Tools</div>
+          <a href="/compare">All EDA comparisons</a>
+          <a href="/compare/eda-playground">vs. EDA Playground</a>
+          <a href="/compare/chip-verify">vs. ChipVerify Lab</a>
+          <a href="/compare/digitaljs">vs. DigitalJS</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ============================================================
+         Content (right column)
+         ============================================================ -->
+    <main class="learn-content">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/learn">Learn</a>
+        <span class="sep">/</span>
+        <span>Mixed-language projects</span>
+      </nav>
+
+      <h1>Verilog and VHDL in one design</h1>
+
+      <p class="lede">
+        RTL Bench elaborates VHDL with GHDL and Verilog with Yosys, then
+        stitches the two netlists into a single hierarchy. You can mix
+        languages freely in one project — a SystemVerilog top instantiating a
+        VHDL entity, or the other way round.
+      </p>
+
+      <h2>When you actually need this</h2>
+
+      <p>
+        Most new designs are single-language. You pick Verilog or VHDL and
+        stay there. Mixed-language comes up when:
+      </p>
+
+      <ul>
+        <li>
+          <b>You are integrating third-party IP.</b> A vendor ships a VHDL
+          block, your project is Verilog, and rewriting it is not an option.
+        </li>
+        <li>
+          <b>You inherited a legacy design.</b> The old blocks are VHDL, the
+          new ones are SystemVerilog, and both have to compile together.
+        </li>
+        <li>
+          <b>Your team is split.</b> One group writes VHDL for safety-critical
+          blocks, another uses SystemVerilog for verification-heavy logic.
+        </li>
+        <li>
+          <b>You are learning.</b> You want to see how the same design looks
+          in both languages side by side.
+        </li>
+      </ul>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <span>If you are starting fresh and have no integration constraints,
+        pick one language. Mixed-language projects work, but they add
+        elaboration complexity and one more class of bug to debug.</span>
+      </div>
+
+      <h2>How RTL Bench handles it</h2>
+
+      <p>
+        When you upload a folder with mixed files, RTL Bench sorts them by
+        extension and routes each group to the right backend:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Extension</th>
+              <th>Parser</th>
+              <th>Output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>.v</code></td>
+              <td>Yosys <code>read_verilog -sv</code></td>
+              <td>Yosys RTLIL netlist</td>
+            </tr>
+            <tr>
+              <td><code>.sv</code></td>
+              <td>Yosys <code>read_verilog -sv</code></td>
+              <td>Yosys RTLIL netlist</td>
+            </tr>
+            <tr>
+              <td><code>.vhd</code></td>
+              <td>GHDL via <code>ghdl --std=08</code></td>
+              <td>Converted to RTLIL through the Yosys GHDL plugin</td>
+            </tr>
+            <tr>
+              <td><code>.vhdl</code></td>
+              <td>GHDL via <code>ghdl --std=08</code></td>
+              <td>Converted to RTLIL through the Yosys GHDL plugin</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Once both are RTLIL, Yosys sees one design. Cross-language
+        instantiation works both ways because the hierarchy is resolved by
+        name, not by language.
+      </p>
+
+      <h2>A working example</h2>
+
+      <p>
+        Three files. Two VHDL, one SystemVerilog. Upload all three at once,
+        and the SystemVerilog top instantiates the VHDL entity.
+      </p>
+
+      <h3>1. VHDL package — <code>alu_pkg.vhd</code></h3>
+
+      <pre><code><span class="kw">library</span> ieee;
+<span class="kw">use</span> ieee.std_logic_1164.<span class="kw">all</span>;
+
+<span class="kw">package</span> <span class="fn">alu_pkg</span> <span class="kw">is</span>
+    <span class="kw">constant</span> WIDTH : <span class="ty">integer</span> := <span class="nu">8</span>;
+<span class="kw">end package</span> alu_pkg;</code></pre>
+
+      <h3>2. VHDL entity — <code>alu_core.vhd</code></h3>
+
+      <pre><code><span class="kw">library</span> ieee;
+<span class="kw">use</span> ieee.std_logic_1164.<span class="kw">all</span>;
+<span class="kw">use</span> ieee.numeric_std.<span class="kw">all</span>;
+<span class="kw">use</span> work.alu_pkg.<span class="kw">all</span>;
+
+<span class="kw">entity</span> <span class="fn">alu_core</span> <span class="kw">is</span>
+    <span class="kw">port</span> (
+        a    : <span class="kw">in</span>  <span class="ty">std_logic_vector</span>(WIDTH-<span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>);
+        b    : <span class="kw">in</span>  <span class="ty">std_logic_vector</span>(WIDTH-<span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>);
+        op   : <span class="kw">in</span>  <span class="ty">std_logic_vector</span>(<span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>);
+        y    : <span class="kw">out</span> <span class="ty">std_logic_vector</span>(WIDTH-<span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>)
+    );
+<span class="kw">end entity</span> alu_core;
+
+<span class="kw">architecture</span> rtl <span class="kw">of</span> alu_core <span class="kw">is</span>
+<span class="kw">begin</span>
+    <span class="kw">with</span> op <span class="kw">select</span>
+        y &lt;= <span class="ty">std_logic_vector</span>(<span class="ty">unsigned</span>(a) + <span class="ty">unsigned</span>(b)) <span class="kw">when</span> <span class="st">"00"</span>,
+             <span class="ty">std_logic_vector</span>(<span class="ty">unsigned</span>(a) - <span class="ty">unsigned</span>(b)) <span class="kw">when</span> <span class="st">"01"</span>,
+             a <span class="kw">and</span> b                                            <span class="kw">when</span> <span class="st">"10"</span>,
+             a <span class="kw">or</span>  b                                            <span class="kw">when</span> <span class="kw">others</span>;
+<span class="kw">end architecture</span> rtl;</code></pre>
+
+      <h3>3. SystemVerilog top — <code>top.sv</code></h3>
+
+      <pre><code><span class="kw">module</span> <span class="fn">top</span> (
+    <span class="kw">input</span>  <span class="kw">logic</span> [<span class="nu">7</span>:<span class="nu">0</span>] a,
+    <span class="kw">input</span>  <span class="kw">logic</span> [<span class="nu">7</span>:<span class="nu">0</span>] b,
+    <span class="kw">input</span>  <span class="kw">logic</span> [<span class="nu">1</span>:<span class="nu">0</span>] op,
+    <span class="kw">output</span> <span class="kw">logic</span> [<span class="nu">7</span>:<span class="nu">0</span>] y
+);
+    <span class="cm">// VHDL entity instantiated from Verilog</span>
+    <span class="fn">alu_core</span> u_alu (
+        .a (a),
+        .b (b),
+        .op(op),
+        .y (y)
+    );
+<span class="kw">endmodule</span></code></pre>
+
+      <p>
+        Upload all three files, click <b>Generate</b>. The schematic shows
+        <code>top</code> at the root and <code>u_alu</code> as a submodule
+        with ports matching the VHDL entity. The <b>TOP:</b> dropdown
+        auto-selects <code>top</code> because it is the only module that
+        nothing else instantiates.
+      </p>
+
+      <div class="callout">
+        <span class="callout-icon">ℹ️</span>
+        <span>RTL Bench does not require you to declare which file uses which
+        language. Extensions are enough. The tool sorts them by suffix before
+        invoking either backend.</span>
+      </div>
+
+      <h2>Type mapping across languages</h2>
+
+      <p>
+        When a Verilog module instantiates a VHDL entity, RTL Bench maps the
+        types on the port list. The rules are simple but worth memorising:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>VHDL</th>
+              <th>Verilog / SystemVerilog</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>std_logic</code></td>
+              <td><code>logic</code></td>
+              <td>1-bit signal. Both are 4-state (0, 1, X, Z).</td>
+            </tr>
+            <tr>
+              <td><code>std_logic_vector(N-1 downto 0)</code></td>
+              <td><code>logic [N-1:0]</code></td>
+              <td>Bit order must match. <code>downto</code> maps to big-endian bits.</td>
+            </tr>
+            <tr>
+              <td><code>unsigned(N-1 downto 0)</code></td>
+              <td><code>logic [N-1:0]</code></td>
+              <td>Only a type hint in VHDL. On the port list it is still a vector.</td>
+            </tr>
+            <tr>
+              <td><code>signed(N-1 downto 0)</code></td>
+              <td><code>logic [N-1:0]</code></td>
+              <td>Same as unsigned — signedness is not tracked at the port boundary.</td>
+            </tr>
+            <tr>
+              <td><code>integer</code></td>
+              <td>—</td>
+              <td>Not legal as a port type. Use <code>std_logic_vector</code> or a generic.</td>
+            </tr>
+            <tr>
+              <td><code>boolean</code></td>
+              <td>—</td>
+              <td>Not legal as a port type. Use <code>std_logic</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <span>VHDL ports declared with <code>integer</code> or
+        <code>boolean</code> fail to elaborate in a mixed-language project.
+        Convert them to <code>std_logic_vector</code> in the VHDL source
+        before mixing.</span>
+      </div>
+
+      <h2>Case sensitivity — the #1 bug</h2>
+
+      <p>
+        VHDL is <b>case-insensitive</b>. Verilog is <b>case-sensitive</b>.
+        When the two meet, casing matters on the Verilog side and must
+        exactly match what GHDL reports.
+      </p>
+
+      <p>
+        This is fine:
+      </p>
+
+      <pre><code><span class="cm">-- VHDL</span>
+<span class="kw">entity</span> <span class="fn">ALU_Core</span> <span class="kw">is</span> ... <span class="kw">end entity</span>;
+
+<span class="cm">// Verilog — same casing</span>
+<span class="fn">ALU_Core</span> u_alu ( ... );
+
+<span class="cm">// Verilog — all lowercase also works</span>
+<span class="fn">alu_core</span> u_alu ( ... );</code></pre>
+
+      <p>
+        This fails silently until elaboration:
+      </p>
+
+      <pre><code><span class="cm">// Verilog — mixed casing that matches neither</span>
+<span class="fn">Alu_Core</span> u_alu ( ... );</code></pre>
+
+      <p>
+        Yosys looks for a module called <code>Alu_Core</code>, does not find
+        it, and reports <i>"module not found"</i>. GHDL does not know about
+        Verilog's case rules, so the VHDL side has already been elaborated
+        into a netlist with whatever casing the entity was declared with.
+      </p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <span>Pick one convention and enforce it: either declare all VHDL
+        entities in <code>lower_snake_case</code> (matching Verilog habits),
+        or declare them in <code>PascalCase</code> and use that exact casing
+        in every Verilog instantiation. Do not mix within a project.</span>
+      </div>
+
+      <h2>Generics and parameters</h2>
+
+      <p>
+        A VHDL <code>generic</code> and a Verilog <code>parameter</code> are
+        the same idea — a value passed at elaboration. But they are not
+        interchangeable across the language boundary in RTL Bench.
+      </p>
+
+      <ul>
+        <li>
+          <b>VHDL generic with a default.</b> Works. The default is used when
+          the entity is instantiated from Verilog.
+        </li>
+        <li>
+          <b>VHDL generic without a default.</b> Fails to elaborate. GHDL
+          cannot resolve the value, and the Verilog side has no syntax to
+          pass a generic anyway.
+        </li>
+        <li>
+          <b>Verilog parameter overridden from VHDL.</b> Not supported.
+          VHDL has no direct syntax for Verilog's parameter-override
+          mechanism.
+        </li>
+      </ul>
+
+      <pre><code><span class="cm">-- Good: default value</span>
+<span class="kw">entity</span> alu_core <span class="kw">is</span>
+    <span class="kw">generic</span> ( WIDTH : <span class="ty">integer</span> := <span class="nu">8</span> );
+    <span class="kw">port</span> ( ... );
+<span class="kw">end entity</span>;
+
+<span class="cm">-- Bad: no default — mixed-language instantiation fails</span>
+<span class="kw">entity</span> alu_core <span class="kw">is</span>
+    <span class="kw">generic</span> ( WIDTH : <span class="ty">integer</span> );
+    <span class="kw">port</span> ( ... );
+<span class="kw">end entity</span>;</code></pre>
+
+      <h2>What does not work</h2>
+
+      <p>
+        Honest limitations of the mixed-language flow in RTL Bench:
+      </p>
+
+      <ul>
+        <li>
+          <b>Passing generics across the boundary.</b> Verilog cannot override
+          a VHDL generic. Every mixed-language generic must have a default.
+        </li>
+        <li>
+          <b>Sharing a <code>package</code> with Verilog.</b> VHDL packages
+          exist only inside VHDL. Verilog has no way to <code>use</code>
+          them.
+        </li>
+        <li>
+          <b>VHDL <code>record</code> ports.</b> Records cannot cross into
+          Verilog. Flatten them into separate ports or a
+          <code>std_logic_vector</code>.
+        </li>
+        <li>
+          <b>VHDL <code>integer</code> and <code>boolean</code> ports.</b>
+          Not legal across the boundary. Convert to <code>std_logic</code> or
+          <code>std_logic_vector</code>.
+        </li>
+        <li>
+          <b>Signals and variables shared across languages.</b> Only ports
+          cross the boundary. Internal signals stay inside their language.
+        </li>
+        <li>
+          <b>Verification constructs.</b> VHDL <code>assert</code> and
+          SystemVerilog <code>assert</code> are ignored by the synthesis
+          flow. They only run in a simulator, and the auto-generated
+          testbench does not exercise them.
+        </li>
+      </ul>
+
+      <h2>Uploading the files</h2>
+
+      <p>
+        The upload flow is identical to a single-language project:
+      </p>
+
+      <ol>
+        <li>Click <b>📁 Folder</b> in the top bar.</li>
+        <li>Select a folder containing every file — <code>.v</code>,
+            <code>.sv</code>, <code>.vhd</code>, <code>.vhdl</code>, and
+            any <code>.hex</code> or <code>.mem</code> data files.</li>
+        <li>RTL Bench preserves the folder structure and the relative paths.
+            <code>`include</code> directives and <code>$readmemh</code> calls
+            resolve against the working directory.</li>
+        <li>Click <b>Generate</b>. The TOP dropdown auto-selects the module
+            or entity that nothing else instantiates.</li>
+      </ol>
+
+      <p>
+        See <a href="/learn/multifile">Multi-file projects</a> for the full
+        upload and top-detection walkthrough.
+      </p>
+
+      <h2>When to not mix languages</h2>
+
+      <p>
+        Mixed-language works but costs you:
+      </p>
+
+      <ul>
+        <li>
+          <b>Two syntaxes to debug.</b> Every build failure could be a
+          Verilog parse error or a VHDL elaboration error.
+        </li>
+        <li>
+          <b>Casing bugs.</b> The most common failure mode, described above.
+        </li>
+        <li>
+          <b>Type mapping friction.</b> Every VHDL port must use a subset of
+          types that Verilog can understand.
+        </li>
+        <li>
+          <b>Readability.</b> A new engineer reading the file tree has to
+          context-switch between two languages.
+        </li>
+      </ul>
+
+      <p>
+        If you have a choice, pick one language and stick with it. If you do
+        not — because the IP is fixed, or the team is split — RTL Bench's
+        mixed-language flow is genuinely usable for small and medium designs.
+      </p>
+
+      <div class="next-steps">
+        <h2>See also</h2>
+        <ul>
+          <li>
+            <a href="/learn/verilog">Verilog &amp; SystemVerilog</a>
+            <span class="desc">What Yosys accepts, and the patterns that work well.</span>
+          </li>
+          <li>
+            <a href="/learn/vhdl">VHDL in the browser</a>
+            <span class="desc">Entity, architecture, and GHDL in RTL Bench.</span>
+          </li>
+          <li>
+            <a href="/learn/multifile">Multi-file projects</a>
+            <span class="desc">Folder upload, top-module detection, and memory initialisation.</span>
+          </li>
+        </ul>
+      </div>
+
+      <a href="/studio" class="cta" style="margin-top: 32px;">Try it in the workbench →</a>
+
+      <footer>
+        <span>© RTL Bench</span>
+        <span>
+          <a href="/">Home</a> &nbsp;·&nbsp;
+          <a href="/studio">Workbench</a> &nbsp;·&nbsp;
+          <a href="/sta">STA</a> &nbsp;·&nbsp;
+          <a href="/compare">Compare</a> &nbsp;·&nbsp;
+          <a href="/terms">Terms</a> &nbsp;·&nbsp;
+          <a href="/privacy">Privacy</a>
+        </span>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ============================================================
+       Search Modal Overlay (inline fallback — same as learn/index.html)
+       ============================================================ -->
+  <div id="search-overlay" role="dialog" aria-modal="true">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <span style="color:#8b949e; font-size:12px;">🔍</span>
+        <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search documentation, timing, CDC, FPGA..." autocomplete="off" />
+        <button class="search-close-key" type="button" onclick="closeRtlSearch()">ESC</button>
+      </div>
+      <div class="search-results-list" id="searchResultsList">
+        <div class="search-empty-msg">Type keywords to search across all guides and features.</div>
+      </div>
+      <div class="search-modal-footer">
+        <span>Navigate <kbd style="font-family:monospace;">↑</kbd> <kbd style="font-family:monospace;">↓</kbd></span>
+        <span>Open <kbd style="font-family:monospace;">↵</kbd></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function learnGoBack() {
+    if (!sessionStorage.getItem('rtl_learn_entry')) {
+      let entry = '/';
+      const ref = document.referrer;
+      if (ref) {
+        try {
+          const u = new URL(ref);
+          if (u.origin === location.origin) {
+            entry = u.pathname + u.search;
+          }
+        } catch (_) {}
+      }
+      sessionStorage.setItem('rtl_learn_entry', entry);
+    }
+
+    const ref = document.referrer;
+    if (ref) {
+      try {
+        const u = new URL(ref);
+        if (u.origin === location.origin && history.length > 1) {
+          history.back();
+          return;
+        }
+      } catch (_) {}
+    }
+
+    const entry = sessionStorage.getItem('rtl_learn_entry') || '/';
+    window.location.href = entry;
+  }
+
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', '#' + id);
+  });
+
+  /* Embedded Client-Side Search Engine with Domain Categories & Icons */
+  (function () {
+    const searchIndex = [
+      { title: "RTL Bench — Home", url: "/", category: "Platform", catClass: "cat-default", icon: "🏠", content: "Browser-based digital logic design, schematic elaboration, simulation, timing analysis, and FPGA flashing for Verilog and VHDL." },
+      { title: "Workbench / Studio", url: "/studio", category: "IDE / Studio", catClass: "cat-ide", icon: "💻", content: "Interactive HDL editor, real-time ELK netlist diagram generator, testbench execution, and interactive waveform inspection." },
+      { title: "Static Timing Analysis (STA) Engine", url: "/sta", category: "Timing Engine", catClass: "cat-timing", icon: "⏱️", content: "Interactive multi-corner timing analyzer across SkyWater 130nm, GlobalFoundries 180nm, and IHP SG13G2. Critical path breakdown and slack calculator." },
+      { title: "FPGA Flasher & Bitstream Builder", url: "/fpga", category: "Hardware", catClass: "cat-hardware", icon: "🔌", content: "Direct in-browser hardware flashing for Tang Nano 9K, Tang Nano 20K, and iCE40UP5K development boards via WebSerial." },
+      { title: "Clock Domain Crossing (CDC) Checker", url: "/cdc", category: "CDC Checker", catClass: "cat-cdc", icon: "🔀", content: "Topological netlist audit detecting asynchronous clock domain hazards, 2-FF synchronizers, and MTBF calculation." },
+      { title: "Learn RTL Bench: Feature Tour", url: "/learn", category: "Guide", catClass: "cat-guide", icon: "📖", content: "Visual tour of RTL Bench. Verilog, SystemVerilog, VHDL in browser. Block, hybrid, gate views. Waveform measurements, Delta T and frequency readout, cursor snapping." },
+      { title: "Verilog & SystemVerilog Guide", url: "/learn/verilog", category: "Languages", catClass: "cat-language", icon: "📖", content: "Synthesizable Verilog and SystemVerilog constructs. Always_ff, always_comb, logic, wire, non-blocking assignments, clock and active-low reset inferred automatically by Yosys." },
+      { title: "VHDL Guide & Compilation", url: "/learn/vhdl", category: "Languages", catClass: "cat-language", icon: "📖", content: "IEEE 1076-2008 VHDL compilation via GHDL. Entities, architectures, signals, processes, synchronous registers, std_logic, std_logic_vector, numeric_std arithmetic." },
+      { title: "Online VHDL Compiler", url: "/learn/vhdl-compiler-online", category: "Languages", catClass: "cat-language", icon: "📖", content: "Compile and synthesize VHDL-2008 online without vendor toolchains. GHDL to Yosys synthesis, netlist generation, interactive schematics, and simulation." },
+      { title: "Mixed-Language Projects", url: "/learn/mixed-language", category: "Languages", catClass: "cat-language", icon: "📖", content: "Co-elaboration mixing Verilog submodules inside VHDL architectures or instantiating VHDL entities in SystemVerilog top-levels via GHDL-Yosys plugin." },
+      { title: "Schematic & View Modes", url: "/learn/schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Hierarchical vs Flat netlists. Orthogonal layout engine powered by Eclipse Layout Kernel ELK. Vector bus collapsing [31:0], fused constant comparators, interactive net tracing." },
+      { title: "Verilog to Schematic Viewer", url: "/learn/verilog-to-schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Convert raw HDL code into visual gate-level circuits. Source code cross-probing: click gate cell to jump directly to editor source line. Export clean vector SVG diagrams." },
+      { title: "Simulation & Waveforms", url: "/learn/simulation", category: "Features", catClass: "cat-feature", icon: "📖", content: "Icarus Verilog testbench runner. Double-buffered waveform drawer. Dual measurement cursors A and B, magnetic edge snapping, delta T and frequency readout." },
+      { title: "Online Verilog Simulator", url: "/learn/online-verilog-simulator", category: "Features", catClass: "cat-feature", icon: "📖", content: "Run testbench-free simulations, auto-drive clocks and resets, generate interactive VCD traces in browser without installing local compilers." },
+      { title: "Multi-File HDL Projects", url: "/learn/multifile", category: "Features", catClass: "cat-feature", icon: "📖", content: "Drag and drop folders of .v, .sv, and .vhd files. Auto-detect top modules, compile multi-file hierarchies, and patch $readmemh memory arrays." },
+      { title: "Static Timing Analysis (STA)", url: "/learn/timing", category: "Features", catClass: "cat-feature", icon: "📖", content: "Gate-level static timing analysis. Critical path delay, setup slack calculation, hold violations, gate depth metrics across SkyWater 130nm, GF180MCU, and IHP SG13G2." },
+      { title: "Open-Source STA Guide", url: "/learn/open-source-sta", category: "Features", catClass: "cat-feature", icon: "📖", content: "Liberty table lookups, intrinsic cell propagation delays, load capacitance fan-out penalties across open PDKs." },
+      { title: "WebSerial FPGA Flasher Guide", url: "/learn/webserial-fpga-flasher", category: "Features", catClass: "cat-feature", icon: "📖", content: "Flash Tang Nano 9K, Tang Nano 20K, and iCE40UP5K directly in Google Chrome via WebSerial. Nextpnr place and route, automated pin safety filters, 25-iteration conflict recovery." },
+      { title: "Clock Domain Crossing (CDC) Guide", url: "/learn/clock-domain-crossing-checker", category: "Features", catClass: "cat-feature", icon: "📖", content: "Detect metastability in asynchronous clock boundaries. MTBF calculation formula, 2-FF and 3-FF synchronizers, multi-bit bus convergence hazards, Gray-coded asynchronous FIFOs." },
+      { title: "Concepts & Glossary", url: "/learn/concepts", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Definitions of synthesis, elaboration, netlists, LUTs, flip-flops, slack, propagation delay, metastability, and standard-cell libraries." },
+      { title: "Active-Low Reset Design Pattern", url: "/learn/active-low-reset", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Why digital designs use active-low reset (rst_n), asynchronous assert and synchronous de-assert circuits, and standard-cell reset pin polarities." },
+      { title: "STA Path Types Explained", url: "/learn/sta-path-types", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Classification of timing paths: Reg-to-Reg, In-to-Reg, Reg-to-Out, and In-to-Out. Setup and hold margin checks for each category." },
+      { title: "Open PDK Comparison: Sky130 vs GF180 vs IHP", url: "/learn/pdk-comparison", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Compare open-source silicon technologies: SkyWater 130nm, GlobalFoundries 180nm MCU, and IHP 130nm BiCMOS SG13G2 gate densities and speeds." },
+      { title: "EDA Tool Comparisons Hub", url: "/compare", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Architectural comparison of browser EDA tools, commercial ASIC suites (Synopsys, Cadence, Vivado), and open-source desktop stacks (Yosys, nextpnr, OpenROAD)." },
+      { title: "EDA Playground vs. RTL Bench", url: "/compare/eda-playground", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Commercial simulation engines VCS, Xcelium, Questa, and UVM class hierarchies vs. real-time ELK orthogonal schematics, zero-setup waveform cursors, Liberty STA, and WebSerial FPGA flashing." },
+      { title: "ChipVerify Lab vs. RTL Bench", url: "/compare/chip-verify", category: "Compare", catClass: "cat-compare", icon: "📖", content: "OpenROAD and KLayout Sky130 ASIC tapeout flow and tutorial quizzes vs. instant zero-login multi-PDK timing, VHDL-2008 support, and physical FPGA flashing." },
+      { title: "DigitalJS vs. RTL Bench", url: "/compare/digitaljs", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Spring-embedder physics layout and educational pin-toggling vs. production ELK layered routing, 32-bit vector bus collapsing, source-code cross-probing, and real silicon timing." },
+      { title: "About RTL Bench", url: "/about", category: "About", catClass: "cat-default", icon: "ℹ️", content: "About RTL Bench: an independent open-access cloud Electronic Design Automation platform for digital hardware engineering and education." },
+      { title: "Privacy Policy", url: "/privacy", category: "Legal", catClass: "cat-default", icon: "⚖️", content: "RTL Bench privacy policy, minimal logging practices, Firestore session handling, and data retention." },
+      { title: "Terms of Service & Disclaimers", url: "/terms", category: "Legal", catClass: "cat-default", icon: "⚖", content: "User RTL intellectual property ownership, pre-silicon timing estimation disclaimers, WebSerial hardware flashing electrical liability, and nominative fair use trademark notices." }
+    ];
+
+    const overlay = document.getElementById("search-overlay");
+    const input = document.getElementById("searchModalInput");
+    const results = document.getElementById("searchResultsList");
+
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 900;
+    const isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform);
+    const hintText = isMac ? "⌘K" : "Ctrl K";
+
+    document.querySelectorAll(".shortcut-badge").forEach(el => {
+      if (isTouch) {
+        el.style.display = "none";
+      } else {
+        el.textContent = hintText;
+      }
+    });
+
+    window.openRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.add("active");
+      input.value = "";
+      renderResults([]);
+      setTimeout(() => input.focus(), 30);
+    };
+
+    window.closeRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.remove("active");
+    };
+
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) window.closeRtlSearch();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        overlay.classList.contains("active") ? window.closeRtlSearch() : window.openRtlSearch();
+      } else if (e.key === "Escape" && overlay.classList.contains("active")) {
+        window.closeRtlSearch();
+      }
+    });
+
+    input.addEventListener("input", function () {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        results.innerHTML = '<div class="search-empty-msg">Type keywords to search across all guides and features.</div>';
+        return;
+      }
+
+      const tokens = query.split(/\s+/).filter(Boolean);
+      const scored = searchIndex.map(doc => {
+        let score = 0;
+        const t = doc.title.toLowerCase();
+        const c = doc.content.toLowerCase();
+        const cat = doc.category.toLowerCase();
+        tokens.forEach(tok => {
+          if (t.includes(tok)) score += 10;
+          if (cat.includes(tok)) score += 5;
+          if (c.includes(tok)) score += 2;
+        });
+        return { doc, score };
+      }).filter(item => item.score > 0);
+
+      scored.sort((a, b) => b.score - a.score);
+      renderResults(scored.map(s => s.doc), query);
+    });
+
+    function highlight(text, q) {
+      if (!q) return text;
+      const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+      return text.replace(regex, "<mark>$1</mark>");
+    }
+
+    function getSnippet(content, q) {
+      const idx = content.toLowerCase().indexOf(q.toLowerCase());
+      if (idx === -1) return content.slice(0, 100) + "...";
+      const start = Math.max(0, idx - 30);
+      const end = Math.min(content.length, idx + 70);
+      return (start > 0 ? "..." : "") + content.slice(start, end) + (end < content.length ? "..." : "");
+    }
+
+    function renderResults(list, query) {
+      if (!list.length) {
+        if (query) {
+          results.innerHTML = `<div class="search-empty-msg">No results found for "${query}".</div>`;
+        }
+        return;
+      }
+
+      results.innerHTML = list.slice(0, 8).map(doc => {
+        const snippet = getSnippet(doc.content, query || "");
+        return `
+          <a href="${doc.url}" class="search-result-item" onclick="window.closeRtlSearch()">
+            <div class="search-result-top">
+              <span class="search-result-title">
+                ${doc.icon ? `<span class="result-icon">${doc.icon}</span>` : ''}
+                ${highlight(doc.title, query)}
+              </span>
+              <span class="search-result-cat ${doc.catClass || 'cat-default'}">${doc.category}</span>
+            </div>
+            <div class="search-result-snippet">${highlight(snippet, query)}</div>
+          </a>
+        `;
+      }).join("");
+    }
+  })();
+
+  /* Off-Canvas Navigation Drawer Controller */
+  (function () {
+    const sb  = document.getElementById('learnSidebar');
+    const bd  = document.getElementById('sidebarBackdrop');
+    const btn = document.getElementById('menuBtn');
+    if (!sb || !bd || !btn) return;
+
+    function setOpen(open) {
+      sb.classList.toggle('is-open', open);
+      bd.classList.toggle('is-open', open);
+      document.body.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        const a = sb.querySelector('a.active');
+        if (a) a.scrollIntoView({ block: 'center' });
+      }
+    }
+
+    btn.addEventListener('click', () => setOpen(!sb.classList.contains('is-open')));
+    bd.addEventListener('click', () => setOpen(false));
+    sb.addEventListener('click', e => {
+      if (e.target.closest('a, .sidebar-search-btn')) setOpen(false);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    window.matchMedia('(min-width: 901px)').addEventListener('change', e => {
+      if (e.matches) setOpen(false);
+    });
+  })();
+</script>
+
+<!-- Shared search modules -->
+<script type="module" src="/src/search-constants.js"></script>
+<script type="module" src="/src/search-modal.js"></script>
+</body>
+</html>

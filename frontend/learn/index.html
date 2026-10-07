@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+
+  <title>Learn RTL Bench — Verilog, VHDL, Simulation &amp; Timing Guide</title>
+  <meta name="description" content="A visual tour of RTL Bench. Verilog, SystemVerilog, and VHDL in the browser — schematic, simulation, waveforms, and static timing analysis. Animated demos, no install." />
+  <link rel="canonical" href="https://rtlbench.com/learn" />
+
+  <meta property="og:title" content="Learn RTL Bench — Verilog, VHDL, Simulation &amp; Timing Guide" />
+  <meta property="og:description" content="A visual tour of RTL Bench — the browser-based RTL workbench." />
+  <meta property="og:url" content="https://rtlbench.com/learn" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="RTL Bench" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Primary Search Engine Directives -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="RTL Bench" />
+
+  <!-- Standard Keywords -->
+  <meta name="keywords" content="RTL Bench, Verilog simulator online, VHDL compiler online, SystemVerilog browser, static timing analysis, open-source STA, SkyWater 130nm, GF180MCU, IHP SG13G2, WebSerial FPGA flasher, Tang Nano 9K, Tang Nano 20K, iCE40UP5K, clock domain crossing checker, CDC verification, Yosys browser, GHDL online, EDA tools online" />
+
+  <!-- Open Graph -->
+  <meta property="og:image" content="https://rtlbench.com/og-learn.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RTL Bench IDE waveform and schematic preview" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@rtlbench" />
+  <meta name="twitter:url" content="https://rtlbench.com/learn" />
+  <meta name="twitter:title" content="Learn RTL Bench — Verilog, VHDL & Timing in the Browser" />
+  <meta name="twitter:description" content="Interactive guide to RTL Bench: zero-install HDL elaboration, interactive schematics, and WebSerial FPGA flashing." />
+  <meta name="twitter:image" content="https://rtlbench.com/og-learn.png" />
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LT20GTPEL1');
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #080a0d;
+      color: #c9d1d9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre, kbd { font-family: 'JetBrains Mono', monospace; }
+
+    /* Navbar */
+    #navbar {
+      position: sticky; top: 0;
+      height: 48px;
+      background: rgba(17, 20, 24, 0.96);
+      border-bottom: 1px solid #262c36;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 8px;
+      backdrop-filter: blur(8px);
+      z-index: 30;
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1c2128; color: #c9d1d9;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: 5px 12px; font-size: 11px; font-weight: 600;
+      text-decoration: none; cursor: pointer; font-family: inherit;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .nav-btn:hover { background: #262c36; color: #fff; border-color: #58a6ff; text-decoration: none; }
+    .nav-btn.primary { background: #1f6feb; border-color: #388bfd; color: #fff; }
+    .nav-btn.primary:hover { background: #388bfd; }
+    .nav-btn .arrow { color: #58a6ff; font-size: 13px; }
+    .brand { font-weight: 700; color: #e6edf3; font-size: 13px; text-decoration: none; white-space: nowrap; }
+    .badge-pro { background: #ff9800; color: #000; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 4px; }
+
+    /* Layout */
+    .learn-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar */
+    .learn-sidebar {
+      order: 1;
+      flex: 0 0 240px;
+      width: 240px;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 20px 16px 40px 20px;
+      border-right: 1px solid #21262d;
+    }
+    .learn-sidebar::-webkit-scrollbar { width: 5px; }
+    .learn-sidebar::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+
+    .sidebar-search-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+      padding: 7px 11px; color: #8b949e; font-size: 12px;
+      cursor: pointer; margin-bottom: 20px; transition: all 0.15s;
+    }
+    .sidebar-search-btn:hover { border-color: #58a6ff; color: #f0f6fc; background: #111418; }
+    .sidebar-search-btn .shortcut-badge {
+      font-size: 9.5px; background: #161b22; border: 1px solid #30363d;
+      padding: 2px 5px; border-radius: 4px; color: #7d8590; font-family: 'JetBrains Mono', monospace;
+    }
+
+    .learn-sidebar .nav-group { margin-bottom: 22px; }
+    .learn-sidebar .nav-group-title {
+      font-size: 10px; font-weight: 700; color: #6e7681;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      margin-bottom: 6px; padding: 0 8px;
+    }
+    .learn-sidebar a {
+      display: block; padding: 5px 8px 5px 10px; font-size: 12.5px;
+      color: #8b949e; text-decoration: none; border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0; transition: all 0.12s;
+    }
+    .learn-sidebar a:hover { color: #e6edf3; background: #111418; text-decoration: none; }
+    .learn-sidebar a.active {
+      color: #58a6ff; background: rgba(88, 166, 255, 0.08);
+      border-left-color: #58a6ff; font-weight: 600;
+    }
+
+    /* Content Area */
+    .learn-content {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+      max-width: 860px;
+      padding: 40px 40px 80px;
+    }
+
+    .breadcrumb {
+      font-size: 12px; color: #6e7681; margin-bottom: 20px;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .breadcrumb a { color: #8b949e; }
+    .breadcrumb a:hover { color: #58a6ff; }
+    .breadcrumb .sep { color: #484f58; }
+
+    .hero { padding-bottom: 28px; border-bottom: 1px solid #21262d; margin-bottom: 28px; }
+    .hero h1 { font-size: 30px; font-weight: 700; color: #f0f6fc; letter-spacing: -0.5px; margin-bottom: 10px; line-height: 1.25; }
+    .hero p { font-size: 15px; color: #8b949e; max-width: 640px; }
+
+    .toc {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 16px 20px; margin-bottom: 40px;
+    }
+    .toc-title { font-size: 11px; font-weight: 700; color: #8b949e; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 10px; }
+    .toc ol {
+      list-style: none; display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px 24px; counter-reset: toc;
+    }
+    .toc li { counter-increment: toc; font-size: 13px; }
+    .toc li::before { content: counter(toc) ". "; color: #484f58; font-weight: 700; }
+
+    section, article { margin-bottom: 60px; scroll-margin-top: 64px; }
+    section h2, article h2 {
+      font-size: 22px; font-weight: 700; color: #f0f6fc; letter-spacing: -0.3px;
+      padding-bottom: 8px; margin-bottom: 20px; border-bottom: 1px solid #21262d;
+    }
+    section h3, article h3 { font-size: 15px; font-weight: 700; color: #e6edf3; margin: 24px 0 8px; }
+    p { color: #c9d1d9; margin-bottom: 14px; max-width: 720px; }
+    ul, ol { margin: 8px 0 16px 22px; color: #c9d1d9; max-width: 720px; }
+    li { margin-bottom: 4px; }
+
+    code {
+      background: #161b22; border: 1px solid #21262d; border-radius: 4px;
+      padding: 1px 6px; font-size: 12px; color: #79c0ff;
+    }
+    pre {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 14px 18px; overflow-x: auto; font-size: 12.5px;
+      color: #c9d1d9; line-height: 1.55; margin: 10px 0 18px;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+    kbd {
+      background: #1c2128; border: 1px solid #30363d; border-bottom-width: 2px;
+      border-radius: 4px; padding: 1px 6px; font-size: 11px; color: #e6edf3;
+    }
+
+    .callout {
+      display: flex; gap: 12px; background: #0d1117; border: 1px solid #21262d;
+      border-left: 3px solid #58a6ff; border-radius: 6px; padding: 12px 16px;
+      margin: 14px 0; font-size: 13px; color: #c9d1d9; max-width: 720px;
+    }
+    .callout.tip  { border-left-color: #3fb950; }
+    .callout.warn { border-left-color: #e3b341; }
+    .callout-icon { font-size: 15px; line-height: 1.4; }
+
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; max-width: 720px; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #21262d; }
+    th { color: #8b949e; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 6px; background: #1f6feb;
+      color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px;
+      font-weight: 600; text-decoration: none; transition: background 0.15s;
+    }
+    .cta:hover { background: #388bfd; text-decoration: none; }
+
+    .deep-dive {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(88, 166, 255, 0.06); border: 1px solid rgba(88, 166, 255, 0.25);
+      border-radius: 6px; padding: 10px 14px; margin: 16px 0 24px; max-width: 720px; font-size: 13px;
+    }
+    .deep-dive .icon { color: #58a6ff; font-size: 14px; }
+    .deep-dive .label { color: #8b949e; }
+    .deep-dive a { font-weight: 600; }
+
+    footer {
+      margin-top: 60px; padding-top: 24px; border-top: 1px solid #21262d;
+      font-size: 12px; color: #484f58; display: flex; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+
+    /* Demos */
+    .demo { margin: 20px 0 28px; max-width: 760px; }
+    .demo-window {
+      background: #080a0d; border: 1px solid #30363d; border-radius: 10px;
+      overflow: hidden; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #c9d1d9; user-select: none;
+    }
+    .demo-titlebar {
+      height: 26px; background: #111418; border-bottom: 1px solid #262c36;
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; color: #8b949e; font-size: 10px;
+    }
+    .demo-lights { display: flex; gap: 5px; }
+    .demo-lights span { width: 9px; height: 9px; border-radius: 50%; background: #30363d; }
+    .demo-lights span:nth-child(1) { background: #f85149; }
+    .demo-lights span:nth-child(2) { background: #e3b341; }
+    .demo-lights span:nth-child(3) { background: #3fb950; }
+    .demo-titlebar .tname { flex: 1; text-align: center; color: #6e7681; font-weight: 500; }
+
+    .demo-split { display: flex; height: 260px; position: relative; }
+    .demo-left { width: 44%; background: #0b0d10; border-right: 1px solid #1f242c; padding: 8px 10px; overflow: hidden; position: relative; }
+    .demo-right { flex: 1; background: #080a0d; position: relative; overflow: hidden; }
+    .demo-chipstrip { display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; min-height: 18px; }
+    .demo-chip {
+      background: #1c2128; border: 1px solid #30363d; border-radius: 4px;
+      padding: 2px 7px; font-size: 9px; color: #c9d1d9; white-space: nowrap; opacity: 0; transform: translateY(-4px);
+    }
+    .demo-code { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.7; color: #58a6ff; white-space: pre; }
+    .demo-code .kw  { color: #ff7b72; }
+    .demo-code .fn  { color: #d2a8ff; }
+    .demo-code .nu  { color: #79c0ff; }
+    .demo-code .cm  { color: #6e7681; font-style: italic; }
+    .demo-caption { margin-top: 10px; font-size: 12px; color: #8b949e; font-style: italic; }
+
+    .demo-svg { width: 100%; height: 100%; display: block; }
+    .demo-svg .node-rect { fill: #111418; stroke: #7d8590; stroke-width: 1; }
+    .demo-svg .submodule-rect { fill: #0f1319; stroke: #e3b341; stroke-width: 1; stroke-dasharray: 4 3; }
+    .demo-svg .wire { fill: none; stroke: #6e7681; stroke-width: 1; }
+    .demo-svg .lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; fill: #c9d1d9; }
+    .demo-svg .lbl-dim { font-family: 'JetBrains Mono', monospace; font-size: 8px; fill: #8b949e; }
+
+    .demoA .demo-chip.a { animation: chipIn 0.5s 0.3s forwards ease-out; }
+    .demoA .demo-chip.b { animation: chipIn 0.5s 1.3s forwards ease-out; }
+    .demoA .demo-chip.c { animation: chipIn 0.5s 2.3s forwards ease-out; }
+    .demoA .demo-code-stack { position: relative; height: 120px; overflow: hidden; }
+    .demoA .demo-code-block { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; animation: codeFade 12s infinite; }
+    .demoA .demo-code-block.block1 { animation-delay: 0s; }
+    .demoA .demo-code-block.block2 { animation-delay: 3s; }
+    .demoA .demo-code-block.block3 { animation-delay: 6s; }
+    .demoA .demo-code-block.block4 { animation-delay: 9s; }
+    @keyframes chipIn { from { opacity: 0; transform: translateY(-4px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes codeFade { 0%, 22% { opacity: 1; } 25%, 97% { opacity: 0; } 100% { opacity: 1; } }
+
+    .demoB .demo-code-line { animation: codeHi 6s infinite; }
+    .demoB .demo-code-line.l1 { animation-delay: 0s; }
+    .demoB .demo-code-line.l2 { animation-delay: 2s; }
+    .demoB .demo-code-line.l3 { animation-delay: 4s; }
+    .demoB .demo-svg .node-rect { animation-duration: 6s; animation-iteration-count: infinite; }
+    .demoB .demo-svg .node-rect.n1 { animation-name: nodeHi; animation-delay: 0s; }
+    .demoB .demo-svg .node-rect.n2 { animation-name: nodeHi; animation-delay: 2s; }
+    .demoB .demo-svg .node-rect.n3 { animation-name: nodeHi; animation-delay: 4s; }
+    @keyframes codeHi { 0%, 30% { background: rgba(88, 166, 255, 0.18); } 33%, 100% { background: transparent; } }
+    @keyframes nodeHi {
+      0%, 30% { stroke: #58a6ff; fill: #0d1b2e; filter: drop-shadow(0 0 5px #58a6ff); }
+      33%, 100% { stroke: #7d8590; fill: #111418; filter: none; }
+    }
+
+    .demoC .demo-right { position: relative; }
+    .demoC .view-layer { position: absolute; inset: 0; opacity: 0; animation: viewCycle 9s infinite; }
+    .demoC .view-layer.block { animation-delay: 0s; }
+    .demoC .view-layer.hybrid { animation-delay: 3s; }
+    .demoC .view-layer.gate { animation-delay: 6s; }
+    @keyframes viewCycle { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+    .demoC .view-badge {
+      position: absolute; top: 8px; left: 10px; background: rgba(22, 27, 34, 0.9);
+      border: 1px solid #30363d; border-radius: 4px; padding: 2px 8px; font-size: 9px;
+      color: #c9d1d9; animation: badgeCycle 9s infinite;
+    }
+    .demoC .view-badge.b1 { animation-delay: 0s; }
+    .demoC .view-badge.b2 { animation-delay: 3s; }
+    .demoC .view-badge.b3 { animation-delay: 6s; }
+    @keyframes badgeCycle { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+
+    .demoD .demo-right { background: #080a0d; padding: 12px; }
+    .demoD .cursorA, .demoD .cursorB { opacity: 0; animation: cursorAIn 8s infinite; }
+    .demoD .cursorA { animation-delay: 0.5s; }
+    .demoD .cursorB { animation-delay: 2.5s; }
+    @keyframes cursorAIn { 0%, 3% { opacity: 0; transform: translateX(-10px); } 8%, 92% { opacity: 1; transform: translateX(0); } 97%, 100% { opacity: 0; } }
+    .demoD .delta-badge { opacity: 0; animation: deltaIn 8s infinite; animation-delay: 4s; }
+    @keyframes deltaIn { 0%, 3% { opacity: 0; transform: translateY(-4px); } 10%, 90% { opacity: 1; transform: translateY(0); } 97%, 100% { opacity: 0; } }
+    .demoD .measure-band { opacity: 0; animation: deltaIn 8s infinite; animation-delay: 4s; }
+
+    .demoE .demo-window { transition: transform 0.6s ease, border-radius 0.6s ease; animation: fsLoop 10s infinite; }
+    .demoE .mode-bar {
+      position: absolute; top: 8px; left: 50%; transform: translate(-50%, -20px);
+      display: flex; gap: 4px; background: rgba(22, 27, 34, 0.95); border: 1px solid #30363d;
+      border-radius: 6px; padding: 3px; opacity: 0; animation: modeBarIn 10s infinite; animation-delay: 3s;
+    }
+    .demoE .mode-bar button {
+      background: transparent; color: #c9d1d9; border: none; padding: 4px 10px;
+      border-radius: 4px; font-family: inherit; font-size: 9.5px; font-weight: 600;
+    }
+    .demoE .mode-bar button.on { background: #1f6feb; color: #fff; }
+    @keyframes fsLoop { 0%, 15% { transform: scale(1); border-radius: 10px; } 30%, 70% { transform: scale(1.08); border-radius: 6px; } 85%, 100% { transform: scale(1); border-radius: 10px; } }
+    @keyframes modeBarIn { 0%, 25% { opacity: 0; transform: translate(-50%, -20px); } 35%, 70% { opacity: 1; transform: translate(-50%, 0); } 80%, 100% { opacity: 0; transform: translate(-50%, -20px); } }
+
+    .demoF .demo-left { animation: splitterL 6s infinite ease-in-out; }
+    .demoF .split-bar { position: absolute; top: 0; bottom: 0; width: 3px; background: #262c36; animation: splitBar 6s infinite ease-in-out; z-index: 2; }
+    @keyframes splitterL { 0%, 15% { width: 44%; } 45%, 55% { width: 24%; } 85%, 100% { width: 44%; } }
+    @keyframes splitBar { 0%, 15% { left: 44%; background: #262c36; } 45%, 55% { left: 24%; background: #58a6ff; } 85%, 100% { left: 44%; background: #262c36; } }
+
+    .demoG .sta-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 4px;
+      border: 1px solid #30363d; background: #1c2128; color: #c9d1d9; font-size: 10px; animation: staChip 8s infinite;
+    }
+    .demoG .sta-chip .icon { color: #58a6ff; }
+    @keyframes staChip {
+      0%, 20% { background: #1c2128; border-color: #30363d; color: #c9d1d9; }
+      25%, 45% { background: #1c2128; border-color: rgba(88,166,255,0.4); color: #58a6ff; }
+      50%, 75% { background: rgba(63,185,80,0.15); border-color: rgba(63,185,80,0.5); color: #3fb950; }
+      80%, 100% { background: #1c2128; border-color: #30363d; color: #c9d1d9; }
+    }
+    .demoG .status { margin-top: 10px; font-size: 11px; color: #8b949e; }
+    .demoG .status .v { animation: staVal 8s infinite; }
+    @keyframes staVal {
+      0%, 20% { color: #8b949e; }
+      25%, 45% { color: #58a6ff; }
+      50%, 75% { color: #3fb950; }
+      80%, 100% { color: #8b949e; }
+    }
+
+    /* Modal Overlay */
+    #search-overlay {
+      position: fixed; inset: 0; background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 99999; display: none; align-items: flex-start; justify-content: center;
+      padding: 12vh 16px 20px;
+    }
+    #search-overlay.active { display: flex; }
+    .search-modal {
+      width: 100%; max-width: 600px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; box-shadow: 0 24px 50px rgba(0,0,0,0.9); overflow: hidden;
+      display: flex; flex-direction: column; max-height: 75vh;
+    }
+    .search-modal-header {
+      display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid #21262d;
+      gap: 10px; background: #111418;
+    }
+    .search-modal-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #f0f6fc; font-family: inherit; font-size: 16px;
+    }
+    .search-modal-input::placeholder { color: #6e7681; }
+    .search-close-key {
+      background: #1c2128; border: 1px solid #30363d; border-radius: 4px;
+      padding: 4px 8px; font-size: 11px; color: #8b949e; cursor: pointer;
+    }
+    .search-results-list { overflow-y: auto; padding: 6px; flex: 1; }
+    .search-result-item {
+      display: block; padding: 10px 12px; border-radius: 6px; text-decoration: none;
+      color: inherit; transition: background 0.12s;
+    }
+    .search-result-item:hover { background: #161b22; text-decoration: none; }
+    .search-result-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
+    .search-result-title { color: #58a6ff; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+    .result-icon { font-size: 13px; line-height: 1; }
+    
+    /* Distinct Category Badges */
+    .search-result-cat {
+      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.3px; text-transform: uppercase;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .cat-ide { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .cat-timing { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .cat-hardware { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .cat-cdc { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+    .cat-language { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .cat-feature { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.35); }
+    .cat-guide { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35); }
+    .cat-reference { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .cat-compare { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
+    .cat-default { background: #1f242c; color: #8b949e; border: 1px solid #30363d; }
+
+    .search-result-snippet { font-size: 12px; color: #8b949e; line-height: 1.45; }
+    .search-result-snippet mark { background: rgba(88, 166, 255, 0.22); color: #79c0ff; border-radius: 2px; padding: 0 2px; }
+    .search-empty-msg { padding: 32px 16px; text-align: center; color: #6e7681; font-size: 13px; }
+    .search-modal-footer {
+      padding: 8px 14px; border-top: 1px solid #21262d; background: #090c10;
+      font-size: 11px; color: #6e7681; display: flex; justify-content: space-between;
+    }
+
+    /* Mobile Controls Default (Hidden on Desktop) */
+    .nav-menu-btn, .nav-search-btn, .sidebar-backdrop {
+      display: none !important;
+    }
+
+    /* Mobile & Tablet Optimization */
+    @media (max-width: 900px) {
+      .nav-menu-btn {
+        display: inline-flex !important;
+        font-size: 15px;
+        padding: 5px 11px;
+      }
+      .nav-search-btn {
+        display: inline-flex !important;
+        font-size: 14px;
+        padding: 5px 11px;
+      }
+      .nav-back {
+        display: none !important;
+      }
+
+      .learn-layout {
+        display: block !important;
+      }
+      .learn-content {
+        order: 2;
+        padding: 24px 16px 60px !important;
+        max-width: 100% !important;
+      }
+      .toc ol {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Off-Canvas Slide-out Drawer */
+      .learn-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 82% !important;
+        max-width: 320px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        flex: none !important;
+        padding: 16px 14px 40px 16px !important;
+        background: #0d1117 !important;
+        border-right: 1px solid #262c36 !important;
+        border-bottom: none !important;
+        box-shadow: 8px 0 32px rgba(0,0,0,.6) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        white-space: normal !important;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(-102%) !important;
+        transition: transform .25s ease !important;
+        z-index: 1000 !important;
+        display: block !important;
+      }
+      .learn-sidebar.is-open {
+        transform: translateX(0) !important;
+      }
+      .learn-sidebar a {
+        display: block !important;
+        padding: 9px 10px !important;
+        font-size: 14px !important;
+        border-radius: 0 4px 4px 0 !important;
+        border: none !important;
+        border-left: 2px solid transparent !important;
+        background: transparent !important;
+        white-space: normal !important;
+      }
+      .learn-sidebar a:hover {
+        color: #e6edf3 !important;
+        background: #111418 !important;
+      }
+      .learn-sidebar a.active {
+        color: #58a6ff !important;
+        background: rgba(88, 166, 255, 0.08) !important;
+        border-left-color: #58a6ff !important;
+        font-weight: 600 !important;
+      }
+      .learn-sidebar .nav-group {
+        display: block !important;
+        margin-bottom: 22px !important;
+      }
+      .learn-sidebar .nav-group-title {
+        display: block !important;
+      }
+      .learn-sidebar nav {
+        display: block !important;
+        width: 100% !important;
+      }
+      .sidebar-search-btn {
+        display: flex !important;
+        padding: 11px 12px !important;
+        font-size: 14px !important;
+      }
+
+      /* Modal Backdrop */
+      .sidebar-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(5, 7, 10, .72) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity .25s ease !important;
+        z-index: 999 !important;
+      }
+      .sidebar-backdrop.is-open {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      body.menu-open {
+        overflow: hidden !important;
+      }
+
+      #search-overlay {
+        padding-top: 5vh;
+      }
+      .search-modal-footer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .demo-split {
+        flex-direction: column !important;
+        height: auto !important;
+      }
+      .demo-left {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid #1f242c !important;
+        min-height: 130px !important;
+      }
+      .demo-right {
+        min-height: 190px !important;
+      }
+      .split-bar {
+        display: none !important;
+      }
+      .hero h1 {
+        font-size: 24px;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .learn-sidebar, .sidebar-backdrop {
+        transition: none !important;
+      }
+    }
+  </style>
+  <style>
+    /* ---- Site links in header (desktop) — added ---- */
+    .site-links { display: none; }
+    @media (min-width: 1000px) {
+      .site-links {
+        display: flex; align-items: center; gap: 22px;
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      }
+      .site-links a { color: #8b949e; font-size: 13px; font-weight: 600; text-decoration: none; transition: color 0.2s; white-space: nowrap; }
+      .site-links a:hover { color: #f0f6fc; text-decoration: none; }
+      .site-links a.active { color: #58a6ff; }
+      .site-links a:focus-visible { outline: 2px solid #2ea043; outline-offset: 4px; border-radius: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav id="navbar" aria-label="Site">
+    <button type="button" class="nav-btn nav-menu-btn" id="menuBtn" aria-label="Open Navigation" aria-expanded="false">
+      ☰
+    </button>
+    <button type="button" class="nav-btn nav-back" onclick="learnGoBack()">
+      <span class="arrow">←</span><span>Back</span>
+    </button>
+    <a href="/" class="brand">RTL Bench<span class="badge-pro">PRO</span></a>
+
+    <div class="site-links" aria-label="Site links">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/learn" class="active">Learn</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:contact@rtlbench.com">Contact</a>
+    </div>
+
+    <div style="flex:1;"></div>
+    <button type="button" class="nav-btn nav-search-btn" onclick="openRtlSearch()" aria-label="Search">
+      🔍
+    </button>
+    <a href="/studio" class="nav-btn primary">Try it now →</a>
+  </nav>
+
+  <!-- Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="learn-layout">
+
+    <!-- Sidebar -->
+    <aside class="learn-sidebar" id="learnSidebar" aria-label="Learn navigation">
+      
+      <!-- Quick Search Button in Sidebar -->
+      <button type="button" class="sidebar-search-btn" onclick="openRtlSearch()">
+        <span style="display:flex; align-items:center; gap:6px;">
+          <span>🔍</span> Quick search...
+        </span>
+        <kbd class="shortcut-badge"></kbd>
+      </button>
+
+      <nav>
+        <div class="nav-group">
+          <div class="nav-group-title">Navigation</div>
+          <a href="/"> Home</a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-title">Learn</div>
+          <a href="/learn" class="active" aria-current="page">Feature tour</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Languages</div>
+          <a href="/learn/verilog">Verilog &amp; SystemVerilog</a>
+          <a href="/learn/vhdl">VHDL</a>
+          <a href="/learn/vhdl-compiler-online">Online VHDL compiler</a>
+          <a href="/learn/mixed-language">Mixed-language projects</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Features</div>
+          <a href="/learn/schematic">Schematic &amp; views</a>
+          <a href="/learn/verilog-to-schematic">Verilog to schematic</a>
+          <a href="/learn/simulation">Simulation &amp; waveforms</a>
+          <a href="/learn/online-verilog-simulator">Online simulator guide</a>
+          <a href="/learn/multifile">Multi-file projects</a>
+          <a href="/learn/timing">Timing analysis (STA)</a>
+          <a href="/learn/open-source-sta">Open-source STA</a>
+          <a href="/learn/webserial-fpga-flasher">WebSerial FPGA flasher</a>
+          <a href="/learn/clock-domain-crossing-checker">CDC verification guide</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Reference</div>
+          <a href="/learn/concepts">Concepts &amp; glossary</a>
+          <a href="/learn/active-low-reset">Active-low reset</a>
+          <a href="/learn/sta-path-types">STA path types</a>
+          <a href="/learn/pdk-comparison">PDK comparison</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Comparisons &amp; Tools</div>
+          <a href="/compare">All EDA comparisons</a>
+          <a href="/compare/eda-playground">vs. EDA Playground</a>
+          <a href="/compare/chip-verify">vs. ChipVerify Lab</a>
+          <a href="/compare/digitaljs">vs. DigitalJS</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Content (Right Column) -->
+    <main class="learn-content">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <span>Learn</span>
+      </nav>
+
+      <header class="hero">
+        <h1>Learn RTL Bench</h1>
+        <p>
+          A visual tour of every feature. Each section pairs a short explanation
+          with an animated demo of the exact interaction you'll see in the
+          workbench — no screenshots to guess at, no GIFs to sit through.
+        </p>
+      </header>
+
+      <nav class="toc" aria-label="Contents">
+        <div class="toc-title">Contents</div>
+        <ol>
+          <li><a href="#overview">What is RTL Bench?</a></li>
+          <li><a href="#writing">Writing HDL</a></li>
+          <li><a href="#multifile">Multi-file projects</a></li>
+          <li><a href="#views">Block / Hybrid / Gate views</a></li>
+          <li><a href="#schematic">Navigating the schematic</a></li>
+          <li><a href="#sim">Simulation &amp; waveforms</a></li>
+          <li><a href="#sta">Timing analysis (STA)</a></li>
+          <li><a href="#fullscreen">Fullscreen &amp; the mode bar</a></li>
+          <li><a href="#shortcuts">Gestures &amp; shortcuts</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ol>
+      </nav>
+
+      <!-- 1 -->
+      <article id="overview">
+        <h2>1. What is RTL Bench?</h2>
+        <p>
+          RTL Bench is a browser-based workbench for small- to medium-sized
+          digital designs. You write Verilog, SystemVerilog, or VHDL on the
+          left; a live toolchain on the right elaborates, draws, simulates, and
+          analyses your circuit as you type.
+        </p>
+        <ul>
+          <li><b>Elaborates</b> your source with Yosys (Verilog) or GHDL (VHDL) — one file or twenty.</li>
+          <li><b>Draws</b> a schematic from the block level down to individual gates.</li>
+          <li><b>Simulates</b> the design and renders inspectable waveforms.</li>
+          <li><b>Estimates timing</b> against a standard-cell library (sky130, gf180, or IHP SG13G2).</li>
+        </ul>
+        <div class="callout tip">
+          <span class="callout-icon">💡</span>
+          <span><b>Fastest way in:</b> open the Examples menu in the top bar and
+          click <i>RISC-V 32-bit ALU (multi-file)</i>. It exercises every feature
+          in one go.</span>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article id="writing">
+        <h2>2. Writing HDL</h2>
+        <p>
+          The editor accepts SystemVerilog (<code>.sv</code>), Verilog
+          (<code>.v</code>), and VHDL (<code>.vhd</code> / <code>.vhdl</code>).
+          Pick the language from the dropdown in the top bar; it changes how
+          the backend parses your source.
+        </p>
+
+        <h3>A minimal module</h3>
+<pre><code>module counter (
+    input  logic       clk,
+    input  logic       rst_n,
+    output logic [7:0] q
+);
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) q &lt;= 8'h00;
+        else        q &lt;= q + 8'd1;
+    end
+endmodule</code></pre>
+
+        <div class="deep-dive">
+          <span class="icon">→</span>
+          <span class="label">Working in VHDL?</span>
+          <a href="/learn/vhdl">Read the VHDL guide</a>
+        </div>
+
+        <h3>Code ↔ diagram link</h3>
+        <p>
+          The two panes are linked bidirectionally. Hover a line of code — the
+          corresponding node lights up on the right. Hover a node — the source
+          range is selected in the editor.
+        </p>
+
+        <div class="demo demoB">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — hover link</div>
+            </div>
+            <div class="demo-split">
+              <div class="demo-left">
+                <div class="demo-code">
+<span class="demo-code-line l1"><span class="kw">logic</span> [<span class="nu">31:0</span>] add_out;</span>
+<span class="demo-code-line l2"><span class="kw">logic</span> [<span class="nu">31:0</span>] logic_out;</span>
+<span class="demo-code-line l3"><span class="kw">logic</span> [<span class="nu">31:0</span>] slt_out;</span>
+                </div>
+              </div>
+              <div class="demo-right">
+                <svg class="demo-svg" viewBox="0 0 260 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Code-to-diagram hover link">
+                  <rect class="node-rect n1" x="20" y="18" width="90" height="34" rx="4"/>
+                  <text class="lbl" x="65" y="39" text-anchor="middle">add_out</text>
+                  <rect class="node-rect n2" x="20" y="92" width="90" height="34" rx="4"/>
+                  <text class="lbl" x="65" y="113" text-anchor="middle">logic_out</text>
+                  <rect class="node-rect n3" x="20" y="166" width="90" height="34" rx="4"/>
+                  <text class="lbl" x="65" y="187" text-anchor="middle">slt_out</text>
+                  <path class="wire" d="M 110 35 H 180 V 111 H 220"/>
+                  <path class="wire" d="M 110 109 H 200 V 111 H 220"/>
+                  <path class="wire" d="M 110 183 H 190 V 111 H 220"/>
+                  <rect class="node-rect" x="200" y="94" width="40" height="34" rx="4"/>
+                  <text class="lbl-dim" x="220" y="115" text-anchor="middle">mux</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">Hovering a declaration highlights its node — and vice versa.</div>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article id="multifile">
+        <h2>3. Multi-file projects</h2>
+        <p>
+          Use the <b>📎 Files</b> or <b>📁 Folder</b> button to upload one or more
+          HDL files. RTL Bench merges them into a single compilation unit — the
+          top module is detected automatically from every file.
+        </p>
+
+        <div class="demo demoA">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — upload folder</div>
+            </div>
+            <div class="demo-split">
+              <div class="demo-left">
+                <div class="demo-chipstrip">
+                  <div class="demo-chip a">rv32_alu_top.sv</div>
+                  <div class="demo-chip b">adder_sub.sv</div>
+                  <div class="demo-chip c">logic_ops.sv</div>
+                </div>
+                <div class="demo-code-stack">
+                  <div class="demo-code-block block1 demo-code">
+<span class="cm">// rv32_alu_top.sv</span>
+<span class="kw">module</span> <span class="fn">rv32_alu_top</span> (...);
+  <span class="kw">adder_sub</span> u_adder (...);
+  <span class="kw">logic_ops</span> u_logic (...);
+<span class="kw">endmodule</span>
+                  </div>
+                  <div class="demo-code-block block2 demo-code">
+<span class="cm">// adder_sub.sv</span>
+<span class="kw">module</span> <span class="fn">adder_sub</span> (...);
+  <span class="kw">assign</span> b_xor = b ^ {32{op}};
+  <span class="kw">assign</span> y = a + b_xor + op;
+<span class="kw">endmodule</span>
+                  </div>
+                  <div class="demo-code-block block3 demo-code">
+<span class="cm">// logic_ops.sv</span>
+<span class="kw">module</span> <span class="fn">logic_ops</span> (...);
+  <span class="kw">case</span> (sel)
+    3'b100: y = a ^ b;
+    3'b110: y = a | b;
+<span class="kw">endcase</span>
+                  </div>
+                  <div class="demo-code-block block4 demo-code" style="opacity:0">
+<span class="cm">// ...switching files...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-right">
+                <svg class="demo-svg" viewBox="0 0 260 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Multi-file project schematic">
+                  <line x1="14" y1="14" x2="14" y2="70" stroke="#3fb950" stroke-width="1"/>
+                  <text class="lbl" x="20" y="18" fill="#3fb950">a[31:0]</text>
+                  <line x1="14" y1="90" x2="14" y2="130" stroke="#3fb950" stroke-width="1"/>
+                  <text class="lbl" x="20" y="94" fill="#3fb950">b[31:0]</text>
+                  <line x1="14" y1="150" x2="14" y2="180" stroke="#3fb950" stroke-width="1"/>
+                  <text class="lbl" x="20" y="154" fill="#3fb950">op[3:0]</text>
+                  <rect class="submodule-rect" x="80" y="18" width="90" height="60" rx="4"/>
+                  <text class="lbl" x="125" y="34" text-anchor="middle" fill="#e3b341">u_adder</text>
+                  <text class="lbl-dim" x="125" y="50" text-anchor="middle">adder_sub</text>
+                  <rect class="submodule-rect" x="80" y="98" width="90" height="60" rx="4"/>
+                  <text class="lbl" x="125" y="114" text-anchor="middle" fill="#e3b341">u_logic</text>
+                  <text class="lbl-dim" x="125" y="130" text-anchor="middle">logic_ops</text>
+                  <path class="wire" d="M 14 30 H 80"/>
+                  <path class="wire" d="M 14 110 H 80"/>
+                  <path class="wire" d="M 14 165 H 60 V 128 H 80"/>
+                  <path class="wire" d="M 170 48 H 220 V 108 H 240"/>
+                  <path class="wire" d="M 170 128 H 240"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Upload a folder → chips appear automatically → editor cycles through
+            files → the top module is chosen for you.
+          </div>
+        </div>
+
+        <h3>Hierarchy vs. Flat</h3>
+        <table>
+          <thead><tr><th>Mode</th><th>What you see</th><th>When to use</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Hierarchy</b></td>
+              <td>Each instantiated submodule is a labelled box with ports.</td>
+              <td>Default. Preserves design intent, stays fast on large designs.</td>
+            </tr>
+            <tr>
+              <td><b>Flat</b></td>
+              <td>Every submodule unrolled to primitive gates.</td>
+              <td>Only when you need to see inside one submodule.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout warn">
+          <span class="callout-icon">⚠</span>
+          <span>Flattening a design with many multipliers (20+) will freeze the
+          browser while ELK lays out the graph. RTL Bench asks first — heed the
+          warning.</span>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article id="views">
+        <h2>4. Block / Hybrid / Gate views</h2>
+        <p>
+          Three buttons in the top bar — and a floating bar in fullscreen —
+          control how much detail the schematic shows.
+        </p>
+
+        <div class="demo demoC">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — view modes</div>
+            </div>
+            <div class="demo-split">
+              <div class="demo-left">
+                <div class="demo-code">
+<span class="cm">// Same design,</span>
+<span class="cm">// three ways to</span>
+<span class="cm">// look at it.</span>
+
+<span class="kw">Block</span>   → high-level
+<span class="kw">Hybrid</span>  → auto-switch
+<span class="kw">Gate</span>    → every gate
+                </div>
+              </div>
+              <div class="demo-right">
+                <div class="view-layer block">
+                  <svg class="demo-svg" viewBox="0 0 260 200" role="img" aria-label="Block view">
+                    <rect class="submodule-rect" x="80" y="60" width="100" height="70" rx="4"/>
+                    <text class="lbl" x="130" y="90" text-anchor="middle" fill="#e3b341">rv32_alu_top</text>
+                    <text class="lbl-dim" x="130" y="108" text-anchor="middle">1 module</text>
+                    <line x1="14" y1="80" x2="80" y2="80" stroke="#3fb950"/>
+                    <line x1="14" y1="110" x2="80" y2="110" stroke="#3fb950"/>
+                    <line x1="180" y1="90" x2="246" y2="90" stroke="#38bdf8"/>
+                  </svg>
+                </div>
+                <div class="view-layer hybrid">
+                  <svg class="demo-svg" viewBox="0 0 260 200" role="img" aria-label="Hybrid view">
+                    <rect class="submodule-rect" x="20" y="30" width="90" height="60" rx="4"/>
+                    <text class="lbl" x="65" y="55" text-anchor="middle" fill="#e3b341">u_adder</text>
+                    <rect class="submodule-rect" x="20" y="110" width="90" height="60" rx="4"/>
+                    <text class="lbl" x="65" y="135" text-anchor="middle" fill="#e3b341">u_logic</text>
+                    <rect class="node-rect" x="160" y="90" width="60" height="40" rx="4"/>
+                    <text class="lbl-dim" x="190" y="112" text-anchor="middle">mux</text>
+                    <path class="wire" d="M 110 60 H 140 V 108 H 160"/>
+                    <path class="wire" d="M 110 140 H 140 V 112 H 160"/>
+                    <path class="wire" d="M 220 110 H 246"/>
+                  </svg>
+                </div>
+                <div class="view-layer gate">
+                  <svg class="demo-svg" viewBox="0 0 260 200" role="img" aria-label="Gate view">
+                    <rect class="node-rect" x="14" y="30" width="40" height="26" rx="3"/>
+                    <text class="lbl-dim" x="34" y="47" text-anchor="middle">$dff</text>
+                    <rect class="node-rect" x="14" y="90" width="40" height="26" rx="3"/>
+                    <text class="lbl-dim" x="34" y="107" text-anchor="middle">$dff</text>
+                    <rect class="node-rect" x="14" y="150" width="40" height="26" rx="3"/>
+                    <text class="lbl-dim" x="34" y="167" text-anchor="middle">$dff</text>
+                    <circle class="node-rect" cx="100" cy="103" r="18"/>
+                    <text class="lbl" x="100" y="107" text-anchor="middle">+</text>
+                    <rect class="node-rect" x="150" y="60" width="50" height="26" rx="3"/>
+                    <text class="lbl-dim" x="175" y="77" text-anchor="middle">xor</text>
+                    <rect class="node-rect" x="150" y="120" width="50" height="26" rx="3"/>
+                    <text class="lbl-dim" x="175" y="137" text-anchor="middle">and</text>
+                    <path class="wire" d="M 54 43 H 80 V 95"/>
+                    <path class="wire" d="M 54 103 H 82"/>
+                    <path class="wire" d="M 54 163 H 80 V 111"/>
+                    <path class="wire" d="M 118 103 H 140 V 73 H 150"/>
+                    <path class="wire" d="M 118 103 H 140 V 133 H 150"/>
+                    <path class="wire" d="M 200 73 H 230 V 100"/>
+                    <path class="wire" d="M 200 133 H 230 V 110"/>
+                  </svg>
+                </div>
+                <div class="view-badge b1">Block view</div>
+                <div class="view-badge b2">Hybrid</div>
+                <div class="view-badge b3">Gate view</div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Block → Hybrid → Gate. Hybrid switches between the two automatically
+            based on zoom level.
+          </div>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article id="schematic">
+        <h2>5. Navigating the schematic</h2>
+        <h3>Pan, zoom, fit</h3>
+        <ul>
+          <li><b>Pan</b> — click and drag anywhere on the canvas.</li>
+          <li><b>Zoom</b> — scroll wheel, or pinch on a trackpad.</li>
+          <li><b>Fit to view</b> — the <code>⌖</code> button top-right.</li>
+          <li><b>Fullscreen</b> — the <code>⤢</code> button next to it.</li>
+        </ul>
+
+        <h3>Inspecting signals</h3>
+        <ul>
+          <li><b>Click a wire</b> to select it. Selected nets stay highlighted in blue.</li>
+          <li><b>Buses</b> render as thick grey lines with a width badge (<code>32</code>, <code>[31:0]</code>) at branch points.</li>
+          <li><b>Submodules</b> appear as yellow dashed rectangles with green (input) and blue (output) ports.</li>
+        </ul>
+
+        <div class="callout tip">
+          <span class="callout-icon">💡</span>
+          <span>In <b>Hybrid</b> mode, zoom is what flips between views: below
+          about 0.75× you see blocks, above that the gate-level detail appears.
+          If a view feels "wrong", try scrolling a notch.</span>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article id="sim">
+        <h2>6. Simulation &amp; waveforms</h2>
+        <p>
+          Click <b>Waves</b> in the bottom status bar to open the simulation
+          drawer, or press <b>▶ Run Testbench</b> inside it. RTL Bench generates
+          a simple stimulus, runs the design, and streams back a VCD waveform.
+        </p>
+
+        <div class="demo demoD">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — waveform measurement</div>
+            </div>
+            <div class="demo-split" style="height:200px;">
+              <div class="demo-left" style="width:30%;">
+                <div class="demo-code" style="font-size:9px;">
+clk         <span style="color:#3fb950;">1</span><br>
+data_in     <span style="color:#e3b341;">0x30</span><br>
+match_flag  <span style="color:#3fb950;">0</span><br>
+counter     <span style="color:#e3b341;">0x25</span>
+                </div>
+              </div>
+              <div class="demo-right demoD">
+                <svg class="demo-svg" viewBox="0 0 400 160" preserveAspectRatio="none" style="height:100%; width:100%;" role="img" aria-label="Waveform with cursors">
+                  <g transform="translate(0,10)">
+                    <text class="lbl" x="0" y="14" fill="#8b949e">clk</text>
+                    <path d="M 0 22 L 20 22 L 20 6 L 40 6 L 40 22 L 60 22 L 60 6 L 80 6 L 80 22 L 100 22 L 100 6 L 120 6 L 120 22 L 140 22 L 140 6 L 160 6 L 160 22 L 180 22 L 180 6 L 200 6 L 200 22 L 220 22 L 220 6 L 240 6 L 240 22 L 260 22 L 260 6 L 280 6 L 280 22 L 300 22 L 300 6 L 320 6 L 320 22 L 340 22 L 340 6 L 360 6 L 360 22 L 400 22" fill="none" stroke="#3fb950" stroke-width="1.2"/>
+                  </g>
+                  <g transform="translate(0,50)">
+                    <text class="lbl" x="0" y="14" fill="#8b949e">data</text>
+                    <path d="M 0 22 L 60 22 L 60 6 L 120 6 L 120 22 L 180 22 L 180 6 L 240 6 L 240 22 L 300 22 L 300 6 L 400 6" fill="none" stroke="#38bdf8" stroke-width="1.2"/>
+                  </g>
+                  <g transform="translate(0,90)">
+                    <text class="lbl" x="0" y="14" fill="#8b949e">match</text>
+                    <path d="M 0 22 L 220 22 L 220 6 L 400 6" fill="none" stroke="#3fb950" stroke-width="1.2"/>
+                  </g>
+                  <g transform="translate(0,130)">
+                    <text class="lbl" x="0" y="14" fill="#8b949e">cnt</text>
+                    <path d="M 0 22 L 100 22 L 100 6 L 200 6 L 200 22 L 300 22 L 300 6 L 400 6" fill="none" stroke="#38bdf8" stroke-width="1.2"/>
+                  </g>
+                  <rect class="measure-band" x="140" y="0" width="120" height="150" fill="rgba(63,185,80,0.08)"/>
+                  <g class="cursorA">
+                    <line x1="140" y1="0" x2="140" y2="150" stroke="#e3b341" stroke-width="1.2" stroke-dasharray="4 3"/>
+                    <rect x="122" y="2" width="36" height="14" rx="3" fill="#e3b341"/>
+                    <text x="140" y="12" text-anchor="middle" font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#080a0d">A 25ns</text>
+                  </g>
+                  <g class="cursorB">
+                    <line x1="260" y1="0" x2="260" y2="150" stroke="#f85149" stroke-width="1.2" stroke-dasharray="4 3"/>
+                    <rect x="242" y="2" width="36" height="14" rx="3" fill="#f85149"/>
+                    <text x="260" y="12" text-anchor="middle" font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#080a0d">B 47ns</text>
+                  </g>
+                  <g class="delta-badge">
+                    <rect x="160" y="76" width="80" height="16" rx="3" fill="#0d1117" stroke="#3fb950"/>
+                    <text x="200" y="87" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" font-weight="700" fill="#3fb950">Δ 22ns (45 MHz)</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Click once for cursor A, again for cursor B. The header shows Δ and
+            the derived frequency — perfect for measuring clock periods.
+          </div>
+        </div>
+
+        <h3>All cursor gestures</h3>
+        <table>
+          <thead><tr><th>Gesture</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><b>Click</b> the waveform</td><td>Places A, then B, then moves the nearer of the two.</td></tr>
+            <tr><td><b>Drag</b> a cursor</td><td>Slides it; snaps to the nearest transition.</td></tr>
+            <tr><td><kbd>Shift</kbd> + drag</td><td>Free positioning, no snap.</td></tr>
+            <tr><td><b>Hover</b> anywhere</td><td>Shows a blue hover cursor and live values in the sidebar.</td></tr>
+            <tr><td><b>Right-click</b></td><td>Clears both cursors.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Resize and maximise</h3>
+        <ul>
+          <li>Drag the horizontal bar at the top of the drawer to resize it.</li>
+          <li>Click the <code>🗖</code> icon to maximise the drawer.</li>
+          <li>The code editor reserves space automatically — the last lines of your source stay visible above the drawer.</li>
+        </ul>
+      </article>
+
+      <!-- 7 -->
+      <article id="sta">
+        <h2>7. Timing analysis (STA)</h2>
+        <p>
+          Click <b>⏱ Calculate STA</b> in the bottom bar. RTL Bench synthesises
+          your design, maps it to standard cells from the selected PDK, walks
+          the critical path, and reports the worst-case delay.
+        </p>
+
+        <div class="demo demoG">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — status bar (STA cycle)</div>
+            </div>
+            <div style="padding: 24px; background: #0d1117;">
+              <div class="sta-chip">
+                <span class="icon">⏱</span>
+                <span>Calculate STA</span>
+              </div>
+              <div class="status">
+                Critical: <span class="v"><b>3.42 ns</b></span> &nbsp;·&nbsp;
+                Slack: <span class="v"><b>+6.58 ns</b></span> &nbsp;·&nbsp;
+                <span class="v">100 MHz</span>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Idle → calculating → done. Green means positive slack; yellow is
+            marginal; red is a violation.
+          </div>
+        </div>
+
+        <h3>What you get</h3>
+        <ul>
+          <li><b>Critical path delay</b> in nanoseconds — the longest combinational path.</li>
+          <li><b>Slack</b> against a 10 ns clock period (100 MHz). Negative = violation.</li>
+          <li>A status chip that turns green, yellow, or red depending on slack.</li>
+        </ul>
+        <p>
+          Click the coloured chip after STA runs. The <a href="/sta">/sta</a> page
+          breaks down every stage, shows cell counts by type, and lets you
+          re-run with a different target node (sky130, gf180, ihp).
+        </p>
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <span>STA flattens the design. If it has many multipliers (15+) or a
+          flattened netlist over 50k gates, the backend will time out. Analyse
+          one module at a time using the Top-module dropdown.</span>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article id="fullscreen">
+        <h2>8. Fullscreen &amp; the mode bar</h2>
+        <p>
+          Click <code>⤢</code> on the canvas to enter fullscreen. The controls
+          enlarge for easier clicking, and a small bar appears at the
+          <b>top-center</b> of the screen letting you switch view modes without
+          leaving fullscreen.
+        </p>
+
+        <div class="demo demoE">
+          <div class="demo-window" style="position:relative;">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — fullscreen toggle</div>
+            </div>
+            <div class="demo-split" style="height:200px;">
+              <div class="demo-left">
+                <div class="demo-code" style="font-size:9.5px;">
+<span class="kw">module</span> <span class="fn">rv32_alu_top</span> (
+  <span class="kw">input</span> [31:0] a, b,
+  <span class="kw">input</span> [3:0]  alu_op,
+  <span class="kw">output</span> [31:0] result
+);
+                </div>
+              </div>
+              <div class="demo-right">
+                <svg class="demo-svg" viewBox="0 0 260 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Fullscreen mode">
+                  <rect class="submodule-rect" x="40" y="40" width="80" height="50" rx="4"/>
+                  <text class="lbl" x="80" y="60" text-anchor="middle" fill="#e3b341">u_adder</text>
+                  <rect class="submodule-rect" x="40" y="110" width="80" height="50" rx="4"/>
+                  <text class="lbl" x="80" y="130" text-anchor="middle" fill="#e3b341">u_logic</text>
+                  <rect class="node-rect" x="170" y="80" width="50" height="40" rx="4"/>
+                  <text class="lbl-dim" x="195" y="102" text-anchor="middle">mux</text>
+                  <path class="wire" d="M 120 65 H 150 V 98 H 170"/>
+                  <path class="wire" d="M 120 135 H 150 V 102 H 170"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-bar">
+              <button>Block view</button>
+              <button class="on">Hybrid</button>
+              <button>Gate view</button>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Fullscreen enlarges the controls and slides in the mode bar.
+            <kbd>Esc</kbd> exits.
+          </div>
+        </div>
+
+        <h3>Try it in the real studio</h3>
+        <ol>
+          <li>Click <code>⤢</code>. The canvas expands to fill the screen.</li>
+          <li>The mode bar appears top-center with <b>Block view / Hybrid / Gate view</b>.</li>
+          <li>Click any mode — the diagram switches instantly, the bar stays.</li>
+          <li>Press <kbd>Esc</kbd> or click <code>✕</code> to return.</li>
+        </ol>
+      </article>
+
+      <!-- 9 -->
+      <article id="shortcuts">
+        <h2>9. Gestures &amp; shortcuts</h2>
+
+        <div class="demo demoF">
+          <div class="demo-window">
+            <div class="demo-titlebar">
+              <div class="demo-lights"><span></span><span></span><span></span></div>
+              <div class="tname">studio — splitter drag</div>
+            </div>
+            <div class="demo-split" style="height:180px;">
+              <div class="demo-left">
+                <div class="demo-code" style="font-size:9.5px;">
+<span class="kw">module</span> ...
+                </div>
+              </div>
+              <div class="split-bar"></div>
+              <div class="demo-right">
+                <svg class="demo-svg" viewBox="0 0 260 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Splitter drag">
+                  <rect class="node-rect" x="60" y="50" width="90" height="50" rx="4"/>
+                  <text class="lbl-dim" x="105" y="80" text-anchor="middle">schematic</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="demo-caption">
+            Drag the thin vertical bar between editor and canvas. Double-click
+            it to reset to 40 / 60.
+          </div>
+        </div>
+
+        <h3>Global</h3>
+        <table>
+          <thead><tr><th>Key / gesture</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd></td><td>Force re-generate the schematic</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>Exit fullscreen / close modals</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Schematic</h3>
+        <table>
+          <thead><tr><th>Gesture</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Click + drag</td><td>Pan</td></tr>
+            <tr><td>Scroll / pinch</td><td>Zoom</td></tr>
+            <tr><td>Click a wire</td><td>Select / deselect the net</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Waveform</h3>
+        <table>
+          <thead><tr><th>Gesture</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Click</td><td>Place / move cursor A or B</td></tr>
+            <tr><td>Drag a cursor</td><td>Slide, snaps to nearest edge</td></tr>
+            <tr><td><kbd>Shift</kbd> + drag</td><td>Free positioning, no snap</td></tr>
+            <tr><td>Right-click</td><td>Clear cursors</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <!-- 10 -->
+      <article id="troubleshooting">
+        <h2>10. Troubleshooting</h2>
+
+        <h3>Nothing appears in the schematic</h3>
+        <ul>
+          <li>Check the error modal — a syntax error blocks elaboration.</li>
+          <li>Confirm the top module in the <code>TOP:</code> dropdown.</li>
+          <li>Press <b>Generate</b> to force a fresh compile.</li>
+        </ul>
+
+        <h3>Simulation shows no signals</h3>
+        <ul>
+          <li>Open the browser console (<kbd>F12</kbd>) — a red error usually explains it.</li>
+          <li>If it says <code>fileModules: []</code> with files loaded, reload to reset state.</li>
+        </ul>
+
+        <h3>STA times out</h3>
+        <ul>
+          <li>Pick a single module from the Top-module dropdown first.</li>
+          <li>Designs with many multipliers should be analysed one submodule at a time.</li>
+        </ul>
+
+        <h3>Editor's last lines are hidden</h3>
+        <ul>
+          <li>The drawer reserves space automatically — close and reopen it if it doesn't.</li>
+          <li>Or drag the drawer's top bar down to reduce its height.</li>
+        </ul>
+
+        <div style="margin-top: 28px;">
+          <a href="/studio" class="cta">Open the workbench →</a>
+        </div>
+      </article>
+
+      <footer>
+        <span>© RTL Bench</span>
+        <span>
+          <a href="/">Home</a> &nbsp;·&nbsp;
+          <a href="/studio">Workbench</a> &nbsp;·&nbsp;
+          <a href="/sta">STA</a> &nbsp;·&nbsp;
+          <a href="/compare">Compare</a> &nbsp;·&nbsp;
+          <a href="/terms">Terms</a> &nbsp;·&nbsp;
+          <a href="/privacy">Privacy</a>
+        </span>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Search Modal Overlay -->
+  <div id="search-overlay" role="dialog" aria-modal="true">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <span style="color:#8b949e; font-size:12px;">🔍</span>
+        <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search documentation, timing, CDC, FPGA..." autocomplete="off" />
+        <button class="search-close-key" type="button" onclick="closeRtlSearch()">ESC</button>
+      </div>
+      <div class="search-results-list" id="searchResultsList">
+        <div class="search-empty-msg">Type keywords to search across all guides and features.</div>
+      </div>
+      <div class="search-modal-footer">
+        <span>Navigate <kbd style="font-family:monospace;">↑</kbd> <kbd style="font-family:monospace;">↓</kbd></span>
+        <span>Open <kbd style="font-family:monospace;">↵</kbd></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function learnGoBack() {
+      if (!sessionStorage.getItem('rtl_learn_entry')) {
+        let entry = '/';
+        const ref = document.referrer;
+        if (ref) {
+          try {
+            const u = new URL(ref);
+            if (u.origin === location.origin) {
+              entry = u.pathname + u.search;
+            }
+          } catch (_) {}
+        }
+        sessionStorage.setItem('rtl_learn_entry', entry);
+      }
+      const ref = document.referrer;
+      if (ref) {
+        try {
+          const u = new URL(ref);
+          if (u.origin === location.origin && history.length > 1) {
+            history.back();
+            return;
+          }
+        } catch (_) {}
+      }
+      window.location.href = sessionStorage.getItem('rtl_learn_entry') || '/';
+    }
+
+    document.addEventListener('click', function (e) {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+
+      const id = a.getAttribute('href').slice(1);
+      if (!id) return;
+
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, '', '#' + id);
+    });
+
+    /* Embedded Client-Side Search Engine with Domain Categories & Icons */
+    (function () {
+      const searchIndex = [
+        { title: "RTL Bench — Home", url: "/", category: "Platform", catClass: "cat-default", icon: "🏠", content: "Browser-based digital logic design, schematic elaboration, simulation, timing analysis, and FPGA flashing for Verilog and VHDL." },
+        { title: "Workbench / Studio", url: "/studio", category: "IDE / Studio", catClass: "cat-ide", icon: "💻", content: "Interactive HDL editor, real-time ELK netlist diagram generator, testbench execution, and interactive waveform inspection." },
+        { title: "Static Timing Analysis (STA) Engine", url: "/sta", category: "Timing Engine", catClass: "cat-timing", icon: "⏱️", content: "Interactive multi-corner timing analyzer across SkyWater 130nm, GlobalFoundries 180nm, and IHP SG13G2. Critical path breakdown and slack calculator." },
+        { title: "FPGA Flasher & Bitstream Builder", url: "/fpga", category: "Hardware", catClass: "cat-hardware", icon: "🔌", content: "Direct in-browser hardware flashing for Tang Nano 9K, Tang Nano 20K, and iCE40UP5K development boards via WebSerial." },
+        { title: "Clock Domain Crossing (CDC) Checker", url: "/cdc", category: "CDC Checker", catClass: "cat-cdc", icon: "🔀", content: "Topological netlist audit detecting asynchronous clock domain hazards, 2-FF synchronizers, and MTBF calculation." },
+        { title: "Learn RTL Bench: Feature Tour", url: "/learn", category: "Guide", catClass: "cat-guide", icon: "📖", content: "Visual tour of RTL Bench. Verilog, SystemVerilog, VHDL in browser. Block, hybrid, gate views. Waveform measurements, Delta T and frequency readout, cursor snapping." },
+        { title: "Verilog & SystemVerilog Guide", url: "/learn/verilog", category: "Languages", catClass: "cat-language", icon: "📖", content: "Synthesizable Verilog and SystemVerilog constructs. Always_ff, always_comb, logic, wire, non-blocking assignments, clock and active-low reset inferred automatically by Yosys." },
+        { title: "VHDL Guide & Compilation", url: "/learn/vhdl", category: "Languages", catClass: "cat-language", icon: "📖", content: "IEEE 1076-2008 VHDL compilation via GHDL. Entities, architectures, signals, processes, synchronous registers, std_logic, std_logic_vector, numeric_std arithmetic." },
+        { title: "Online VHDL Compiler", url: "/learn/vhdl-compiler-online", category: "Languages", catClass: "cat-language", icon: "📖", content: "Compile and synthesize VHDL-2008 online without vendor toolchains. GHDL to Yosys synthesis, netlist generation, interactive schematics, and simulation." },
+        { title: "Mixed-Language Projects", url: "/learn/mixed-language", category: "Languages", catClass: "cat-language", icon: "📖", content: "Co-elaboration mixing Verilog submodules inside VHDL architectures or instantiating VHDL entities in SystemVerilog top-levels via GHDL-Yosys plugin." },
+        { title: "Schematic & View Modes", url: "/learn/schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Hierarchical vs Flat netlists. Orthogonal layout engine powered by Eclipse Layout Kernel ELK. Vector bus collapsing [31:0], fused constant comparators, interactive net tracing." },
+        { title: "Verilog to Schematic Viewer", url: "/learn/verilog-to-schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Convert raw HDL code into visual gate-level circuits. Source code cross-probing: click gate cell to jump directly to editor source line. Export clean vector SVG diagrams." },
+        { title: "Simulation & Waveforms", url: "/learn/simulation", category: "Features", catClass: "cat-feature", icon: "📖", content: "Icarus Verilog testbench runner. Double-buffered waveform drawer. Dual measurement cursors A and B, magnetic edge snapping, delta T and frequency readout." },
+        { title: "Online Verilog Simulator", url: "/learn/online-verilog-simulator", category: "Features", catClass: "cat-feature", icon: "📖", content: "Run testbench-free simulations, auto-drive clocks and resets, generate interactive VCD traces in browser without installing local compilers." },
+        { title: "Multi-File HDL Projects", url: "/learn/multifile", category: "Features", catClass: "cat-feature", icon: "📖", content: "Drag and drop folders of .v, .sv, and .vhd files. Auto-detect top modules, compile multi-file hierarchies, and patch $readmemh memory arrays." },
+        { title: "Static Timing Analysis (STA)", url: "/learn/timing", category: "Features", catClass: "cat-feature", icon: "📖", content: "Gate-level static timing analysis. Critical path delay, setup slack calculation, hold violations, gate depth metrics across SkyWater 130nm, GF180MCU, and IHP SG13G2." },
+        { title: "Open-Source STA Guide", url: "/learn/open-source-sta", category: "Features", catClass: "cat-feature", icon: "📖", content: "Liberty table lookups, intrinsic cell propagation delays, load capacitance fan-out penalties across open PDKs." },
+        { title: "WebSerial FPGA Flasher Guide", url: "/learn/webserial-fpga-flasher", category: "Features", catClass: "cat-feature", icon: "📖", content: "Flash Tang Nano 9K, Tang Nano 20K, and iCE40UP5K directly in Google Chrome via WebSerial. Nextpnr place and route, automated pin safety filters, 25-iteration conflict recovery." },
+        { title: "Clock Domain Crossing (CDC) Guide", url: "/learn/clock-domain-crossing-checker", category: "Features", catClass: "cat-feature", icon: "📖", content: "Detect metastability in asynchronous clock boundaries. MTBF calculation formula, 2-FF and 3-FF synchronizers, multi-bit bus convergence hazards, Gray-coded asynchronous FIFOs." },
+        { title: "Concepts & Glossary", url: "/learn/concepts", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Definitions of synthesis, elaboration, netlists, LUTs, flip-flops, slack, propagation delay, metastability, and standard-cell libraries." },
+        { title: "Active-Low Reset Design Pattern", url: "/learn/active-low-reset", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Why digital designs use active-low reset (rst_n), asynchronous assert and synchronous de-assert circuits, and standard-cell reset pin polarities." },
+        { title: "STA Path Types Explained", url: "/learn/sta-path-types", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Classification of timing paths: Reg-to-Reg, In-to-Reg, Reg-to-Out, and In-to-Out. Setup and hold margin checks for each category." },
+        { title: "Open PDK Comparison: Sky130 vs GF180 vs IHP", url: "/learn/pdk-comparison", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Compare open-source silicon technologies: SkyWater 130nm, GlobalFoundries 180nm MCU, and IHP 130nm BiCMOS SG13G2 gate densities and speeds." },
+        { title: "EDA Tool Comparisons Hub", url: "/compare", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Architectural comparison of browser EDA tools, commercial ASIC suites (Synopsys, Cadence, Vivado), and open-source desktop stacks (Yosys, nextpnr, OpenROAD)." },
+        { title: "EDA Playground vs. RTL Bench", url: "/compare/eda-playground", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Commercial simulation engines VCS, Xcelium, Questa, and UVM class hierarchies vs. real-time ELK orthogonal schematics, zero-setup waveform cursors, Liberty STA, and WebSerial FPGA flashing." },
+        { title: "ChipVerify Lab vs. RTL Bench", url: "/compare/chip-verify", category: "Compare", catClass: "cat-compare", icon: "📖", content: "OpenROAD and KLayout Sky130 ASIC tapeout flow and tutorial quizzes vs. instant zero-login multi-PDK timing, VHDL-2008 support, and physical FPGA flashing." },
+        { title: "DigitalJS vs. RTL Bench", url: "/compare/digitaljs", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Spring-embedder physics layout and educational pin-toggling vs. production ELK layered routing, 32-bit vector bus collapsing, source-code cross-probing, and real silicon timing." },
+        { title: "About RTL Bench", url: "/about", category: "About", catClass: "cat-default", icon: "ℹ️", content: "About RTL Bench: an independent open-access cloud Electronic Design Automation platform for digital hardware engineering and education." },
+        { title: "Privacy Policy", url: "/privacy", category: "Legal", catClass: "cat-default", icon: "⚖️", content: "RTL Bench privacy policy, minimal logging practices, Firestore session handling, and data retention." },
+        { title: "Terms of Service & Disclaimers", url: "/terms", category: "Legal", catClass: "cat-default", icon: "⚖", content: "User RTL intellectual property ownership, pre-silicon timing estimation disclaimers, WebSerial hardware flashing electrical liability, and nominative fair use trademark notices." }
+      ];
+
+      const overlay = document.getElementById("search-overlay");
+      const input = document.getElementById("searchModalInput");
+      const results = document.getElementById("searchResultsList");
+
+      const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 900;
+      const isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform);
+      const hintText = isMac ? "⌘K" : "Ctrl K";
+
+      document.querySelectorAll(".shortcut-badge").forEach(el => {
+        if (isTouch) {
+          el.style.display = "none";
+        } else {
+          el.textContent = hintText;
+        }
+      });
+
+      window.openRtlSearch = function () {
+        if (!overlay) return;
+        overlay.classList.add("active");
+        input.value = "";
+        renderResults([]);
+        setTimeout(() => input.focus(), 30);
+      };
+
+      window.closeRtlSearch = function () {
+        if (!overlay) return;
+        overlay.classList.remove("active");
+      };
+
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) window.closeRtlSearch();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          overlay.classList.contains("active") ? window.closeRtlSearch() : window.openRtlSearch();
+        } else if (e.key === "Escape" && overlay.classList.contains("active")) {
+          window.closeRtlSearch();
+        }
+      });
+
+      input.addEventListener("input", function () {
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+          results.innerHTML = '<div class="search-empty-msg">Type keywords to search across all guides and features.</div>';
+          return;
+        }
+
+        const tokens = query.split(/\s+/).filter(Boolean);
+        const scored = searchIndex.map(doc => {
+          let score = 0;
+          const t = doc.title.toLowerCase();
+          const c = doc.content.toLowerCase();
+          const cat = doc.category.toLowerCase();
+          tokens.forEach(tok => {
+            if (t.includes(tok)) score += 10;
+            if (cat.includes(tok)) score += 5;
+            if (c.includes(tok)) score += 2;
+          });
+          return { doc, score };
+        }).filter(item => item.score > 0);
+
+        scored.sort((a, b) => b.score - a.score);
+        renderResults(scored.map(s => s.doc), query);
+      });
+
+      function highlight(text, q) {
+        if (!q) return text;
+        const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+        return text.replace(regex, "<mark>$1</mark>");
+      }
+
+      function getSnippet(content, q) {
+        const idx = content.toLowerCase().indexOf(q.toLowerCase());
+        if (idx === -1) return content.slice(0, 100) + "...";
+        const start = Math.max(0, idx - 30);
+        const end = Math.min(content.length, idx + 70);
+        return (start > 0 ? "..." : "") + content.slice(start, end) + (end < content.length ? "..." : "");
+      }
+
+      function renderResults(list, query) {
+        if (!list.length) {
+          if (query) {
+            results.innerHTML = `<div class="search-empty-msg">No results found for "${query}".</div>`;
+          }
+          return;
+        }
+
+        results.innerHTML = list.slice(0, 8).map(doc => {
+          const snippet = getSnippet(doc.content, query || "");
+          return `
+            <a href="${doc.url}" class="search-result-item" onclick="window.closeRtlSearch()">
+              <div class="search-result-top">
+                <span class="search-result-title">
+                  ${doc.icon ? `<span class="result-icon">${doc.icon}</span>` : ''}
+                  ${highlight(doc.title, query)}
+                </span>
+                <span class="search-result-cat ${doc.catClass || 'cat-default'}">${doc.category}</span>
+              </div>
+              <div class="search-result-snippet">${highlight(snippet, query)}</div>
+            </a>
+          `;
+        }).join("");
+      }
+    })();
+
+    /* Off-Canvas Navigation Drawer Controller */
+    (function () {
+      const sb  = document.getElementById('learnSidebar');
+      const bd  = document.getElementById('sidebarBackdrop');
+      const btn = document.getElementById('menuBtn');
+      if (!sb || !bd || !btn) return;
+
+      function setOpen(open) {
+        sb.classList.toggle('is-open', open);
+        bd.classList.toggle('is-open', open);
+        document.body.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        if (open) {
+          const a = sb.querySelector('a.active');
+          if (a) a.scrollIntoView({ block: 'center' });
+        }
+      }
+
+      btn.addEventListener('click', () => setOpen(!sb.classList.contains('is-open')));
+      bd.addEventListener('click', () => setOpen(false));
+      sb.addEventListener('click', e => {
+        if (e.target.closest('a, .sidebar-search-btn')) setOpen(false);
+      });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+      window.matchMedia('(min-width: 901px)').addEventListener('change', e => {
+        if (e.matches) setOpen(false);
+      });
+    })();
+  </script>
+
+  <script type="module" src="/src/search-constants.js"></script>
+  <script type="module" src="/src/search-modal.js"></script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+
+  <title>Clock Domain Crossing (CDC) Verification Guide — RTL Bench Learn</title>
+  <meta name="description" content="A comprehensive engineering guide to Clock Domain Crossing (CDC) verification: metastability, MTBF, 2-flop synchronizers, multi-bit bus skew, asynchronous FIFOs, and automated structural netlist tracing." />
+  <link rel="canonical" href="https://rtlbench.com/learn/clock-domain-crossing-checker" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Clock Domain Crossing (CDC) Verification Guide | RTL Bench" />
+  <meta property="og:description" content="Detect metastability, synchronize asynchronous clocks, and prevent multi-bit bus hazards in Verilog and SystemVerilog." />
+  <meta property="og:url" content="https://rtlbench.com/learn/clock-domain-crossing-checker" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="RTL Bench" />
+  <meta property="og:image" content="https://rtlbench.com/og-learn.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RTL Bench IDE waveform and schematic preview" />
+  <meta name="author" content="RTL Bench" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@rtlbench" />
+  <meta name="twitter:url" content="https://rtlbench.com/learn/clock-domain-crossing-checker" />
+  <meta name="twitter:image" content="https://rtlbench.com/og-learn.png" />
+  <meta name="twitter:title" content="Clock Domain Crossing (CDC) Verification Guide" />
+  <meta name="twitter:description" content="Detect metastability, synchronize asynchronous clocks, and prevent multi-bit bus hazards in Verilog and SystemVerilog." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LT20GTPEL1');
+  </script>
+
+  <!-- Structured Data: TechArticle, SoftwareApplication & FAQ for AI Overviews -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Clock Domain Crossing (CDC) Verification and Metastability Analysis Guide",
+        "description": "Comprehensive tutorial explaining how asynchronous clock domain crossings cause metastability, how to calculate MTBF, how to implement 2-FF synchronizers and Gray-coded asynchronous FIFOs, and how structural topological checkers audit netlists.",
+        "author": { "@type": "Organization", "name": "RTL Bench" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "RTL Bench",
+          "logo": { "@type": "ImageObject", "url": "https://rtlbench.com/logo.png" }
+        },
+        "datePublished": "2026-10-04",
+        "dateModified": "2026-10-04",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": "https://rtlbench.com/learn/clock-domain-crossing-checker" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "RTL Bench CDC Verification Engine",
+        "operatingSystem": "Browser",
+        "applicationCategory": "DeveloperApplication",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://rtlbench.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Learn", "item": "https://rtlbench.com/learn" },
+          { "@type": "ListItem", "position": 3, "name": "CDC Verification", "item": "https://rtlbench.com/learn/clock-domain-crossing-checker" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Clock Domain Crossing (CDC) and why is it dangerous in digital design?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A Clock Domain Crossing occurs when a signal launched by a flip-flop driven by one clock is sampled by a flip-flop driven by an asynchronous clock. Because the two clocks have independent phase and frequency relationships, the signal can violate setup or hold times, plunging the receiving flip-flop into a metastable state."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why can't you synchronize a multi-bit bus with standard 2-FF synchronizers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Different bits in a data bus experience different routing delays and cell propagation skews. If each bit passes through an independent 2-FF synchronizer, some bits will be captured one clock cycle earlier than others, creating corrupt intermediate data values. Multi-bit crossings require asynchronous FIFOs or Gray-coded pointer schemes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does automated structural CDC checking work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Automated CDC checkers parse the elaborated gate netlist to identify all flip-flop clock pins. The engine traces every sequential register backwards through combinational gates to its driving launch register. If the launch and capture clocks belong to different domains and no dedicated multi-stage synchronizer chain exists, a CDC hazard is flagged."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #080a0d;
+      color: #c9d1d9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre, kbd { font-family: 'JetBrains Mono', monospace; }
+
+    #navbar {
+      position: sticky; top: 0;
+      height: 48px;
+      background: rgba(17, 20, 24, 0.96);
+      border-bottom: 1px solid #262c36;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 10px;
+      backdrop-filter: blur(8px);
+      z-index: 30;
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1c2128; color: #c9d1d9;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: 5px 12px; font-size: 11px; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover { background: #262c36; color: #fff; border-color: #58a6ff; text-decoration: none; }
+    .nav-btn.primary { background: #1f6feb; border-color: #388bfd; color: #fff; }
+    .nav-btn.primary:hover { background: #388bfd; }
+    .nav-btn .arrow { color: #58a6ff; font-size: 13px; }
+    .brand { font-weight: 700; color: #e6edf3; font-size: 13px; text-decoration: none; }
+    .badge-pro { background: #ff9800; color: #000; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 4px; }
+
+    .learn-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .learn-sidebar {
+      order: 1;
+      flex: 0 0 240px;
+      width: 240px;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 20px 16px 40px 20px;
+      border-right: 1px solid #21262d;
+    }
+    .learn-sidebar::-webkit-scrollbar { width: 5px; }
+    .learn-sidebar::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+    .sidebar-search-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+      padding: 7px 11px; color: #8b949e; font-size: 12px;
+      cursor: pointer; margin-bottom: 20px; transition: all 0.15s;
+      font-family: inherit;
+    }
+    .sidebar-search-btn:hover { border-color: #58a6ff; color: #f0f6fc; background: #111418; }
+    .sidebar-search-btn .shortcut-badge {
+      font-size: 9.5px; background: #161b22; border: 1px solid #30363d;
+      padding: 2px 5px; border-radius: 4px; color: #7d8590; font-family: 'JetBrains Mono', monospace;
+    }
+
+    .learn-sidebar .nav-group { margin-bottom: 22px; }
+    .learn-sidebar .nav-group-title {
+      font-size: 10px; font-weight: 700;
+      color: #6e7681; letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px; padding: 0 8px;
+    }
+    .learn-sidebar a {
+      display: block;
+      padding: 5px 8px 5px 10px;
+      font-size: 12.5px;
+      color: #8b949e;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: all 0.12s;
+    }
+    .learn-sidebar a:hover {
+      color: #e6edf3;
+      background: #111418;
+      text-decoration: none;
+    }
+    .learn-sidebar a.active {
+      color: #58a6ff;
+      background: rgba(88, 166, 255, 0.08);
+      border-left-color: #58a6ff;
+      font-weight: 600;
+    }
+
+    .learn-content {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+      max-width: 860px;
+      padding: 40px 40px 80px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: #6e7681;
+      margin-bottom: 20px;
+      display: flex; gap: 6px; align-items: center;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #8b949e; }
+    .breadcrumb a:hover { color: #58a6ff; }
+    .breadcrumb .sep { color: #484f58; }
+
+    h1 {
+      font-size: 30px; font-weight: 700;
+      color: #f0f6fc; letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .lede {
+      font-size: 15px;
+      color: #8b949e;
+      margin-bottom: 32px;
+      max-width: 680px;
+    }
+
+    h2 {
+      font-size: 19px; font-weight: 700; color: #f0f6fc;
+      letter-spacing: -0.2px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #21262d;
+    }
+    h3 {
+      font-size: 14px; font-weight: 700; color: #e6edf3;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { color: #c9d1d9; margin-bottom: 14px; max-width: 720px; }
+    ul, ol { margin: 8px 0 16px 22px; color: #c9d1d9; max-width: 720px; }
+    li { margin-bottom: 6px; }
+
+    code {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12.5px;
+      color: #79c0ff;
+    }
+    pre {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      color: #c9d1d9;
+      line-height: 1.55;
+      margin: 10px 0 18px;
+      max-width: 720px;
+      -webkit-overflow-scrolling: touch;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .kw  { color: #ff7b72; }
+    .fn  { color: #d2a8ff; }
+    .nu  { color: #79c0ff; }
+    .st  { color: #a5d6ff; }
+    .cm  { color: #6e7681; font-style: italic; }
+    .ty  { color: #7ee787; }
+
+    .callout {
+      display: flex; gap: 12px;
+      background: #0d1117; border: 1px solid #21262d;
+      border-left: 3px solid #58a6ff;
+      border-radius: 6px; padding: 12px 16px;
+      margin: 16px 0; font-size: 13px; color: #c9d1d9;
+      max-width: 720px;
+    }
+    .callout.tip  { border-left-color: #3fb950; }
+    .callout.warn { border-left-color: #e3b341; }
+    .callout-icon { font-size: 15px; line-height: 1.4; }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 20px;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      max-width: 720px;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #21262d; }
+    tr:last-child td { border-bottom: none; }
+    th {
+      background: #111418;
+      color: #8b949e;
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1f6feb; color: #fff;
+      padding: 11px 22px; border-radius: 6px;
+      font-size: 13.5px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s;
+      margin-top: 12px;
+    }
+    .cta:hover { background: #388bfd; text-decoration: none; }
+
+    .next-steps {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #21262d;
+    }
+    .next-steps h2 { margin-top: 0; border-bottom: none; padding-bottom: 0; }
+    .next-steps ul { list-style: none; margin-left: 0; }
+    .next-steps li {
+      padding: 10px 0;
+      border-bottom: 1px solid #161b22;
+    }
+    .next-steps li:last-child { border-bottom: none; }
+    .next-steps a { font-weight: 600; }
+    .next-steps .desc { color: #8b949e; font-size: 12.5px; display: block; margin-top: 2px; }
+
+    .faq-item { margin-bottom: 20px; }
+    .faq-item strong { display: block; color: #f0f6fc; font-size: 13.5px; margin-bottom: 4px; }
+    .faq-item p { margin-bottom: 0; font-size: 13px; }
+
+    footer {
+      margin-top: 60px; padding-top: 24px;
+      border-top: 1px solid #21262d;
+      font-size: 12px; color: #484f58;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+
+    /* ========== Search Modal Overlay (inline fallback) ========== */
+    #search-overlay {
+      position: fixed; inset: 0; background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 99999; display: none; align-items: flex-start; justify-content: center;
+      padding: 12vh 16px 20px;
+    }
+    #search-overlay.active { display: flex; }
+    .search-modal {
+      width: 100%; max-width: 600px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; box-shadow: 0 24px 50px rgba(0,0,0,0.9); overflow: hidden;
+      display: flex; flex-direction: column; max-height: 75vh;
+    }
+    .search-modal-header {
+      display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid #21262d;
+      gap: 10px; background: #111418;
+    }
+    .search-modal-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #f0f6fc; font-family: inherit; font-size: 16px;
+    }
+    .search-modal-input::placeholder { color: #6e7681; }
+    .search-close-key {
+      background: #1c2128; border: 1px solid #30363d; border-radius: 4px;
+      padding: 4px 8px; font-size: 11px; color: #8b949e; cursor: pointer;
+    }
+    .search-results-list { overflow-y: auto; padding: 6px; flex: 1; }
+    .search-result-item {
+      display: block; padding: 10px 12px; border-radius: 6px; text-decoration: none;
+      color: inherit; transition: background 0.12s;
+    }
+    .search-result-item:hover { background: #161b22; text-decoration: none; }
+    .search-result-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
+    .search-result-title { color: #58a6ff; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+    .result-icon { font-size: 13px; line-height: 1; }
+    .search-result-cat {
+      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.3px; text-transform: uppercase;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .cat-ide { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .cat-timing { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .cat-hardware { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .cat-cdc { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+    .cat-language { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .cat-feature { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.35); }
+    .cat-guide { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35); }
+    .cat-reference { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .cat-compare { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
+    .cat-default { background: #1f242c; color: #8b949e; border: 1px solid #30363d; }
+
+    .search-result-snippet { font-size: 12px; color: #8b949e; line-height: 1.45; }
+    .search-result-snippet mark { background: rgba(88, 166, 255, 0.22); color: #79c0ff; border-radius: 2px; padding: 0 2px; }
+    .search-empty-msg { padding: 32px 16px; text-align: center; color: #6e7681; font-size: 13px; }
+    .search-modal-footer {
+      padding: 8px 14px; border-top: 1px solid #21262d; background: #090c10;
+      font-size: 11px; color: #6e7681; display: flex; justify-content: space-between;
+    }
+
+    /* Mobile Controls Default (Hidden on Desktop) */
+    .nav-menu-btn, .nav-search-btn, .sidebar-backdrop {
+      display: none !important;
+    }
+
+    /* Mobile & Tablet Optimization */
+    @media (max-width: 900px) {
+      .nav-menu-btn {
+        display: inline-flex !important;
+        font-size: 15px;
+        padding: 5px 11px;
+      }
+      .nav-search-btn {
+        display: inline-flex !important;
+        font-size: 14px;
+        padding: 5px 11px;
+      }
+      .nav-back {
+        display: none !important;
+      }
+
+      .learn-layout {
+        display: block !important;
+      }
+      .learn-content {
+        order: 2;
+        padding: 24px 16px 60px !important;
+        max-width: 100% !important;
+      }
+
+      /* Off-Canvas Slide-out Drawer */
+      .learn-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 82% !important;
+        max-width: 320px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        flex: none !important;
+        padding: 16px 14px 40px 16px !important;
+        background: #0d1117 !important;
+        border-right: 1px solid #262c36 !important;
+        border-bottom: none !important;
+        box-shadow: 8px 0 32px rgba(0,0,0,.6) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        white-space: normal !important;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(-102%) !important;
+        transition: transform .25s ease !important;
+        z-index: 1000 !important;
+        display: block !important;
+      }
+      .learn-sidebar.is-open {
+        transform: translateX(0) !important;
+      }
+      .learn-sidebar a {
+        display: block !important;
+        padding: 9px 10px !important;
+        font-size: 14px !important;
+        border-radius: 0 4px 4px 0 !important;
+        border: none !important;
+        border-left: 2px solid transparent !important;
+        background: transparent !important;
+        white-space: normal !important;
+      }
+      .learn-sidebar a:hover {
+        color: #e6edf3 !important;
+        background: #111418 !important;
+      }
+      .learn-sidebar a.active {
+        color: #58a6ff !important;
+        background: rgba(88, 166, 255, 0.08) !important;
+        border-left-color: #58a6ff !important;
+        font-weight: 600 !important;
+      }
+      .learn-sidebar .nav-group {
+        display: block !important;
+        margin-bottom: 22px !important;
+      }
+      .learn-sidebar .nav-group-title {
+        display: block !important;
+      }
+      .learn-sidebar nav {
+        display: block !important;
+        width: 100% !important;
+      }
+      .sidebar-search-btn {
+        display: flex !important;
+        padding: 11px 12px !important;
+        font-size: 14px !important;
+      }
+
+      /* Modal Backdrop */
+      .sidebar-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(5, 7, 10, .72) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity .25s ease !important;
+        z-index: 999 !important;
+      }
+      .sidebar-backdrop.is-open {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      body.menu-open {
+        overflow: hidden !important;
+      }
+
+      #search-overlay {
+        padding-top: 5vh;
+      }
+      .search-modal-footer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+      pre {
+        padding: 12px 14px;
+        font-size: 11.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .learn-sidebar, .sidebar-backdrop {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar" aria-label="Site">
+    <button type="button" class="nav-btn nav-menu-btn" id="menuBtn" aria-label="Open Navigation" aria-expanded="false">
+      ☰
+    </button>
+    <button type="button" class="nav-btn nav-back" onclick="learnGoBack()">
+      <span class="arrow">←</span><span>Back</span>
+    </button>
+    <a href="/" class="brand">RTL Bench<span class="badge-pro">PRO</span></a>
+    <div style="flex:1;"></div>
+    <button type="button" class="nav-btn nav-search-btn" onclick="openRtlSearch()" aria-label="Search">
+      🔍
+    </button>
+    <a href="/cdc" class="nav-btn primary">Open CDC Report →</a>
+  </nav>
+
+  <!-- Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="learn-layout">
+
+    <!-- ============================================================
+         Sidebar (left column)
+         ============================================================ -->
+    <aside class="learn-sidebar" id="learnSidebar" aria-label="Learn navigation">
+
+      <!-- Quick Search Button in Sidebar -->
+      <button type="button" class="sidebar-search-btn" onclick="openRtlSearch()">
+        <span style="display:flex; align-items:center; gap:6px;">
+          <span>🔍</span> Quick search...
+        </span>
+        <kbd class="shortcut-badge"></kbd>
+      </button>
+
+      <nav>
+        <div class="nav-group">
+          <div class="nav-group-title">Learn</div>
+          <a href="/learn">Feature tour</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Languages</div>
+          <a href="/learn/verilog">Verilog &amp; SystemVerilog</a>
+          <a href="/learn/vhdl">VHDL</a>
+          <a href="/learn/vhdl-compiler-online">Online VHDL compiler</a>
+          <a href="/learn/mixed-language">Mixed-language projects</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Features</div>
+          <a href="/learn/schematic">Schematic &amp; views</a>
+          <a href="/learn/verilog-to-schematic">Verilog to schematic</a>
+          <a href="/learn/simulation">Simulation &amp; waveforms</a>
+          <a href="/learn/online-verilog-simulator">Online simulator guide</a>
+          <a href="/learn/multifile">Multi-file projects</a>
+          <a href="/learn/timing">Timing analysis (STA)</a>
+          <a href="/learn/open-source-sta">Open-source STA</a>
+          <a href="/learn/webserial-fpga-flasher">WebSerial FPGA flasher</a>
+          <a href="/learn/clock-domain-crossing-checker" class="active" aria-current="page">CDC verification guide</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Reference</div>
+          <a href="/learn/concepts">Concepts &amp; glossary</a>
+          <a href="/learn/active-low-reset">Active-low reset</a>
+          <a href="/learn/sta-path-types">STA path types</a>
+          <a href="/learn/pdk-comparison">PDK comparison</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Comparisons &amp; Tools</div>
+          <a href="/compare">All EDA comparisons</a>
+          <a href="/compare/eda-playground">vs. EDA Playground</a>
+          <a href="/compare/chip-verify">vs. ChipVerify Lab</a>
+          <a href="/compare/digitaljs">vs. DigitalJS</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ============================================================
+         Content (right column)
+         ============================================================ -->
+    <main class="learn-content">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/learn">Learn</a>
+        <span class="sep">/</span>
+        <span>Clock Domain Crossing</span>
+      </nav>
+
+      <h1>Clock Domain Crossing (CDC): Preventing Silicon Metastability</h1>
+
+      <p class="lede">
+        When digital data passes between asynchronous clock domains, standard static
+        timing analysis (STA) cannot guarantee timing closure. Unsynchronized signals
+        inevitably violate setup or hold windows, causing flip-flops to hover in
+        metastable states. This guide breaks down CDC physics, synchronizer design,
+        and automated structural verification.
+      </p>
+
+      <h2>1. The physics of metastability &amp; MTBF</h2>
+
+      <p>
+        Every sequential flip-flop contains internal cross-coupled inverters. If data toggles
+        inside the forbidden aperture window (defined by setup time <i>T</i><sub>setup</sub> and
+        hold time <i>T</i><sub>hold</sub>), the internal latch cannot immediately resolve to a
+        clean <code>0</code> or <code>1</code>.
+      </p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <span><b>The Mean Time Between Failures (MTBF) Formula:</b> The statistical likelihood of a synchronizer failure over time is defined by:</span>
+      </div>
+
+      <pre><code>MTBF = exp(T_resolve / tau) / (T_0 * f_clk * f_data)</code></pre>
+
+      <ul>
+        <li><b><i>f</i><sub>clk</sub> (Receiver Clock Frequency):</b> The sampling rate of the destination clock domain.</li>
+        <li><b><i>f</i><sub>data</sub> (Asynchronous Data Transition Rate):</b> How frequently the incoming signal changes state.</li>
+        <li><b><i>T</i><sub>resolve</sub> (Settling Time):</b> Time allowed for the flip-flop output to settle before downstream logic samples it.</li>
+        <li><b>&tau; &amp; <i>T</i><sub>0</sub> (Silicon Process Constants):</b> Intrinsic physical parameters of the chosen foundry library.</li>
+      </ul>
+
+      <p>
+        Because settling probability increases exponentially with available resolution time,
+        inserting cascade flip-flops (the classic 2-FF or 3-FF synchronizer) extends MTBF from
+        milliseconds into centuries.
+      </p>
+
+      <h2>2. Single-bit synchronization: The 2-FF synchronizer</h2>
+
+      <p>
+        For quasi-static control signals and pulses, a <b>Two Flip-Flop (2-FF) Synchronizer</b>
+        provides adequate metastability protection:
+      </p>
+
+      <pre><code><span class="cm">// Asynchronous single-bit 2-FF synchronizer</span>
+<span class="kw">module</span> <span class="fn">sync_2ff</span> (
+  <span class="kw">input</span>  <span class="kw">wire</span> clk_b,    <span class="cm">// Destination clock domain</span>
+  <span class="kw">input</span>  <span class="kw">wire</span> rst_n,    <span class="cm">// Active-low reset (destination domain)</span>
+  <span class="kw">input</span>  <span class="kw">wire</span> async_in, <span class="cm">// Signal launched from clk_a</span>
+  <span class="kw">output</span> <span class="kw">reg</span>  sync_out
+);
+  <span class="kw">reg</span> meta_stage;
+
+  <span class="kw">always</span> @(<span class="kw">posedge</span> clk_b <span class="kw">or negedge</span> rst_n) <span class="kw">begin</span>
+    <span class="kw">if</span> (!rst_n) <span class="kw">begin</span>
+      meta_stage &lt;= <span class="nu">1'b0</span>;
+      sync_out   &lt;= <span class="nu">1'b0</span>;
+    <span class="kw">end else begin</span>
+      meta_stage &lt;= async_in;   <span class="cm">// Stage 1: Absorbs potential metastability</span>
+      sync_out   &lt;= meta_stage;  <span class="cm">// Stage 2: Clean, resolved synchronous output</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">endmodule</span></code></pre>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <span><b>The No-Combinational Rule:</b> Never place combinational logic (AND, OR, MUX) between the launch register and the first synchronizer flip-flop, or between synchronizer stages. Intermediate logic gates introduce glitches that drastically degrade MTBF.</span>
+      </div>
+
+      <h2>3. Multi-bit bus crossings: Why 2-FF synchronizers fail</h2>
+
+      <p>
+        A common pitfall in digital logic design is placing a 2-FF synchronizer on each bit
+        of a multi-bit data bus (e.g. <code>data[31:0]</code>).
+      </p>
+
+      <p>
+        Because physical wires have subtle routing skew differences, individual bits will
+        not arrive at identical picoseconds. The destination domain may sample some bits
+        in cycle <i>N</i> and others in cycle <i>N+1</i>. When transmitting from <code>0x00FF</code>
+        to <code>0x0100</code>, intermediate corruption states like <code>0x0000</code> or <code>0x01FF</code>
+        will be captured.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Crossing Pattern</th>
+              <th>Recommended Solution</th>
+              <th>Engineering Trade-Off</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Single-Bit Control Flag</b></td>
+              <td>2-Stage or 3-Stage DFF Synchronizer</td>
+              <td>Adds 2 clock cycles of latency; zero area overhead.</td>
+            </tr>
+            <tr>
+              <td><b>Multi-Bit Quasi-Static Bus</b></td>
+              <td>Source-Synchronous Handshake (REQ / ACK)</td>
+              <td>Multi-cycle handshake latency; guarantees stable bus data.</td>
+            </tr>
+            <tr>
+              <td><b>Continuous Streaming Data</b></td>
+              <td>Asynchronous Dual-Clock FIFO</td>
+              <td>Requires dual-port SRAM and Gray-coded read/write pointers.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Gray-coded pointers in asynchronous FIFOs</h3>
+
+      <p>
+        In an asynchronous dual-clock FIFO, multi-bit pointers must cross between write
+        and read domains to compute <code>full</code> and <code>empty</code> flags.
+        By encoding pointer counters in <b>Gray code</b> (where only one bit changes per count),
+        bus convergence hazards are eliminated:
+      </p>
+
+      <pre><code><span class="cm">// Binary to Gray code conversion</span>
+<span class="kw">assign</span> gray_ptr = bin_ptr ^ (bin_ptr &gt;&gt; <span class="nu">1</span>);
+
+<span class="cm">// Gray code to Binary conversion (for 4-bit pointers)</span>
+<span class="kw">assign</span> bin_ptr[<span class="nu">3</span>] = gray_ptr[<span class="nu">3</span>];
+<span class="kw">assign</span> bin_ptr[<span class="nu">2</span>] = gray_ptr[<span class="nu">3</span>] ^ gray_ptr[<span class="nu">2</span>];
+<span class="kw">assign</span> bin_ptr[<span class="nu">1</span>] = gray_ptr[<span class="nu">3</span>] ^ gray_ptr[<span class="nu">2</span>] ^ gray_ptr[<span class="nu">1</span>];
+<span class="kw">assign</span> bin_ptr[<span class="nu">0</span>] = gray_ptr[<span class="nu">3</span>] ^ gray_ptr[<span class="nu">2</span>] ^ gray_ptr[<span class="nu">1</span>] ^ gray_ptr[<span class="nu">0</span>];</code></pre>
+
+      <h2>4. Automated structural CDC verification in RTL Bench</h2>
+
+      <p>
+        Dynamic simulations rarely catch CDC bugs because ideal testbenches simulate with
+        fixed zero-skew clock relationships. RTL Bench executes a <b>static structural CDC audit</b>
+        directly on the elaborated gate netlist during synthesis:
+      </p>
+
+      <ol>
+        <li>
+          <b>Clock Domain Extraction:</b> The auditor identifies every D flip-flop cell in the
+          netlist, parsing its clock pin (<code>CLK</code>, <code>C</code>) to group registers into
+          distinct domain sets.
+        </li>
+        <li>
+          <b>Topological Back-Tracing:</b> For every capturing flip-flop, the engine traverses input
+          nets backward through combinational logic gates until it reaches driving source flip-flops.
+        </li>
+        <li>
+          <b>Domain Boundary Evaluation:</b> If a launch flip-flop and capture flip-flop reside on
+          different clock nets, the path is flagged as an inter-domain boundary.
+        </li>
+        <li>
+          <b>Synchronizer Pattern Matching:</b> The engine checks whether the destination register feeds
+          into a 2-stage back-to-back flip-flop chain without intervening combinational gates.
+          Safe chains are marked as verified synchronizers; direct unbuffered crossings are reported as
+          <b>UNSYNCHRONIZED CDC HAZARDS</b>.
+        </li>
+      </ol>
+
+      <h2>Frequently asked questions</h2>
+
+      <div class="faq-item">
+        <strong>What is Clock Domain Crossing (CDC) and why is it dangerous in digital design?</strong>
+        <p>A Clock Domain Crossing occurs when a signal launched by a flip-flop driven by one clock is sampled by a flip-flop driven by an asynchronous clock. Because the two clocks have independent phase and frequency relationships, the signal can violate setup or hold times, plunging the receiving flip-flop into a metastable state.</p>
+      </div>
+
+      <div class="faq-item">
+        <strong>Why can't you synchronize a multi-bit bus with standard 2-FF synchronizers?</strong>
+        <p>Different bits in a data bus experience different routing delays and cell propagation skews. If each bit passes through an independent 2-FF synchronizer, some bits will be captured one clock cycle earlier than others, creating corrupt intermediate data values. Multi-bit crossings require asynchronous FIFOs or Gray-coded pointer schemes.</p>
+      </div>
+
+      <div class="faq-item">
+        <strong>Can static timing analysis (STA) catch CDC errors?</strong>
+        <p>No. STA calculates propagation delays between synchronous registers governed by a common clock tree. On asynchronous boundaries, STA will report artificial setup and hold timing violations. Once synchronizers are verified, they must be set as <code>set_false_path</code> or <code>set_clock_groups -asynchronous</code> in your SDC constraints.</p>
+      </div>
+
+      <div class="next-steps">
+        <h2>Next</h2>
+        <ul>
+          <li>
+            <a href="/cdc">Inspect CDC Verification Report</a>
+            <span class="desc">View domain interaction matrices, hazard lists, and export SDC false-path constraints.</span>
+          </li>
+          <li>
+            <a href="/learn/timing">Timing analysis (STA) guide</a>
+            <span class="desc">Calculate setup slack and critical paths for synchronous clock domains.</span>
+          </li>
+          <li>
+            <a href="/learn/verilog-to-schematic">Verilog to schematic</a>
+            <span class="desc">Inspect visual netlists and track register-to-register connections interactively.</span>
+          </li>
+        </ul>
+      </div>
+
+      <a href="/cdc" class="cta" style="margin-top: 32px;">Open CDC verification tool →</a>
+
+      <footer>
+        <span>© RTL Bench</span>
+        <span>
+          <a href="/">Home</a> &nbsp;·&nbsp;
+          <a href="/studio">Workbench</a> &nbsp;·&nbsp;
+          <a href="/sta">STA</a> &nbsp;·&nbsp;
+          <a href="/compare">Compare</a> &nbsp;·&nbsp;
+          <a href="/terms">Terms</a> &nbsp;·&nbsp;
+          <a href="/privacy">Privacy</a>
+        </span>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ============================================================
+       Search Modal Overlay (inline fallback — same as learn/index.html)
+       ============================================================ -->
+  <div id="search-overlay" role="dialog" aria-modal="true">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <span style="color:#8b949e; font-size:12px;">🔍</span>
+        <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search documentation, timing, CDC, FPGA..." autocomplete="off" />
+        <button class="search-close-key" type="button" onclick="closeRtlSearch()">ESC</button>
+      </div>
+      <div class="search-results-list" id="searchResultsList">
+        <div class="search-empty-msg">Type keywords to search across all guides and features.</div>
+      </div>
+      <div class="search-modal-footer">
+        <span>Navigate <kbd style="font-family:monospace;">↑</kbd> <kbd style="font-family:monospace;">↓</kbd></span>
+        <span>Open <kbd style="font-family:monospace;">↵</kbd></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function learnGoBack() {
+    if (!sessionStorage.getItem('rtl_learn_entry')) {
+      let entry = '/';
+      const ref = document.referrer;
+      if (ref) {
+        try {
+          const u = new URL(ref);
+          if (u.origin === location.origin) {
+            entry = u.pathname + u.search;
+          }
+        } catch (_) {}
+      }
+      sessionStorage.setItem('rtl_learn_entry', entry);
+    }
+
+    const ref = document.referrer;
+    if (ref) {
+      try {
+        const u = new URL(ref);
+        if (u.origin === location.origin && history.length > 1) {
+          history.back();
+          return;
+        }
+      } catch (_) {}
+    }
+
+    const entry = sessionStorage.getItem('rtl_learn_entry') || '/';
+    window.location.href = entry;
+  }
+
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', '#' + id);
+  });
+
+  /* Embedded Client-Side Search Engine with Domain Categories & Icons */
+  (function () {
+    const searchIndex = [
+      { title: "RTL Bench — Home", url: "/", category: "Platform", catClass: "cat-default", icon: "🏠", content: "Browser-based digital logic design, schematic elaboration, simulation, timing analysis, and FPGA flashing for Verilog and VHDL." },
+      { title: "Workbench / Studio", url: "/studio", category: "IDE / Studio", catClass: "cat-ide", icon: "💻", content: "Interactive HDL editor, real-time ELK netlist diagram generator, testbench execution, and interactive waveform inspection." },
+      { title: "Static Timing Analysis (STA) Engine", url: "/sta", category: "Timing Engine", catClass: "cat-timing", icon: "⏱️", content: "Interactive multi-corner timing analyzer across SkyWater 130nm, GlobalFoundries 180nm, and IHP SG13G2. Critical path breakdown and slack calculator." },
+      { title: "FPGA Flasher & Bitstream Builder", url: "/fpga", category: "Hardware", catClass: "cat-hardware", icon: "🔌", content: "Direct in-browser hardware flashing for Tang Nano 9K, Tang Nano 20K, and iCE40UP5K development boards via WebSerial." },
+      { title: "Clock Domain Crossing (CDC) Checker", url: "/cdc", category: "CDC Checker", catClass: "cat-cdc", icon: "🔀", content: "Topological netlist audit detecting asynchronous clock domain hazards, 2-FF synchronizers, and MTBF calculation." },
+      { title: "Learn RTL Bench: Feature Tour", url: "/learn", category: "Guide", catClass: "cat-guide", icon: "📖", content: "Visual tour of RTL Bench. Verilog, SystemVerilog, VHDL in browser. Block, hybrid, gate views. Waveform measurements, Delta T and frequency readout, cursor snapping." },
+      { title: "Verilog & SystemVerilog Guide", url: "/learn/verilog", category: "Languages", catClass: "cat-language", icon: "📖", content: "Synthesizable Verilog and SystemVerilog constructs. Always_ff, always_comb, logic, wire, non-blocking assignments, clock and active-low reset inferred automatically by Yosys." },
+      { title: "VHDL Guide & Compilation", url: "/learn/vhdl", category: "Languages", catClass: "cat-language", icon: "📖", content: "IEEE 1076-2008 VHDL compilation via GHDL. Entities, architectures, signals, processes, synchronous registers, std_logic, std_logic_vector, numeric_std arithmetic." },
+      { title: "Online VHDL Compiler", url: "/learn/vhdl-compiler-online", category: "Languages", catClass: "cat-language", icon: "📖", content: "Compile and synthesize VHDL-2008 online without vendor toolchains. GHDL to Yosys synthesis, netlist generation, interactive schematics, and simulation." },
+      { title: "Mixed-Language Projects", url: "/learn/mixed-language", category: "Languages", catClass: "cat-language", icon: "📖", content: "Co-elaboration mixing Verilog submodules inside VHDL architectures or instantiating VHDL entities in SystemVerilog top-levels via GHDL-Yosys plugin." },
+      { title: "Schematic & View Modes", url: "/learn/schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Hierarchical vs Flat netlists. Orthogonal layout engine powered by Eclipse Layout Kernel ELK. Vector bus collapsing [31:0], fused constant comparators, interactive net tracing." },
+      { title: "Verilog to Schematic Viewer", url: "/learn/verilog-to-schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Convert raw HDL code into visual gate-level circuits. Source code cross-probing: click gate cell to jump directly to editor source line. Export clean vector SVG diagrams." },
+      { title: "Simulation & Waveforms", url: "/learn/simulation", category: "Features", catClass: "cat-feature", icon: "📖", content: "Icarus Verilog testbench runner. Double-buffered waveform drawer. Dual measurement cursors A and B, magnetic edge snapping, delta T and frequency readout." },
+      { title: "Online Verilog Simulator", url: "/learn/online-verilog-simulator", category: "Features", catClass: "cat-feature", icon: "📖", content: "Run testbench-free simulations, auto-drive clocks and resets, generate interactive VCD traces in browser without installing local compilers." },
+      { title: "Multi-File HDL Projects", url: "/learn/multifile", category: "Features", catClass: "cat-feature", icon: "📖", content: "Drag and drop folders of .v, .sv, and .vhd files. Auto-detect top modules, compile multi-file hierarchies, and patch $readmemh memory arrays." },
+      { title: "Static Timing Analysis (STA)", url: "/learn/timing", category: "Features", catClass: "cat-feature", icon: "📖", content: "Gate-level static timing analysis. Critical path delay, setup slack calculation, hold violations, gate depth metrics across SkyWater 130nm, GF180MCU, and IHP SG13G2." },
+      { title: "Open-Source STA Guide", url: "/learn/open-source-sta", category: "Features", catClass: "cat-feature", icon: "📖", content: "Liberty table lookups, intrinsic cell propagation delays, load capacitance fan-out penalties across open PDKs." },
+      { title: "WebSerial FPGA Flasher Guide", url: "/learn/webserial-fpga-flasher", category: "Features", catClass: "cat-feature", icon: "📖", content: "Flash Tang Nano 9K, Tang Nano 20K, and iCE40UP5K directly in Google Chrome via WebSerial. Nextpnr place and route, automated pin safety filters, 25-iteration conflict recovery." },
+      { title: "Clock Domain Crossing (CDC) Guide", url: "/learn/clock-domain-crossing-checker", category: "Features", catClass: "cat-feature", icon: "📖", content: "Detect metastability in asynchronous clock boundaries. MTBF calculation formula, 2-FF and 3-FF synchronizers, multi-bit bus convergence hazards, Gray-coded asynchronous FIFOs." },
+      { title: "Concepts & Glossary", url: "/learn/concepts", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Definitions of synthesis, elaboration, netlists, LUTs, flip-flops, slack, propagation delay, metastability, and standard-cell libraries." },
+      { title: "Active-Low Reset Design Pattern", url: "/learn/active-low-reset", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Why digital designs use active-low reset (rst_n), asynchronous assert and synchronous de-assert circuits, and standard-cell reset pin polarities." },
+      { title: "STA Path Types Explained", url: "/learn/sta-path-types", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Classification of timing paths: Reg-to-Reg, In-to-Reg, Reg-to-Out, and In-to-Out. Setup and hold margin checks for each category." },
+      { title: "Open PDK Comparison: Sky130 vs GF180 vs IHP", url: "/learn/pdk-comparison", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Compare open-source silicon technologies: SkyWater 130nm, GlobalFoundries 180nm MCU, and IHP 130nm BiCMOS SG13G2 gate densities and speeds." },
+      { title: "EDA Tool Comparisons Hub", url: "/compare", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Architectural comparison of browser EDA tools, commercial ASIC suites (Synopsys, Cadence, Vivado), and open-source desktop stacks (Yosys, nextpnr, OpenROAD)." },
+      { title: "EDA Playground vs. RTL Bench", url: "/compare/eda-playground", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Commercial simulation engines VCS, Xcelium, Questa, and UVM class hierarchies vs. real-time ELK orthogonal schematics, zero-setup waveform cursors, Liberty STA, and WebSerial FPGA flashing." },
+      { title: "ChipVerify Lab vs. RTL Bench", url: "/compare/chip-verify", category: "Compare", catClass: "cat-compare", icon: "📖", content: "OpenROAD and KLayout Sky130 ASIC tapeout flow and tutorial quizzes vs. instant zero-login multi-PDK timing, VHDL-2008 support, and physical FPGA flashing." },
+      { title: "DigitalJS vs. RTL Bench", url: "/compare/digitaljs", category: "Compare", catClass: "cat-compare", icon: "📖", content: "Spring-embedder physics layout and educational pin-toggling vs. production ELK layered routing, 32-bit vector bus collapsing, source-code cross-probing, and real silicon timing." },
+      { title: "About RTL Bench", url: "/about", category: "About", catClass: "cat-default", icon: "ℹ️", content: "About RTL Bench: an independent open-access cloud Electronic Design Automation platform for digital hardware engineering and education." },
+      { title: "Privacy Policy", url: "/privacy", category: "Legal", catClass: "cat-default", icon: "⚖️", content: "RTL Bench privacy policy, minimal logging practices, Firestore session handling, and data retention." },
+      { title: "Terms of Service & Disclaimers", url: "/terms", category: "Legal", catClass: "cat-default", icon: "⚖", content: "User RTL intellectual property ownership, pre-silicon timing estimation disclaimers, WebSerial hardware flashing electrical liability, and nominative fair use trademark notices." }
+    ];
+
+    const overlay = document.getElementById("search-overlay");
+    const input = document.getElementById("searchModalInput");
+    const results = document.getElementById("searchResultsList");
+
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 900;
+    const isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform);
+    const hintText = isMac ? "⌘K" : "Ctrl K";
+
+    document.querySelectorAll(".shortcut-badge").forEach(el => {
+      if (isTouch) {
+        el.style.display = "none";
+      } else {
+        el.textContent = hintText;
+      }
+    });
+
+    window.openRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.add("active");
+      input.value = "";
+      renderResults([]);
+      setTimeout(() => input.focus(), 30);
+    };
+
+    window.closeRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.remove("active");
+    };
+
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) window.closeRtlSearch();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        overlay.classList.contains("active") ? window.closeRtlSearch() : window.openRtlSearch();
+      } else if (e.key === "Escape" && overlay.classList.contains("active")) {
+        window.closeRtlSearch();
+      }
+    });
+
+    input.addEventListener("input", function () {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        results.innerHTML = '<div class="search-empty-msg">Type keywords to search across all guides and features.</div>';
+        return;
+      }
+
+      const tokens = query.split(/\s+/).filter(Boolean);
+      const scored = searchIndex.map(doc => {
+        let score = 0;
+        const t = doc.title.toLowerCase();
+        const c = doc.content.toLowerCase();
+        const cat = doc.category.toLowerCase();
+        tokens.forEach(tok => {
+          if (t.includes(tok)) score += 10;
+          if (cat.includes(tok)) score += 5;
+          if (c.includes(tok)) score += 2;
+        });
+        return { doc, score };
+      }).filter(item => item.score > 0);
+
+      scored.sort((a, b) => b.score - a.score);
+      renderResults(scored.map(s => s.doc), query);
+    });
+
+    function highlight(text, q) {
+      if (!q) return text;
+      const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+      return text.replace(regex, "<mark>$1</mark>");
+    }
+
+    function getSnippet(content, q) {
+      const idx = content.toLowerCase().indexOf(q.toLowerCase());
+      if (idx === -1) return content.slice(0, 100) + "...";
+      const start = Math.max(0, idx - 30);
+      const end = Math.min(content.length, idx + 70);
+      return (start > 0 ? "..." : "") + content.slice(start, end) + (end < content.length ? "..." : "");
+    }
+
+    function renderResults(list, query) {
+      if (!list.length) {
+        if (query) {
+          results.innerHTML = `<div class="search-empty-msg">No results found for "${query}".</div>`;
+        }
+        return;
+      }
+
+      results.innerHTML = list.slice(0, 8).map(doc => {
+        const snippet = getSnippet(doc.content, query || "");
+        return `
+          <a href="${doc.url}" class="search-result-item" onclick="window.closeRtlSearch()">
+            <div class="search-result-top">
+              <span class="search-result-title">
+                ${doc.icon ? `<span class="result-icon">${doc.icon}</span>` : ''}
+                ${highlight(doc.title, query)}
+              </span>
+              <span class="search-result-cat ${doc.catClass || 'cat-default'}">${doc.category}</span>
+            </div>
+            <div class="search-result-snippet">${highlight(snippet, query)}</div>
+          </a>
+        `;
+      }).join("");
+    }
+  })();
+
+  /* Off-Canvas Navigation Drawer Controller */
+  (function () {
+    const sb  = document.getElementById('learnSidebar');
+    const bd  = document.getElementById('sidebarBackdrop');
+    const btn = document.getElementById('menuBtn');
+    if (!sb || !bd || !btn) return;
+
+    function setOpen(open) {
+      sb.classList.toggle('is-open', open);
+      bd.classList.toggle('is-open', open);
+      document.body.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        const a = sb.querySelector('a.active');
+        if (a) a.scrollIntoView({ block: 'center' });
+      }
+    }
+
+    btn.addEventListener('click', () => setOpen(!sb.classList.contains('is-open')));
+    bd.addEventListener('click', () => setOpen(false));
+    sb.addEventListener('click', e => {
+      if (e.target.closest('a, .sidebar-search-btn')) setOpen(false);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    window.matchMedia('(min-width: 901px)').addEventListener('change', e => {
+      if (e.matches) setOpen(false);
+    });
+  })();
+</script>
+
+<!-- Shared search modules -->
+<script type="module" src="/src/search-constants.js"></script>
+<script type="module" src="/src/search-modal.js"></script>
+</body>
+</html>

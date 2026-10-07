@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+
+  <title>Online VHDL Compiler & Simulator — GHDL & Synthesis — RTL Bench Learn</title>
+  <meta name="description" content="Synthesize, elaborate, and simulate VHDL online. Native IEEE 1076-2008 support via GHDL, visual schematic elaboration, and mixed-language VHDL/Verilog synthesis." />
+  <link rel="canonical" href="https://rtlbench.com/learn/vhdl-compiler-online" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Online VHDL Compiler & Simulator | RTL Bench" />
+  <meta property="og:description" content="Compile and elaborate VHDL-2008 in your browser. Powered by GHDL and Yosys with interactive schematics and waveforms." />
+  <meta property="og:url" content="https://rtlbench.com/learn/vhdl-compiler-online" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="RTL Bench" />
+  <meta property="og:image" content="https://rtlbench.com/og-learn.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RTL Bench IDE waveform and schematic preview" />
+  <meta name="author" content="RTL Bench" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@rtlbench" />
+  <meta name="twitter:url" content="https://rtlbench.com/learn/vhdl-compiler-online" />
+  <meta name="twitter:image" content="https://rtlbench.com/og-learn.png" />
+  <meta name="twitter:title" content="Online VHDL Compiler & Simulator" />
+  <meta name="twitter:description" content="Compile and simulate VHDL online with zero install. Native GHDL and VHDL-2008 support." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LT20GTPEL1');
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Online VHDL Compiler, Elaboration, and Simulation Guide",
+        "description": "Comprehensive guide to compiling IEEE 1076-2008 VHDL in the browser using GHDL, elaborating entity-architecture pairs into schematics, and mixed-language synthesis.",
+        "author": { "@type": "Organization", "name": "RTL Bench" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "RTL Bench",
+          "logo": { "@type": "ImageObject", "url": "https://rtlbench.com/logo.png" }
+        },
+        "datePublished": "2026-10-04",
+        "dateModified": "2026-10-04",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": "https://rtlbench.com/learn/vhdl-compiler-online" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "RTL Bench Online VHDL Compiler",
+        "operatingSystem": "Browser",
+        "applicationCategory": "DeveloperApplication",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://rtlbench.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Learn", "item": "https://rtlbench.com/learn" },
+          { "@type": "ListItem", "position": 3, "name": "VHDL Compiler", "item": "https://rtlbench.com/learn/vhdl-compiler-online" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which VHDL standards are supported in RTL Bench?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "RTL Bench utilizes GHDL with the --std=08 flag, giving you native support for IEEE 1076-2008, as well as backwards compatibility for IEEE 1076-1993 and 1076-2002."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I mix VHDL and Verilog in the same project?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. GHDL elaborates your VHDL entities into RTLIL/Verilog netlists, allowing you to instantiate Verilog modules directly inside VHDL architectures or wrap VHDL entities inside Verilog testbenches."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does VHDL synthesis work without vendor tools?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "VHDL compilation uses the ghdl-yosys-plugin. GHDL parses and checks types across IEEE packages, while Yosys synthesizes the design into an interactive schematic and performs technology mapping."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #080a0d;
+      color: #c9d1d9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre, kbd { font-family: 'JetBrains Mono', monospace; }
+
+    #navbar {
+      position: sticky; top: 0;
+      height: 48px;
+      background: rgba(17, 20, 24, 0.96);
+      border-bottom: 1px solid #262c36;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 10px;
+      backdrop-filter: blur(8px);
+      z-index: 30;
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1c2128; color: #c9d1d9;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: 5px 12px; font-size: 11px; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover { background: #262c36; color: #fff; border-color: #58a6ff; text-decoration: none; }
+    .nav-btn.primary { background: #1f6feb; border-color: #388bfd; color: #fff; }
+    .nav-btn.primary:hover { background: #388bfd; }
+    .nav-btn .arrow { color: #58a6ff; font-size: 13px; }
+    .brand { font-weight: 700; color: #e6edf3; font-size: 13px; text-decoration: none; }
+    .badge-pro { background: #ff9800; color: #000; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 4px; }
+
+    .learn-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .learn-sidebar {
+      order: 1;
+      flex: 0 0 240px;
+      width: 240px;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 20px 16px 40px 20px;
+      border-right: 1px solid #21262d;
+    }
+    .learn-sidebar::-webkit-scrollbar { width: 5px; }
+    .learn-sidebar::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; }
+
+    .sidebar-search-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+      padding: 7px 11px; color: #8b949e; font-size: 12px;
+      cursor: pointer; margin-bottom: 20px; transition: all 0.15s;
+      font-family: inherit;
+    }
+    .sidebar-search-btn:hover { border-color: #58a6ff; color: #f0f6fc; background: #111418; }
+    .sidebar-search-btn .shortcut-badge {
+      font-size: 9.5px; background: #161b22; border: 1px solid #30363d;
+      padding: 2px 5px; border-radius: 4px; color: #7d8590; font-family: 'JetBrains Mono', monospace;
+    }
+
+    .learn-sidebar .nav-group { margin-bottom: 22px; }
+    .learn-sidebar .nav-group-title {
+      font-size: 10px; font-weight: 700;
+      color: #6e7681; letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px; padding: 0 8px;
+    }
+    .learn-sidebar a {
+      display: block;
+      padding: 5px 8px 5px 10px;
+      font-size: 12.5px;
+      color: #8b949e;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: all 0.12s;
+    }
+    .learn-sidebar a:hover {
+      color: #e6edf3;
+      background: #111418;
+      text-decoration: none;
+    }
+    .learn-sidebar a.active {
+      color: #58a6ff;
+      background: rgba(88, 166, 255, 0.08);
+      border-left-color: #58a6ff;
+      font-weight: 600;
+    }
+
+    .learn-content {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+      max-width: 860px;
+      padding: 40px 40px 80px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: #6e7681;
+      margin-bottom: 20px;
+      display: flex; gap: 6px; align-items: center;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #8b949e; }
+    .breadcrumb a:hover { color: #58a6ff; }
+    .breadcrumb .sep { color: #484f58; }
+
+    h1 {
+      font-size: 30px; font-weight: 700;
+      color: #f0f6fc; letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .lede {
+      font-size: 15px;
+      color: #8b949e;
+      margin-bottom: 32px;
+      max-width: 680px;
+    }
+
+    h2 {
+      font-size: 19px; font-weight: 700; color: #f0f6fc;
+      letter-spacing: -0.2px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #21262d;
+    }
+    h3 {
+      font-size: 14px; font-weight: 700; color: #e6edf3;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { color: #c9d1d9; margin-bottom: 14px; max-width: 720px; }
+    ul, ol { margin: 8px 0 16px 22px; color: #c9d1d9; max-width: 720px; }
+    li { margin-bottom: 6px; }
+
+    code {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12.5px;
+      color: #79c0ff;
+    }
+    pre {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      color: #c9d1d9;
+      line-height: 1.55;
+      margin: 10px 0 18px;
+      max-width: 720px;
+      -webkit-overflow-scrolling: touch;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .kw  { color: #ff7b72; }
+    .fn  { color: #d2a8ff; }
+    .nu  { color: #79c0ff; }
+    .st  { color: #a5d6ff; }
+    .cm  { color: #6e7681; font-style: italic; }
+    .ty  { color: #7ee787; }
+
+    .callout {
+      display: flex; gap: 12px;
+      background: #0d1117; border: 1px solid #21262d;
+      border-left: 3px solid #58a6ff;
+      border-radius: 6px; padding: 12px 16px;
+      margin: 16px 0; font-size: 13px; color: #c9d1d9;
+      max-width: 720px;
+    }
+    .callout.tip  { border-left-color: #3fb950; }
+    .callout.warn { border-left-color: #e3b341; }
+    .callout-icon { font-size: 15px; line-height: 1.4; }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 20px;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      max-width: 720px;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #21262d; }
+    th {
+      color: #8b949e;
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1f6feb; color: #fff;
+      padding: 11px 22px; border-radius: 6px;
+      font-size: 13.5px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s;
+      margin-top: 12px;
+    }
+    .cta:hover { background: #388bfd; text-decoration: none; }
+
+    .next-steps {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #21262d;
+    }
+    .next-steps h2 { margin-top: 0; border-bottom: none; padding-bottom: 0; }
+    .next-steps ul { list-style: none; margin-left: 0; }
+    .next-steps li {
+      padding: 10px 0;
+      border-bottom: 1px solid #161b22;
+    }
+    .next-steps li:last-child { border-bottom: none; }
+    .next-steps a { font-weight: 600; }
+    .next-steps .desc { color: #8b949e; font-size: 12.5px; display: block; margin-top: 2px; }
+
+    .faq-item { margin-bottom: 20px; }
+    .faq-item strong { display: block; color: #f0f6fc; font-size: 13.5px; margin-bottom: 4px; }
+    .faq-item p { margin-bottom: 0; font-size: 13px; }
+
+    footer {
+      margin-top: 60px; padding-top: 24px;
+      border-top: 1px solid #21262d;
+      font-size: 12px; color: #484f58;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+
+    /* ========== Search Modal Overlay (inline fallback) ========== */
+    #search-overlay {
+      position: fixed; inset: 0; background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 99999; display: none; align-items: flex-start; justify-content: center;
+      padding: 12vh 16px 20px;
+    }
+    #search-overlay.active { display: flex; }
+    .search-modal {
+      width: 100%; max-width: 600px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; box-shadow: 0 24px 50px rgba(0,0,0,0.9); overflow: hidden;
+      display: flex; flex-direction: column; max-height: 75vh;
+    }
+    .search-modal-header {
+      display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid #21262d;
+      gap: 10px; background: #111418;
+    }
+    .search-modal-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #f0f6fc; font-family: inherit; font-size: 16px;
+    }
+    .search-modal-input::placeholder { color: #6e7681; }
+    .search-close-key {
+      background: #1c2128; border: 1px solid #30363d; border-radius: 4px;
+      padding: 4px 8px; font-size: 11px; color: #8b949e; cursor: pointer;
+    }
+    .search-results-list { overflow-y: auto; padding: 6px; flex: 1; }
+    .search-result-item {
+      display: block; padding: 10px 12px; border-radius: 6px; text-decoration: none;
+      color: inherit; transition: background 0.12s;
+    }
+    .search-result-item:hover { background: #161b22; text-decoration: none; }
+    .search-result-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
+    .search-result-title { color: #58a6ff; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+    .result-icon { font-size: 13px; line-height: 1; }
+    .search-result-cat {
+      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.3px; text-transform: uppercase;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .cat-ide { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .cat-timing { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .cat-hardware { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .cat-cdc { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+    .cat-language { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .cat-feature { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.35); }
+    .cat-guide { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35); }
+    .cat-reference { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .cat-compare { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
+    .cat-default { background: #1f242c; color: #8b949e; border: 1px solid #30363d; }
+
+    .search-result-snippet { font-size: 12px; color: #8b949e; line-height: 1.45; }
+    .search-result-snippet mark { background: rgba(88, 166, 255, 0.22); color: #79c0ff; border-radius: 2px; padding: 0 2px; }
+    .search-empty-msg { padding: 32px 16px; text-align: center; color: #6e7681; font-size: 13px; }
+    .search-modal-footer {
+      padding: 8px 14px; border-top: 1px solid #21262d; background: #090c10;
+      font-size: 11px; color: #6e7681; display: flex; justify-content: space-between;
+    }
+
+    /* Mobile Controls Default (Hidden on Desktop) */
+    .nav-menu-btn, .nav-search-btn, .sidebar-backdrop {
+      display: none !important;
+    }
+
+    /* ============================================================
+       Mobile & Tablet Optimization
+       ============================================================ */
+    @media (max-width: 900px) {
+      .nav-menu-btn {
+        display: inline-flex !important;
+        font-size: 15px;
+        padding: 5px 11px;
+      }
+      .nav-search-btn {
+        display: inline-flex !important;
+        font-size: 14px;
+        padding: 5px 11px;
+      }
+      .nav-back {
+        display: none !important;
+      }
+
+      .learn-layout {
+        display: block !important;
+      }
+      .learn-content {
+        order: 2;
+        padding: 24px 16px 60px !important;
+        max-width: 100% !important;
+      }
+
+      /* Off-Canvas Slide-out Drawer */
+      .learn-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 82% !important;
+        max-width: 320px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        flex: none !important;
+        padding: 16px 14px 40px 16px !important;
+        background: #0d1117 !important;
+        border-right: 1px solid #262c36 !important;
+        border-bottom: none !important;
+        box-shadow: 8px 0 32px rgba(0,0,0,.6) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        white-space: normal !important;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(-102%) !important;
+        transition: transform .25s ease !important;
+        z-index: 1000 !important;
+        display: block !important;
+      }
+      .learn-sidebar.is-open {
+        transform: translateX(0) !important;
+      }
+      .learn-sidebar a {
+        display: block !important;
+        padding: 9px 10px !important;
+        font-size: 14px !important;
+        border-radius: 0 4px 4px 0 !important;
+        border: none !important;
+        border-left: 2px solid transparent !important;
+        background: transparent !important;
+        white-space: normal !important;
+      }
+      .learn-sidebar a:hover {
+        color: #e6edf3 !important;
+        background: #111418 !important;
+      }
+      .learn-sidebar a.active {
+        color: #58a6ff !important;
+        background: rgba(88, 166, 255, 0.08) !important;
+        border-left-color: #58a6ff !important;
+        font-weight: 600 !important;
+      }
+      .learn-sidebar .nav-group {
+        display: block !important;
+        margin-bottom: 22px !important;
+      }
+      .learn-sidebar .nav-group-title {
+        display: block !important;
+      }
+      .learn-sidebar nav {
+        display: block !important;
+        width: 100% !important;
+      }
+      .sidebar-search-btn {
+        display: flex !important;
+        padding: 11px 12px !important;
+        font-size: 14px !important;
+      }
+
+      /* Modal Backdrop */
+      .sidebar-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(5, 7, 10, .72) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity .25s ease !important;
+        z-index: 999 !important;
+      }
+      .sidebar-backdrop.is-open {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      body.menu-open {
+        overflow: hidden !important;
+      }
+
+      #search-overlay {
+        padding-top: 5vh;
+      }
+      .search-modal-footer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+      pre {
+        padding: 12px 14px;
+        font-size: 11.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .learn-sidebar, .sidebar-backdrop {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar" aria-label="Site">
+    <button type="button" class="nav-btn nav-menu-btn" id="menuBtn" aria-label="Open Navigation" aria-expanded="false">
+      ☰
+    </button>
+    <button type="button" class="nav-btn nav-back" onclick="learnGoBack()">
+      <span class="arrow">←</span><span>Back</span>
+    </button>
+    <a href="/" class="brand">RTL Bench<span class="badge-pro">PRO</span></a>
+    <div style="flex:1;"></div>
+    <button type="button" class="nav-btn nav-search-btn" onclick="openRtlSearch()" aria-label="Search">
+      🔍
+    </button>
+    <a href="/studio" class="nav-btn primary">Try it now →</a>
+  </nav>
+
+  <!-- Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="learn-layout">
+
+    <!-- ============================================================
+         Sidebar (left column)
+         ============================================================ -->
+    <aside class="learn-sidebar" id="learnSidebar" aria-label="Learn navigation">
+
+      <!-- Quick Search Button in Sidebar -->
+      <button type="button" class="sidebar-search-btn" onclick="openRtlSearch()">
+        <span style="display:flex; align-items:center; gap:6px;">
+          <span>🔍</span> Quick search...
+        </span>
+        <kbd class="shortcut-badge"></kbd>
+      </button>
+
+      <nav>
+        <div class="nav-group">
+          <div class="nav-group-title">Learn</div>
+          <a href="/learn">Feature tour</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Languages</div>
+          <a href="/learn/verilog">Verilog &amp; SystemVerilog</a>
+          <a href="/learn/vhdl">VHDL</a>
+          <a href="/learn/vhdl-compiler-online" class="active" aria-current="page">Online VHDL compiler</a>
+          <a href="/learn/mixed-language">Mixed-language projects</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Features</div>
+          <a href="/learn/schematic">Schematic &amp; views</a>
+          <a href="/learn/verilog-to-schematic">Verilog to schematic</a>
+          <a href="/learn/simulation">Simulation &amp; waveforms</a>
+          <a href="/learn/online-verilog-simulator">Online simulator guide</a>
+          <a href="/learn/multifile">Multi-file projects</a>
+          <a href="/learn/timing">Timing analysis (STA)</a>
+          <a href="/learn/open-source-sta">Open-source STA</a>
+          <a href="/learn/webserial-fpga-flasher">WebSerial FPGA flasher</a>
+          <a href="/learn/clock-domain-crossing-checker">CDC verification guide</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Reference</div>
+          <a href="/learn/concepts">Concepts &amp; glossary</a>
+          <a href="/learn/active-low-reset">Active-low reset</a>
+          <a href="/learn/sta-path-types">STA path types</a>
+          <a href="/learn/pdk-comparison">PDK comparison</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">Comparisons &amp; Tools</div>
+          <a href="/compare">All EDA comparisons</a>
+          <a href="/compare/eda-playground">vs. EDA Playground</a>
+          <a href="/compare/chip-verify">vs. ChipVerify Lab</a>
+          <a href="/compare/digitaljs">vs. DigitalJS</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ============================================================
+         Content (right column)
+         ============================================================ -->
+    <main class="learn-content">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/learn">Learn</a>
+        <span class="sep">/</span>
+        <span>VHDL Compiler</span>
+      </nav>
+
+      <h1>Online VHDL compiler &amp; simulation guide</h1>
+
+      <p class="lede">
+        VHDL is known for strict type safety and structured entity-architecture separation.
+        This guide explains how IEEE 1076-2008 VHDL compiles in the browser using GHDL,
+        how visual schematics are elaborated, and how mixed VHDL/Verilog synthesis works.
+      </p>
+
+      <h2>1. The VHDL compilation pipeline: GHDL + Yosys</h2>
+
+      <p>
+        In traditional ASIC and FPGA flows, compiling VHDL requires heavy vendor suites
+        like Vivado, Quartus, or ModelSim. In RTL Bench, VHDL compilation is powered by
+        <b>GHDL</b> (the open-source VHDL analyzer and simulator) coupled directly to <b>Yosys</b>:
+      </p>
+
+      <ul>
+        <li>
+          <b>Analysis &amp; Parsing:</b> GHDL parses your source with <code>--std=08 -fsynopsys</code>,
+          checking strict type matches across <code>ieee.std_logic_1164</code> and <code>ieee.numeric_std</code>.
+        </li>
+        <li>
+          <b>Elaboration:</b> The top-level <code>entity</code> and its bound <code>architecture</code>
+          are resolved. Constants, generics, and generate loops are calculated.
+        </li>
+        <li>
+          <b>RTLIL Mapping:</b> The <code>ghdl-yosys-plugin</code> converts GHDL's intermediate abstract
+          syntax tree directly into RTLIL (RTL Intermediate Language).
+        </li>
+        <li>
+          <b>Schematic &amp; Netlist Generation:</b> Yosys runs logic optimization (<code>opt</code>, <code>clean</code>)
+          and passes the resolved gate-level netlist to both the in-browser schematic renderer and the timing engine.
+        </li>
+      </ul>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <span><b>VHDL-2008 Features Supported:</b> Simplified sensitivity lists (e.g. <code>process(all)</code>),
+        matching relational operators (<code>?&gt;</code>, <code>?=</code>), conditional variable assignments,
+        and unconstrained port arrays are fully supported.</span>
+      </div>
+
+      <h2>2. Entity vs. architecture: The separation of interface and logic</h2>
+
+      <p>
+        Unlike Verilog where module ports and internal logic are declared inside a single block,
+        VHDL enforces strict isolation between interface and implementation:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Construct</th>
+              <th>Role</th>
+              <th>Synthesis Equivalent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>entity</code></td>
+              <td>Defines external I/O pins, bus widths, and generic parameters.</td>
+              <td>Chip bounding box and port interface.</td>
+            </tr>
+            <tr>
+              <td><code>architecture</code></td>
+              <td>Defines internal processes, sequential registers, and concurrent statements.</td>
+              <td>Internal logic gates, multiplexers, and flip-flops.</td>
+            </tr>
+            <tr>
+              <td><code>configuration</code></td>
+              <td>Binds specific architectures to entities (optional).</td>
+              <td>Hierarchy resolution mapping.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Synthesizable example: Parameterized binary counter</h3>
+
+      <p>
+        Here is a complete, synthesizable VHDL-2008 8-bit counter with synchronous clear and load:
+      </p>
+
+      <pre><code><span class="kw">library</span> ieee;
+<span class="kw">use</span> ieee.std_logic_1164.<span class="kw">all</span>;
+<span class="kw">use</span> ieee.numeric_std.<span class="kw">all</span>;
+
+<span class="kw">entity</span> <span class="fn">counter_8bit</span> <span class="kw">is</span>
+  <span class="kw">generic</span> (
+    WIDTH : <span class="ty">natural</span> := <span class="nu">8</span>
+  );
+  <span class="kw">port</span> (
+    clk   : <span class="kw">in</span>  <span class="ty">std_logic</span>;
+    rst_n : <span class="kw">in</span>  <span class="ty">std_logic</span>;
+    load  : <span class="kw">in</span>  <span class="ty">std_logic</span>;
+    din   : <span class="kw">in</span>  <span class="ty">std_logic_vector</span>(WIDTH - <span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>);
+    dout  : <span class="kw">out</span> <span class="ty">std_logic_vector</span>(WIDTH - <span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>)
+  );
+<span class="kw">end entity</span> counter_8bit;
+
+<span class="kw">architecture</span> rtl <span class="kw">of</span> <span class="fn">counter_8bit</span> <span class="kw">is</span>
+  <span class="kw">signal</span> count_reg : <span class="ty">unsigned</span>(WIDTH - <span class="nu">1</span> <span class="kw">downto</span> <span class="nu">0</span>);
+<span class="kw">begin</span>
+  <span class="kw">process</span>(clk, rst_n)
+  <span class="kw">begin</span>
+    <span class="kw">if</span> rst_n = <span class="st">'0'</span> <span class="kw">then</span>
+      count_reg &lt;= (<span class="kw">others</span> =&gt; <span class="st">'0'</span>);
+    <span class="kw">elsif</span> <span class="fn">rising_edge</span>(clk) <span class="kw">then</span>
+      <span class="kw">if</span> load = <span class="st">'1'</span> <span class="kw">then</span>
+        count_reg &lt;= <span class="ty">unsigned</span>(din);
+      <span class="kw">else</span>
+        count_reg &lt;= count_reg + <span class="nu">1</span>;
+      <span class="kw">end if</span>;
+    <span class="kw">end if</span>;
+  <span class="kw">end process</span>;
+
+  dout &lt;= <span class="ty">std_logic_vector</span>(count_reg);
+<span class="kw">end architecture</span> rtl;</code></pre>
+
+      <h2>3. Mixed-language synthesis (VHDL + Verilog)</h2>
+
+      <p>
+        In modern silicon engineering, teams rarely write 100% pure VHDL or 100% pure Verilog.
+        Existing IP blocks (like AXI peripherals or memory controllers) are often written in SystemVerilog,
+        while control pipelines may be written in VHDL.
+      </p>
+
+      <p>
+        Because RTL Bench compiles VHDL and Verilog into unified RTLIL intermediate representations:
+      </p>
+
+      <ul>
+        <li>You can instantiate a <b>Verilog module inside a VHDL architecture</b> using a matching <code>component</code> declaration.</li>
+        <li>You can instantiate a <b>VHDL entity inside a SystemVerilog module</b> simply by matching port names.</li>
+        <li>All internal signals crossing language boundaries automatically preserve their bus widths and data types.</li>
+      </ul>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <span><b>Case Sensitivity Warning:</b> VHDL is case-insensitive, while Verilog is strictly case-sensitive.
+        When instantiating a Verilog module inside VHDL, ensure all port and signal names match the lowercase convention
+        so the elaboration linker binds them properly.</span>
+      </div>
+
+      <h2>4. Common VHDL pitfalls &amp; fixes</h2>
+
+      <ol>
+        <li>
+          <b>Mixing <code>std_logic_vector</code> with Arithmetic:</b>
+          <br>You cannot directly add <code>+ 1</code> to a <code>std_logic_vector</code>. Always import <code>ieee.numeric_std</code>
+          and cast the vector to <code>unsigned</code> or <code>signed</code> before applying arithmetic operators.
+        </li>
+        <li>
+          <b>Signals vs. Variables:</b>
+          <br>Signals (<code>&lt;=</code>) update scheduled at the end of the simulation cycle (equivalent to non-blocking in Verilog).
+          Variables (<code>:=</code>) update immediately inside a <code>process</code>. Misusing variables for register state
+          often creates unexpected combinatorial feedback loops.
+        </li>
+        <li>
+          <b>Unintended Latch Inference:</b>
+          <br>In combinational processes, forgetting to assign a signal in every branch of an <code>if / else</code> or <code>case</code>
+          statement forces the synthesis tool to retain the previous state, inferring a transparent latch.
+        </li>
+      </ol>
+
+      <h2>Frequently asked questions</h2>
+
+      <div class="faq-item">
+        <strong>Which VHDL standards are supported in RTL Bench?</strong>
+        <p>RTL Bench utilizes GHDL with the <code>--std=08</code> flag, giving you native support for IEEE 1076-2008, as well as backwards compatibility for IEEE 1076-1993 and 1076-2002.</p>
+      </div>
+
+      <div class="faq-item">
+        <strong>Can I mix VHDL and Verilog in the same project?</strong>
+        <p>Yes. GHDL elaborates your VHDL entities into netlists, allowing you to instantiate Verilog modules directly inside VHDL architectures or wrap VHDL entities inside Verilog testbenches.</p>
+      </div>
+
+      <div class="faq-item">
+        <strong>How does VHDL synthesis work without vendor tools?</strong>
+        <p>VHDL compilation uses the <code>ghdl-yosys-plugin</code>. GHDL parses and checks types across IEEE packages, while Yosys synthesizes the design into an interactive schematic and performs technology mapping.</p>
+      </div>
+
+      <div class="next-steps">
+        <h2>Next</h2>
+        <ul>
+          <li>
+            <a href="/learn/vhdl">VHDL language guide</a>
+            <span class="desc">Deep dive into IEEE 1076 syntax, packages, and architecture structures.</span>
+          </li>
+          <li>
+            <a href="/learn/mixed-language">Mixed-language projects</a>
+            <span class="desc">Co-simulating and synthesizing multi-file VHDL and Verilog projects together.</span>
+          </li>
+          <li>
+            <a href="/learn/schematic">Interactive schematics</a>
+            <span class="desc">How ELK transforms elaborated VHDL netlists into visual gate diagrams.</span>
+          </li>
+        </ul>
+      </div>
+
+      <a href="/studio" class="cta" style="margin-top: 32px;">Compile VHDL in workbench →</a>
+
+      <footer>
+        <span>© RTL Bench</span>
+        <span>
+          <a href="/">Home</a> &nbsp;·&nbsp;
+          <a href="/studio">Workbench</a> &nbsp;·&nbsp;
+          <a href="/sta">STA</a> &nbsp;·&nbsp;
+          <a href="/compare">Compare</a> &nbsp;·&nbsp;
+          <a href="/terms">Terms</a> &nbsp;·&nbsp;
+          <a href="/privacy">Privacy</a>
+        </span>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ============================================================
+       Search Modal Overlay (inline fallback)
+       ============================================================ -->
+  <div id="search-overlay" role="dialog" aria-modal="true">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <span style="color:#8b949e; font-size:12px;">🔍</span>
+        <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search documentation, timing, CDC, FPGA..." autocomplete="off" />
+        <button class="search-close-key" type="button" onclick="closeRtlSearch()">ESC</button>
+      </div>
+      <div class="search-results-list" id="searchResultsList">
+        <div class="search-empty-msg">Type keywords to search across all guides and features.</div>
+      </div>
+      <div class="search-modal-footer">
+        <span>Navigate <kbd style="font-family:monospace;">↑</kbd> <kbd style="font-family:monospace;">↓</kbd></span>
+        <span>Open <kbd style="font-family:monospace;">↵</kbd></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function learnGoBack() {
+    if (!sessionStorage.getItem('rtl_learn_entry')) {
+      let entry = '/';
+      const ref = document.referrer;
+      if (ref) {
+        try {
+          const u = new URL(ref);
+          if (u.origin === location.origin) {
+            entry = u.pathname + u.search;
+          }
+        } catch (_) {}
+      }
+      sessionStorage.setItem('rtl_learn_entry', entry);
+    }
+
+    const ref = document.referrer;
+    if (ref) {
+      try {
+        const u = new URL(ref);
+        if (u.origin === location.origin && history.length > 1) {
+          history.back();
+          return;
+        }
+      } catch (_) {}
+    }
+
+    const entry = sessionStorage.getItem('rtl_learn_entry') || '/';
+    window.location.href = entry;
+  }
+
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', '#' + id);
+  });
+
+  /* Embedded Client-Side Search Engine */
+  (function () {
+    const searchIndex = [
+      { title: "RTL Bench — Home", url: "/", category: "Platform", catClass: "cat-default", icon: "🏠", content: "Browser-based digital logic design, schematic elaboration, simulation, timing analysis, and FPGA flashing for Verilog and VHDL." },
+      { title: "Workbench / Studio", url: "/studio", category: "IDE / Studio", catClass: "cat-ide", icon: "💻", content: "Interactive HDL editor, real-time ELK netlist diagram generator, testbench execution, and interactive waveform inspection." },
+      { title: "Static Timing Analysis (STA) Engine", url: "/sta", category: "Timing Engine", catClass: "cat-timing", icon: "⏱️", content: "Interactive multi-corner timing analyzer across SkyWater 130nm, GlobalFoundries 180nm, and IHP SG13G2. Critical path breakdown and slack calculator." },
+      { title: "FPGA Flasher & Bitstream Builder", url: "/fpga", category: "Hardware", catClass: "cat-hardware", icon: "🔌", content: "Direct in-browser hardware flashing for Tang Nano 9K, Tang Nano 20K, and iCE40UP5K development boards via WebSerial." },
+      { title: "Clock Domain Crossing (CDC) Checker", url: "/cdc", category: "CDC Checker", catClass: "cat-cdc", icon: "🔀", content: "Topological netlist audit detecting asynchronous clock domain hazards, 2-FF synchronizers, and MTBF calculation." },
+      { title: "Learn RTL Bench: Feature Tour", url: "/learn", category: "Guide", catClass: "cat-guide", icon: "📖", content: "Visual tour of RTL Bench. Verilog, SystemVerilog, VHDL in browser. Block, hybrid, gate views. Waveform measurements, Delta T and frequency readout, cursor snapping." },
+      { title: "Verilog & SystemVerilog Guide", url: "/learn/verilog", category: "Languages", catClass: "cat-language", icon: "📖", content: "Synthesizable Verilog and SystemVerilog constructs. Always_ff, always_comb, logic, wire, non-blocking assignments, clock and active-low reset inferred automatically by Yosys." },
+      { title: "VHDL Guide & Compilation", url: "/learn/vhdl", category: "Languages", catClass: "cat-language", icon: "📖", content: "IEEE 1076-2008 VHDL compilation via GHDL. Entities, architectures, signals, processes, synchronous registers, std_logic, std_logic_vector, numeric_std arithmetic." },
+      { title: "Online VHDL Compiler", url: "/learn/vhdl-compiler-online", category: "Languages", catClass: "cat-language", icon: "📖", content: "Compile and synthesize VHDL-2008 online without vendor toolchains. GHDL to Yosys synthesis, netlist generation, interactive schematics, and simulation." },
+      { title: "Mixed-Language Projects", url: "/learn/mixed-language", category: "Languages", catClass: "cat-language", icon: "📖", content: "Co-elaboration mixing Verilog submodules inside VHDL architectures or instantiating VHDL entities in SystemVerilog top-levels via GHDL-Yosys plugin." },
+      { title: "Schematic & View Modes", url: "/learn/schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Hierarchical vs Flat netlists. Orthogonal layout engine powered by Eclipse Layout Kernel ELK. Vector bus collapsing [31:0], fused constant comparators, interactive net tracing." },
+      { title: "Verilog to Schematic Viewer", url: "/learn/verilog-to-schematic", category: "Features", catClass: "cat-feature", icon: "📖", content: "Convert raw HDL code into visual gate-level circuits. Source code cross-probing: click gate cell to jump directly to editor source line. Export clean vector SVG diagrams." },
+      { title: "Simulation & Waveforms", url: "/learn/simulation", category: "Features", catClass: "cat-feature", icon: "📖", content: "Icarus Verilog testbench runner. Double-buffered waveform drawer. Dual measurement cursors A and B, magnetic edge snapping, delta T and frequency readout." },
+      { title: "Online Verilog Simulator", url: "/learn/online-verilog-simulator", category: "Features", catClass: "cat-feature", icon: "📖", content: "Run testbench-free simulations, auto-drive clocks and resets, generate interactive VCD traces in browser without installing local compilers." },
+      { title: "Multi-File HDL Projects", url: "/learn/multifile", category: "Features", catClass: "cat-feature", icon: "📖", content: "Drag and drop folders of .v, .sv, and .vhd files. Auto-detect top modules, compile multi-file hierarchies, and patch $readmemh memory arrays." },
+      { title: "Static Timing Analysis (STA)", url: "/learn/timing", category: "Features", catClass: "cat-feature", icon: "📖", content: "Gate-level static timing analysis. Critical path delay, setup slack calculation, hold violations, gate depth metrics across SkyWater 130nm, GF180MCU, and IHP SG13G2." },
+      { title: "Open-Source STA Guide", url: "/learn/open-source-sta", category: "Features", catClass: "cat-feature", icon: "📖", content: "Liberty table lookups, intrinsic cell propagation delays, load capacitance fan-out penalties across open PDKs." },
+      { title: "WebSerial FPGA Flasher Guide", url: "/learn/webserial-fpga-flasher", category: "Features", catClass: "cat-feature", icon: "📖", content: "Flash Tang Nano 9K, Tang Nano 20K, and iCE40UP5K directly in Google Chrome via WebSerial. Nextpnr place and route, automated pin safety filters, 25-iteration conflict recovery." },
+      { title: "Clock Domain Crossing (CDC) Guide", url: "/learn/clock-domain-crossing-checker", category: "Features", catClass: "cat-feature", icon: "📖", content: "Detect metastability in asynchronous clock boundaries. MTBF calculation formula, 2-FF and 3-FF synchronizers, multi-bit bus convergence hazards, Gray-coded asynchronous FIFOs." },
+      { title: "Concepts & Glossary", url: "/learn/concepts", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Definitions of synthesis, elaboration, netlists, LUTs, flip-flops, slack, propagation delay, metastability, and standard-cell libraries." },
+      { title: "Active-Low Reset Design Pattern", url: "/learn/active-low-reset", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Why digital designs use active-low reset (rst_n), asynchronous assert and synchronous de-assert circuits, and standard-cell reset pin polarities." },
+      { title: "STA Path Types Explained", url: "/learn/sta-path-types", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Classification of timing paths: Reg-to-Reg, In-to-Reg, Reg-to-Out, and In-to-Out. Setup and hold margin checks for each category." },
+      { title: "Open PDK Comparison: Sky130 vs GF180 vs IHP", url: "/learn/pdk-comparison", category: "Reference", catClass: "cat-reference", icon: "📖", content: "Compare open-source silicon technologies: SkyWater 130nm, GlobalFoundries 180nm MCU, and IHP 130nm BiCMOS SG13G2 gate densities and speeds." }
+    ];
+
+    const overlay = document.getElementById("search-overlay");
+    const input = document.getElementById("searchModalInput");
+    const results = document.getElementById("searchResultsList");
+
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 900;
+    const isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform);
+    const hintText = isMac ? "⌘K" : "Ctrl K";
+
+    document.querySelectorAll(".shortcut-badge").forEach(el => {
+      if (isTouch) {
+        el.style.display = "none";
+      } else {
+        el.textContent = hintText;
+      }
+    });
+
+    window.openRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.add("active");
+      input.value = "";
+      renderResults([]);
+      setTimeout(() => input.focus(), 30);
+    };
+
+    window.closeRtlSearch = function () {
+      if (!overlay) return;
+      overlay.classList.remove("active");
+    };
+
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) window.closeRtlSearch();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        overlay.classList.contains("active") ? window.closeRtlSearch() : window.openRtlSearch();
+      } else if (e.key === "Escape" && overlay.classList.contains("active")) {
+        window.closeRtlSearch();
+      }
+    });
+
+    input.addEventListener("input", function () {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        results.innerHTML = '<div class="search-empty-msg">Type keywords to search across all guides and features.</div>';
+        return;
+      }
+
+      const tokens = query.split(/\s+/).filter(Boolean);
+      const scored = searchIndex.map(doc => {
+        let score = 0;
+        const t = doc.title.toLowerCase();
+        const c = doc.content.toLowerCase();
+        const cat = doc.category.toLowerCase();
+        tokens.forEach(tok => {
+          if (t.includes(tok)) score += 10;
+          if (cat.includes(tok)) score += 5;
+          if (c.includes(tok)) score += 2;
+        });
+        return { doc, score };
+      }).filter(item => item.score > 0);
+
+      scored.sort((a, b) => b.score - a.score);
+      renderResults(scored.map(s => s.doc), query);
+    });
+
+    function renderResults(list, query) {
+      if (!list.length) {
+        if (query) {
+          results.innerHTML = `<div class="search-empty-msg">No results found for "${query}".</div>`;
+        }
+        return;
+      }
+
+      results.innerHTML = list.slice(0, 8).map(doc => {
+        return `
+          <a href="${doc.url}" class="search-result-item" onclick="window.closeRtlSearch()">
+            <div class="search-result-top">
+              <span class="search-result-title">
+                ${doc.icon ? `<span class="result-icon">${doc.icon}</span>` : ''}
+                ${doc.title}
+              </span>
+              <span class="search-result-cat ${doc.catClass || 'cat-default'}">${doc.category}</span>
+            </div>
+            <div class="search-result-snippet">${doc.content}</div>
+          </a>
+        `;
+      }).join("");
+    }
+  })();
+
+  /* Off-Canvas Navigation Drawer Controller */
+  (function () {
+    const sb  = document.getElementById('learnSidebar');
+    const bd  = document.getElementById('sidebarBackdrop');
+    const btn = document.getElementById('menuBtn');
+    if (!sb || !bd || !btn) return;
+
+    function setOpen(open) {
+      sb.classList.toggle('is-open', open);
+      bd.classList.toggle('is-open', open);
+      document.body.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        const a = sb.querySelector('a.active');
+        if (a) a.scrollIntoView({ block: 'center' });
+      }
+    }
+
+    btn.addEventListener('click', () => setOpen(!sb.classList.contains('is-open')));
+    bd.addEventListener('click', () => setOpen(false));
+    sb.addEventListener('click', e => {
+      if (e.target.closest('a, .sidebar-search-btn')) setOpen(false);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    window.matchMedia('(min-width: 901px)').addEventListener('change', e => {
+      if (e.matches) setOpen(false);
+    });
+  })();
+</script>
+
+</body>
+</html>
