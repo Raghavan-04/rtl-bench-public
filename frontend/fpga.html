@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Prevent indexing, snippet extraction, and archiving in Google, Gemini, and search engines -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTL Bench — Hardware Deployment Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/src/studio.min.css?v=2.0.1" />
+  <link rel="stylesheet" href="/static/src/fpga.min.css?v=2.0.1" />
+
+  <!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LT20GTPEL1');
+</script>
+
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="fpga-header">
+    <div class="fpga-header-left">
+      <a href="/studio" class="back-btn" style="text-decoration:none; color:var(--accent-blue); font-size:12px;">← Studio</a>
+      <div class="brand-title">
+        <span>Hardware Deployment Console</span>
+        <span class="badge-hw">FPGA</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span id="global-status-badge" class="status-pill idle">IDLE</span>
+    </div>
+  </div>
+
+  <div class="layout-container">
+
+    <!-- Left Column: Observability, Pinout, Logs -->
+    <div class="main-column">
+
+      <!-- Pipeline Step Tracker -->
+      <div class="card" style="padding: 14px 20px;">
+        <div class="pipeline-tracker">
+          <div id="step-ingest" class="pipe-step done">
+            <div class="pipe-circle">1</div>
+            <div class="pipe-label">HDL Ingest</div>
+          </div>
+          <div id="step-synth" class="pipe-step">
+            <div class="pipe-circle">2</div>
+            <div class="pipe-label">Yosys Synth</div>
+          </div>
+          <div id="step-pnr" class="pipe-step">
+            <div class="pipe-circle">3</div>
+            <div class="pipe-label">nextpnr</div>
+          </div>
+          <div id="step-pack" class="pipe-step">
+            <div class="pipe-circle">4</div>
+            <div class="pipe-label">Bitstream Pack</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Physical Telemetry Gauges -->
+      <div class="card">
+        <div class="card-title">
+          <span>Place &amp; Route Telemetry</span>
+          <span id="telemetry-timing-chip" style="font-size:10px; color:var(--text-muted);">Awaiting Synthesis</span>
+        </div>
+        <div class="metric-grid">
+          <div class="metric-box">
+            <span class="metric-label">Max Clock (Fmax)</span>
+            <span id="stat-fmax" class="metric-value" style="color:var(--accent-blue);">– MHz</span>
+            <div class="metric-progress"><div id="bar-fmax" class="metric-progress-bar" style="background:var(--accent-blue);"></div></div>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Logic Cells (LUT)</span>
+            <span id="stat-lut" class="metric-value" style="color:var(--accent-green);">0 / 0</span>
+            <div class="metric-progress"><div id="bar-lut" class="metric-progress-bar" style="background:var(--accent-green);"></div></div>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Registers (DFF)</span>
+            <span id="stat-ff" class="metric-value" style="color:var(--accent-purple);">0 / 0</span>
+            <div class="metric-progress"><div id="bar-ff" class="metric-progress-bar" style="background:var(--accent-purple);"></div></div>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Block RAM (BSRAM)</span>
+            <span id="stat-bram" class="metric-value" style="color:var(--accent-warn);">0</span>
+            <div class="metric-progress"><div id="bar-bram" class="metric-progress-bar" style="background:var(--accent-warn);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active RTL Code Preview Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Active RTL Source</span>
+          <span id="source-status" style="font-size:10px; font-weight:normal; color:var(--accent-blue);">Single-file loaded</span>
+        </div>
+        <pre id="code-snippet" style="background:#05070a; border:1px solid var(--border-subtle); border-radius:6px; padding:12px; font-family:'JetBrains Mono', monospace; font-size:11px; line-height:1.4; max-height:160px; overflow-y:auto; color:#adbac7; white-space:pre-wrap; margin:0;"></pre>
+      </div>
+
+      <!-- Pin Constraints Mapper -->
+      <div class="card">
+        <div class="card-title">
+          <span>Pinout &amp; I/O Constraints</span>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn-action btn-secondary" style="width:auto; margin:0; padding:3px 8px; font-size:10px;" onclick="toggleRawConstraintModal()">
+              ⚙ View / Edit Raw Constraints
+            </button>
+            <span style="font-size:10px; font-weight:normal; color:var(--text-muted);">Auto-detected</span>
+          </div>
+        </div>
+        <div class="pin-table-wrap">
+          <table class="pin-table">
+            <thead>
+              <tr>
+                <th>Port Name</th>
+                <th>Direction</th>
+                <th>Target Board Pin Assignment</th>
+              </tr>
+            </thead>
+            <tbody id="pin-table-body">
+              <tr>
+                <td colspan="3" style="text-align:center; color:var(--text-muted); padding:16px;">
+                  No active top module loaded. Return to Workbench and click 'FPGA'.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Raw Constraints Collapsible Drawer -->
+        <div id="raw-constraints-box" style="display:none; margin-top:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-size:10px; font-weight:600; color:var(--text-muted);">GENERATED CONSTRAINT FILE (<span id="cst-file-label">pins.cst</span>)</label>
+            <span style="font-size:9px; color:var(--accent-blue);">Manual edits will be passed to nextpnr</span>
+          </div>
+          <textarea id="raw-constraints-textarea" style="width:100%; height:90px; background:#05070a; border:1px solid var(--border-strong); border-radius:6px; color:#38bdf8; font-family:'JetBrains Mono', monospace; font-size:11px; padding:8px; box-sizing:border-box;"></textarea>
+        </div>
+      </div>
+
+      <!-- Logs / Terminal Switcher -->
+      <div class="card">
+        <div class="tab-bar">
+          <button id="tab-log-flasher" class="tab-btn active" onclick="switchConsoleTab('flasher')">Flasher &amp; Build Log</button>
+          <button id="tab-log-uart" class="tab-btn" onclick="switchConsoleTab('uart')">Live UART Terminal</button>
+        </div>
+
+        <!-- Flasher / Compiler Log -->
+        <div id="pane-flasher" class="console-screen">Ready. Connect your board and click '⚡ Flash FPGA'.</div>
+
+        <!-- Interactive UART Terminal -->
+        <div id="pane-uart" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:10px; color:var(--text-muted);">BAUD RATE:</span>
+              <select id="uart-baud-select" class="input-select" style="padding:2px 8px; font-size:11px;">
+                <option value="115200" selected>115200</option>
+                <option value="9600">9600</option>
+                <option value="57600">57600</option>
+                <option value="1000000">1000000 (1M)</option>
+              </select>
+            </div>
+            <button class="btn-action btn-secondary" style="width:auto; margin:0; padding:2px 8px; font-size:10px;" onclick="clearUartScreen()">Clear Screen</button>
+          </div>
+          <div id="uart-screen" class="console-screen" style="height:190px; color:#38bdf8;">[UART Terminal offline - flash or open connection below]</div>
+          <div class="uart-input-row">
+            <input type="text" id="uart-send-input" placeholder="Type ASCII to send over UART... (Press Enter)" onkeydown="if(event.key==='Enter') sendUartLine()">
+            <button class="btn-action btn-secondary" style="width:auto; margin:0;" onclick="sendUartLine()">Send</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Board Control, Hardware Specs, Actions -->
+    <div class="side-column">
+
+      <!-- Target Hardware Card -->
+      <div class="card">
+        <div class="card-title">Target Board &amp; Configuration</div>
+        
+        <div class="form-row">
+          <label>Target Hardware</label>
+            <select id="board-select" class="input-select" onchange="onBoardSelectChanged()">
+            <option value="tangnano9k">Sipeed Tang Nano 9K (Gowin GW1NR-9C)</option>
+            <option value="tangnano20k">Sipeed Tang Nano 20K (Gowin GW2AR-18C)</option>
+            <option value="ice40up5k">Lattice iCE40 UltraPlus (iCE40UP5K)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Top Module</label>
+          <input type="text" id="target-top-module" class="input-text" placeholder="auto-detect">
+        </div>
+
+        <div class="form-row">
+          <label>Target Memory Mode</label>
+          <select id="target-mem-select" class="input-select">
+            <option value="sram">SRAM Mode (Instant, volatile debug)</option>
+            <option value="flash">SPI Flash Mode (Permanent on-board)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Default I/O Standard</label>
+          <select id="iostandard-select" class="input-select" onchange="syncConstraintsTextarea()">
+            <option value="LVCMOS33">LVCMOS 3.3V (Standard)</option>
+            <option value="LVCMOS18">LVCMOS 1.8V</option>
+            <option value="PULLUP">LVCMOS 3.3V + Pull-up</option>
+          </select>
+        </div>
+
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
+  <button id="btn-synthesize" class="btn-action" onclick="handleSynthesize()">
+    ⚙ Synthesize Bitstream
+  </button>
+
+  <div id="post-synth-actions" style="display:none; flex-direction:column; gap:8px;">
+    <button id="btn-flash" class="btn-action" onclick="handleFlash()">
+      ⚡ Flash to FPGA
+    </button>
+    <button id="btn-download-bin" class="btn-action btn-secondary" onclick="handleDownload()">
+      ⬇ Download .bin
+    </button>
+    <div id="synth-info" style="
+      font-size:10px; color:#6e7681;
+      font-family:'JetBrains Mono', monospace;
+      text-align:center; padding:4px 0;
+      line-height:1.5;
+    "></div>
+  </div>
+</div>
+      </div>
+
+      <!-- Clock & Timing Constraint Helper -->
+      <div class="card">
+        <div class="card-title">Clock &amp; Timing Constraints</div>
+        <div class="form-row">
+          <label>Target Clock Frequency (MHz)</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" id="target-clock-freq" class="input-text" value="27" style="flex:1;">
+            <button class="btn-action btn-secondary" style="width:auto; margin:0; padding:4px 10px; font-size:11px;" onclick="applyClockConstraint()">Apply</button>
+          </div>
+          <span style="font-size:10px; color:var(--text-muted); margin-top:2px;">Used to evaluate setup/hold slack in PnR</span>
+        </div>
+      </div>
+
+      <!-- Target Hardware Specification Sheet -->
+      <div class="card">
+        <div class="card-title">Silicon Specs &amp; Limits</div>
+        <table class="specs-table">
+          <tbody>
+            <tr><td>Device Part</td><td id="spec-part">GW1NR-LV9QN88PC6/I5</td></tr>
+            <tr><td>Logic Cells (LUT4)</td><td id="spec-lut">8,640</td></tr>
+            <tr><td>Flip-Flops (DFF)</td><td id="spec-ff">6,480</td></tr>
+            <tr><td>Block RAM (BSRAM)</td><td id="spec-bram">468 Kbits (26 blocks)</td></tr>
+            <tr><td>18x18 Multipliers</td><td id="spec-dsp">2 Multipliers</td></tr>
+            <tr><td>User I/O Pins</td><td id="spec-io">Up to 70 pins</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Design Snapshot -->
+      <div class="card">
+        <div class="card-title">Design Snapshot</div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.6;">
+          <div>Source: <b id="snap-file-desc" style="color:#c9d1d9;">–</b></div>
+          <div>Top: <b id="snap-top-name" style="color:#c9d1d9;">–</b></div>
+          <div>Constraints: <b id="snap-cst-status" style="color:#38bdf8;">Auto-Generated</b></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+    <!-- Build progress overlay -->
+<div id="fpga-loading-overlay" style="display:none;">
+      <div class="fpga-loading-card">
+  <div class="fpga-loading-pipeline">
+    <svg viewBox="0 0 440 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="flow-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"  stop-color="#38bdf8" stop-opacity="0.1"/>
+          <stop offset="50%" stop-color="#38bdf8" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.1"/>
+        </linearGradient>
+        <linearGradient id="chip-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#0f1319"/>
+          <stop offset="100%" stop-color="#050708"/>
+        </linearGradient>
+        <filter id="glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- ============================================================
+           HDL source block
+           ============================================================ -->
+      <g class="fpga-stage" data-stage="0">
+        <rect x="8" y="18" width="62" height="44" rx="6"
+              fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+        <g class="fpga-code-lines">
+          <rect x="16" y="28" width="34" height="3" rx="1.5" fill="#7ee787"/>
+          <rect x="16" y="36" width="46" height="3" rx="1.5" fill="#ff7b72"/>
+          <rect x="16" y="44" width="28" height="3" rx="1.5" fill="#79c0ff"/>
+          <rect x="16" y="52" width="40" height="3" rx="1.5" fill="#a371f7"/>
+        </g>
+        <text x="39" y="78" text-anchor="middle"
+              fill="#8b949e" font-family="'JetBrains Mono', monospace"
+              font-size="9" font-weight="600">HDL</text>
+      </g>
+
+      <!-- ============================================================
+           Arrow 1 → Yosys
+           ============================================================ -->
+      <path class="fpga-flow" d="M 70 40 L 96 40"
+            stroke="url(#flow-grad)" stroke-width="2"
+            stroke-dasharray="5 4" fill="none"/>
+      <circle class="fpga-pulse" r="2.5" fill="#38bdf8" filter="url(#glow-soft)">
+        <animateMotion dur="1.4s" repeatCount="indefinite"
+                       path="M 70 40 L 96 40"/>
+      </circle>
+
+      <!-- ============================================================
+           Yosys block
+           ============================================================ -->
+      <g class="fpga-stage" data-stage="1">
+        <rect x="96" y="18" width="62" height="44" rx="6"
+              fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+        <g class="fpga-yosys-icon">
+          <!-- simplified gate symbol -->
+          <path d="M 108 30 L 128 30 L 138 40 L 128 50 L 108 50 Z"
+                fill="none" stroke="#3fb950" stroke-width="1.4"/>
+          <line x1="138" y1="40" x2="148" y2="40"
+                stroke="#3fb950" stroke-width="1.4"/>
+          <circle cx="150" cy="40" r="2" fill="#3fb950"/>
+        </g>
+        <text x="127" y="78" text-anchor="middle"
+              fill="#8b949e" font-family="'JetBrains Mono', monospace"
+              font-size="9" font-weight="600">Yosys</text>
+      </g>
+
+      <!-- ============================================================
+           Arrow 2 → nextpnr
+           ============================================================ -->
+      <path class="fpga-flow" d="M 158 40 L 184 40"
+            stroke="url(#flow-grad)" stroke-width="2"
+            stroke-dasharray="5 4" fill="none"/>
+      <circle class="fpga-pulse" r="2.5" fill="#e3b341" filter="url(#glow-soft)">
+        <animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite"
+                       path="M 158 40 L 184 40"/>
+      </circle>
+
+      <!-- ============================================================
+           nextpnr block
+           ============================================================ -->
+      <g class="fpga-stage" data-stage="2">
+        <rect x="184" y="18" width="62" height="44" rx="6"
+              fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+        <g class="fpga-pnr-icon">
+          <!-- floorplan grid -->
+          <rect x="194" y="28" width="42" height="26"
+                fill="none" stroke="#e3b341" stroke-width="1"/>
+          <line x1="208" y1="28" x2="208" y2="54" stroke="#e3b341" stroke-width="0.6" opacity="0.6"/>
+          <line x1="222" y1="28" x2="222" y2="54" stroke="#e3b341" stroke-width="0.6" opacity="0.6"/>
+          <line x1="194" y1="37" x2="236" y2="37" stroke="#e3b341" stroke-width="0.6" opacity="0.6"/>
+          <line x1="194" y1="46" x2="236" y2="46" stroke="#e3b341" stroke-width="0.6" opacity="0.6"/>
+          <rect x="210" y="30" width="6" height="5" fill="#e3b341" opacity="0.7"/>
+          <rect x="224" y="40" width="6" height="5" fill="#e3b341" opacity="0.7"/>
+        </g>
+        <text x="215" y="78" text-anchor="middle"
+              fill="#8b949e" font-family="'JetBrains Mono', monospace"
+              font-size="9" font-weight="600">nextpnr</text>
+      </g>
+
+      <!-- ============================================================
+           Arrow 3 → Pack
+           ============================================================ -->
+      <path class="fpga-flow" d="M 246 40 L 272 40"
+            stroke="url(#flow-grad)" stroke-width="2"
+            stroke-dasharray="5 4" fill="none"/>
+      <circle class="fpga-pulse" r="2.5" fill="#a371f7" filter="url(#glow-soft)">
+        <animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite"
+                       path="M 246 40 L 272 40"/>
+      </circle>
+
+      <!-- ============================================================
+           Pack block
+           ============================================================ -->
+      <g class="fpga-stage" data-stage="3">
+        <rect x="272" y="18" width="62" height="44" rx="6"
+              fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+        <g class="fpga-pack-icon">
+          <rect x="282" y="28" width="42" height="26" rx="3"
+                fill="none" stroke="#a371f7" stroke-width="1.2"/>
+          <line x1="282" y1="38" x2="324" y2="38"
+                stroke="#a371f7" stroke-width="0.6" opacity="0.5"/>
+          <path d="M 290 34 L 298 34 L 302 42 L 310 42"
+                fill="none" stroke="#a371f7" stroke-width="1.4"/>
+          <path d="M 290 46 L 298 46 L 302 34 L 310 34"
+                fill="none" stroke="#a371f7" stroke-width="1.4"/>
+        </g>
+        <text x="303" y="78" text-anchor="middle"
+              fill="#8b949e" font-family="'JetBrains Mono', monospace"
+              font-size="9" font-weight="600">Pack</text>
+      </g>
+
+      <!-- ============================================================
+           Arrow 4 → FPGA (with vertical drop)
+           ============================================================ -->
+      <path class="fpga-flow" d="M 334 40 L 356 40"
+            stroke="url(#flow-grad)" stroke-width="2"
+            stroke-dasharray="5 4" fill="none"/>
+      <circle class="fpga-pulse fpga-pulse-final" r="3" fill="#3fb950" filter="url(#glow-soft)">
+        <animateMotion dur="1.4s" begin="1.2s" repeatCount="indefinite"
+                       path="M 334 40 L 356 40"/>
+      </circle>
+
+      <!-- ============================================================
+           FPGA chip (right)
+           ============================================================ -->
+      <g class="fpga-stage fpga-chip-group" data-stage="chip">
+        <!-- PCB body -->
+        <rect x="356" y="10" width="76" height="120" rx="8"
+              fill="url(#chip-grad)" stroke="#30363d" stroke-width="1.5"/>
+
+        <!-- IC die -->
+        <rect x="368" y="22" width="52" height="96" rx="5"
+              fill="#0a0e14" stroke="#38bdf8" stroke-width="1.2" opacity="0.85"/>
+
+        <!-- Die label -->
+        <text x="394" y="20" text-anchor="middle"
+              fill="#58a6ff" font-family="'JetBrains Mono', monospace"
+              font-size="7.5" font-weight="700" letter-spacing="0.4">FPGA</text>
+
+        <!-- Pin stubs on left side -->
+        <g stroke="#30363d" stroke-width="1.4" stroke-linecap="round">
+          <line x1="348" y1="28" x2="368" y2="28"/>
+          <line x1="348" y1="42" x2="368" y2="42"/>
+          <line x1="348" y1="56" x2="368" y2="56"/>
+          <line x1="348" y1="70" x2="368" y2="70"/>
+          <line x1="348" y1="84" x2="368" y2="84"/>
+          <line x1="348" y1="98" x2="368" y2="98"/>
+          <line x1="348" y1="112" x2="368" y2="112"/>
+        </g>
+
+        <!-- Pin stubs on right side -->
+        <g stroke="#30363d" stroke-width="1.4" stroke-linecap="round">
+          <line x1="420" y1="28" x2="440" y2="28"/>
+          <line x1="420" y1="42" x2="440" y2="42"/>
+          <line x1="420" y1="56" x2="440" y2="56"/>
+          <line x1="420" y1="70" x2="440" y2="70"/>
+          <line x1="420" y1="84" x2="440" y2="84"/>
+          <line x1="420" y1="98" x2="440" y2="98"/>
+          <line x1="420" y1="112" x2="440" y2="112"/>
+        </g>
+
+        <!-- Internal LED grid — each lights up in sequence -->
+        <g class="fpga-led-grid">
+          <circle class="fpga-led" cx="378" cy="36" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="36" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="36" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="36" r="2.2" fill="#1f2937"/>
+
+          <circle class="fpga-led" cx="378" cy="50" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="50" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="50" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="50" r="2.2" fill="#1f2937"/>
+
+          <circle class="fpga-led" cx="378" cy="64" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="64" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="64" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="64" r="2.2" fill="#1f2937"/>
+
+          <circle class="fpga-led" cx="378" cy="78" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="78" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="78" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="78" r="2.2" fill="#1f2937"/>
+
+          <circle class="fpga-led" cx="378" cy="92" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="92" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="92" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="92" r="2.2" fill="#1f2937"/>
+
+          <circle class="fpga-led" cx="378" cy="106" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="390" cy="106" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="402" cy="106" r="2.2" fill="#1f2937"/>
+          <circle class="fpga-led" cx="410" cy="106" r="2.2" fill="#1f2937"/>
+        </g>
+
+        <!-- Programming beam that sweeps over the die -->
+        <rect class="fpga-program-beam" x="368" y="22" width="4" height="96"
+              fill="#3fb950" opacity="0" filter="url(#glow-soft)"/>
+      </g>
+    </svg>
+  </div>
+
+      <div class="fpga-loading-title" id="fpga-loading-title">Building FPGA bitstream</div>
+      <div class="fpga-loading-subtitle" id="fpga-loading-subtitle">Preparing pipeline…</div>
+
+      <!-- 4-step tracker -->
+      <div class="fpga-loading-tracker">
+        <div class="fpga-loading-step" data-step="0">
+          <div class="fpga-loading-dot">1</div>
+          <div class="fpga-loading-label">Ingest</div>
+        </div>
+        <div class="fpga-loading-step" data-step="1">
+          <div class="fpga-loading-dot">2</div>
+          <div class="fpga-loading-label">Synth</div>
+        </div>
+        <div class="fpga-loading-step" data-step="2">
+          <div class="fpga-loading-dot">3</div>
+          <div class="fpga-loading-label">Place &amp; Route</div>
+        </div>
+        <div class="fpga-loading-step" data-step="3">
+          <div class="fpga-loading-dot">4</div>
+          <div class="fpga-loading-label">Pack</div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="fpga-loading-progress">
+        <div class="fpga-loading-progress-bar" id="fpga-loading-progress-bar"></div>
+      </div>
+
+      <div class="fpga-loading-note">
+        Synthesis + PnR can take <b style="color:#e3b341;">30 seconds to 3 minutes</b> depending on design size.
+      </div>
+
+    </div>
+  </div>
+
+
+  <script src="/static/src/fpga.min.js?v=2.0.1"></script>
+
+</body>
+</html>
