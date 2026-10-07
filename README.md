@@ -67,3 +67,158 @@
 ## 🏗️ The pipeline
 
 Every design runs through the same open-source stack professionals use:
+
+
+
+```
+┌──────────────┐    ┌──────────┐    ┌─────────┐    ┌──────────┐
+│  Upload RTL  │──▶│  Yosys   │──▶│   ELK   │──▶│ Analyze  │
+│  (multi-file)│    │ elaborate│    │ layout  │    │ + export │
+└──────────────┘    └──────────┘    └─────────┘    └──────────┘
+                          │
+                          ├──▶ Icarus  ──▶ VCD  ──▶ Waveform viewer
+                          ├──▶ GHDL    ──▶ (VHDL sim)
+                          ├──▶ CDC engine   ──▶ Hazard report
+                          ├──▶ RDC engine   ──▶ Hazard report
+                          ├──▶ Liberty walk ──▶ STA report
+                          └──▶ nextpnr      ──▶ FPGA bitstream ──▶ WebSerial
+```
+
+---
+
+## 🚀 Getting started (frontend only)
+
+This repository contains the **frontend UI and landing page** for RTL Bench.
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Local development
+
+```bash
+# 1. Clone
+git clone https://github.com/Raghavan-04/rtl-bench-public.git
+cd rtl-bench-public
+
+# 2. Install
+npm install
+
+# 3. Run the dev server
+npm run dev
+
+# 4. Open http://localhost:5173
+```
+
+> **⚠️ Backend not included.** The synthesis, simulation, STA, CDC/RDC, and FPGA engines are proprietary and not part of this repo. The UI loads locally, but API calls will fail. To use the full tool, visit **[rtlbench.com](https://rtlbench.com)**.
+
+---
+
+## 🧩 Open-core model
+
+RTL Bench operates on an **open-core** model:
+
+| Part | Status | What it includes |
+|---|---|---|
+| **Frontend** (this repo) | Open source, MIT | UI, landing page, schematic renderer, waveform viewer, all HTML/CSS/JS |
+| **Backend engine** | Proprietary | Yosys orchestration, Icarus/GHDL invocation, Liberty STA, CDC/RDC analyzers, FPGA build flow |
+
+We welcome contributions to the frontend, UI/UX, and client-side tooling. For backend integration or commercial licensing, contact **contact@rtlbench.com**.
+
+---
+
+## 🛠️ Tech stack
+
+**Open-source engines powering the backend:**
+
+- [Yosys](https://yosyshq.net/yosys/) — RTL synthesis
+- [Icarus Verilog](https://steveicarus.github.io/iverilog/) — SystemVerilog simulation
+- [GHDL](https://github.com/ghdl/ghdl) — VHDL simulation
+- [nextpnr](https://github.com/YosysHQ/nextpnr) — FPGA place & route
+- [Eclipse Layout Kernel](https://www.eclipse.org/elk/) — schematic layout
+
+**Open-source PDKs:**
+
+- [SkyWater sky130](https://github.com/google/skywater-pdk)
+- [GlobalFoundries GF180MCU](https://github.com/google/gf180mcu-pdk)
+- [IHP SG13G2](https://github.com/IHP-GmbH/IHP-Open-PDK)
+
+**Frontend:**
+
+- Vanilla JavaScript (no framework)
+- FastAPI (backend serving, not in this repo)
+- ELK.js (client-side layout)
+
+---
+
+## 👥 Who it's for
+
+- **Students & self-learners.** Learn RTL without fighting toolchains. Paste SystemVerilog, see gates, run a testbench, watch the waveform.
+- **Hardware engineers.** Quick sanity checks. Real sky130/GF180/IHP cell timing, per-cell critical-path breakdown, CDC/RDC audits, SVG export for design reviews.
+- **Researchers & educators.** Share a link instead of a repo. Every design loads live synthesis, STA, CDC/RDC verification, and a waveform — reproducible from any browser.
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Public design permalinks (`rtlbench.com/d/<id>`)
+- [ ] `localStorage` autosave + "Recent designs"
+- [ ] Formal verification (SymbiYosys integration)
+- [ ] Verilator backend for faster simulation
+- [ ] Design gallery with tags (`fsm`, `cpu`, `dsp`, `cdc`)
+- [ ] SVA assertion surfacing
+- [ ] On-prem enterprise deployment
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome — bug reports, feature requests, UI improvements, and pull requests.
+
+1. Fork the repo
+2. Create a branch (`git checkout -b feature/amazing-feature`)
+3. Commit (`git commit -m 'Add amazing feature'`)
+4. Push (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please read `CONTRIBUTING.md` for code of conduct and PR guidelines.
+
+**Good first issues** are tagged in the issue tracker. UI polish, accessibility improvements, and documentation fixes are all great places to start.
+
+---
+
+## 📄 License
+
+MIT License — see [LICENSE](LICENSE).
+
+*The MIT License applies only to the files included in this repository. The backend synthesis engine remains the intellectual property of the author.*
+
+---
+
+##  Author
+
+**Raghavan S U**
+
+- 🌐 [rtlbench.com](https://rtlbench.com)
+- 💼 [LinkedIn](https://www.linkedin.com/in/raghavan-su-04r/)
+- 🐙 [GitHub](https://github.com/Raghavan-04/)
+- ✉️ [contact@rtlbench.com](mailto:contact@rtlbench.com)
+
+Built for the open-source hardware community.
+
+---
+
+##  Acknowledgments
+
+- [Yosys Open SYnthesis Suite](https://yosyshq.net/yosys/)
+- [Icarus Verilog](https://steveicarus.github.io/iverilog/)
+- [GHDL](https://github.com/ghdl/ghdl)
+- [nextpnr](https://github.com/YosysHQ/nextpnr)
+- [Eclipse Layout Kernel](https://www.eclipse.org/elk/)
+- The open PDK teams at SkyWater, GlobalFoundries, and IHP
+
+---
+
+ **If RTL Bench helped you, consider starring the repo — it helps other engineers find it.**
+ 
