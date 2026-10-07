@@ -3,901 +3,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RTL Bench — Web EDA Architecture & Netlist Visualizer</title>
+
+  <!-- PRIMARY SEO -->
+  <title>RTL Bench — Browser-Based Verilog, SystemVerilog &amp; VHDL Simulator with Live Schematic and STA</title>
+  <meta name="description" content="RTL Bench is a free, browser-based EDA workbench. Compile SystemVerilog and VHDL into interactive gate schematics, run user or auto-generated testbenches, cross-probe waveforms, check structural CDC and RDC hazards, run real Liberty-table STA on SkyWater 130nm, GF180 and IHP, and flash FPGAs via WebSerial — zero install." />
+  <meta name="keywords" content="Verilog simulator online, SystemVerilog compiler, VHDL simulator browser, browser EDA, gate-level schematic, static timing analysis, STA sky130, GF180, IHP SG13G2, open source PDK, WebSerial FPGA flasher, Tang Nano flasher, CDC analyzer, RDC analyzer, reset domain crossing, clock domain crossing, testbench generator, Verilog testbench online, cross probing RTL, Yosys web, Icarus Verilog online" />
+  <meta name="author" content="Raghavan S U" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="theme-color" content="#080a0d" />
+  <link rel="canonical" href="https://rtlbench.com/" />
+
+  <!-- OPEN GRAPH -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="RTL Bench" />
+  <meta property="og:url" content="https://rtlbench.com/" />
+  <meta property="og:title" content="RTL Bench — Design Digital Hardware in Your Browser" />
+  <meta property="og:description" content="Write Verilog / SystemVerilog / VHDL, get an instant gate-level schematic, simulate with auto-detected or generated testbenches, check CDC and RDC hazards, and run real Liberty-table STA on sky130, GF180, and IHP PDKs. No install. No license. Free." />
+  <meta property="og:image" content="https://rtlbench.com/static/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RTL Bench — browser-based RTL design studio with live schematic and timing analysis" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- TWITTER / X CARD -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RTL Bench — Design Digital Hardware in Your Browser" />
+  <meta name="twitter:description" content="Compile SystemVerilog &amp; VHDL into interactive gate schematics. Run testbenches. CDC + RDC analysis. Real STA on sky130, GF180, IHP. Free." />
+  <meta name="twitter:image" content="https://rtlbench.com/static/og-image.png" />
+  <meta name="twitter:image:alt" content="RTL Bench browser-based RTL design studio" />
+  <meta name="twitter:creator" content="@rtlbench" />
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+
+  <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-LT20GTPEL1');
-</script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background-color: #080a0d;
-      color: #c9d1d9;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
 
-    #landing-page {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.18) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(63, 185, 80, 0.08) 0%, transparent 40%),
-        #080a0d;
-      position: relative;
-    }
+  <!-- STYLESHEET -->
+  <link rel="stylesheet" href="/static/src/index.css?v=2.0.2" />
 
-    #landing-page::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-      mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
-      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
-    }
+  <!-- STRUCTURED DATA -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "RTL Bench",
+    "url": "https://rtlbench.com/",
+    "description": "Browser-based EDA workbench for Verilog, SystemVerilog and VHDL. Compiles RTL to interactive gate-level schematics, runs user-supplied or auto-generated testbenches, checks structural CDC and RDC hazards, and reports real per-cell static timing analysis against open-source PDKs.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any (Web)",
+    "browserRequirements": "Requires JavaScript. Chrome, Edge, Firefox, Safari.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": {
+      "@type": "Person",
+      "name": "Raghavan S U",
+      "url": "https://www.linkedin.com/in/raghavan-su-04r/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "RTL Bench",
+      "url": "https://rtlbench.com/"
+    },
+    "softwareVersion": "2.0",
+    "license": "https://opensource.org/licenses/MIT",
+    "featureList": [
+      "Verilog, SystemVerilog and VHDL synthesis",
+      "Live gate-level schematic rendering",
+      "Bidirectional Code-to-Schematic-to-Waveform cross-probing",
+      "Auto-detected user testbenches (tb_*.sv) and auto-generated testbenches",
+      "Structural Clock Domain Crossing (CDC) analysis with synchronizer verification",
+      "Structural Reset Domain Crossing (RDC) analysis for reset metastability",
+      "Waveform viewer with A/B measurement cursors and frequency readout",
+      "Static timing analysis on SkyWater 130nm, GlobalFoundries 180nm and IHP SG13G2 PDKs",
+      "Direct in-browser WebSerial FPGA programming for Tang Nano 9K/20K and iCE40 UP5K",
+      "Multi-file RTL project support with auto-patching memory arrays",
+      "Vector SVG schematic export"
+    ]
+  }
+  </script>
 
-    .landing-nav {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      z-index: 10;
-    }
-    .landing-brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-    }
-    .badge-pro {
-      background: #ff9800;
-      color: #000;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 800;
-    }
-    .btn-launch-header {
-      background: #238636;
-      border: 1px solid #2ea043;
-      color: #fff;
-      padding: 8px 18px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 13px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .btn-launch-header:hover { background: #2ea043; transform: translateY(-1px); }
-
-    .hero {
-      max-width: 1020px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 60px 20px 20px 20px;
-      z-index: 5;
-    }
-    .hero-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      color: #38bdf8;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
-    }
-    .hero-chip .pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: #38bdf8;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #38bdf8;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.3); }
-    }
-
-    .hero h1 {
-      font-size: 52px;
-      font-weight: 800;
-      line-height: 1.18;
-      color: #f0f6fc;
-      letter-spacing: -1.4px;
-      margin-bottom: 24px;
-      min-height: 124px;
-    }
-
-    .typewriter-wrapper {
-      display: inline-block;
-      color: #58a6ff;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      border-bottom: 2px solid rgba(88, 166, 255, 0.4);
-      padding-bottom: 2px;
-    }
-    .typewriter-cursor {
-      display: inline-block;
-      width: 3px;
-      height: 1em;
-      background-color: #38bdf8;
-      margin-left: 4px;
-      vertical-align: -2px;
-      animation: blink 0.9s infinite;
-    }
-    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-
-    .hero p {
-      font-size: 18px;
-      color: #8b949e;
-      line-height: 1.6;
-      max-width: 720px;
-      margin: 0 auto 36px auto;
-    }
-
-    .hero-tagline {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: #6e7681;
-      margin: -16px auto 36px auto;
-      letter-spacing: 0.3px;
-      text-align: center;
-    }
-    .hero-tagline::before { content: "▸ "; color: #3fb950; }
-
-    .hero-actions {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 48px;
-    }
-    .btn-primary-hero {
-      background: #1f6feb;
-      border: 1px solid #388bfd;
-      color: #fff;
-      padding: 14px 34px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 8px 28px rgba(31, 111, 235, 0.4);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-primary-hero:hover {
-      background: #388bfd;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 34px rgba(31, 111, 235, 0.55);
-    }
-
-    /* Hero preview card */
-    .hero-preview-window {
-      max-width: 900px;
-      margin: 0 auto 70px auto;
-      background: #0d1117;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
-      overflow: hidden;
-      text-decoration: none;
-      display: block;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    .hero-preview-window:hover {
-      transform: translateY(-4px);
-      border-color: #388bfd;
-    }
-    .window-header {
-      height: 34px;
-      background: #161b22;
-      border-bottom: 1px solid #21262d;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      gap: 6px;
-    }
-    .win-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .win-title {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #8b949e;
-      margin: 0 auto;
-    }
-    .window-body {
-      display: flex;
-      height: 220px;
-      background: #0b0d10;
-    }
-    .window-code-pane {
-      width: 48%;
-      border-right: 1px solid #21262d;
-      padding: 16px;
-      text-align: left;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      line-height: 1.6;
-      color: #58a6ff;
-      background: #090c10;
-      overflow: hidden;
-      position: relative;
-    }
-    .window-schematic-pane {
-      width: 52%;
-      background: #080a0d;
-      position: relative;
-      overflow: hidden;
-    }
-    .preview-badge-overlay {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      background: rgba(35, 134, 54, 0.2);
-      border: 1px solid rgba(46, 160, 67, 0.4);
-      color: #3fb950;
-      font-size: 10.5px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    /* =========================================================
-       ANIMATED SCHEMATIC — 3-phase build, loops forever
-       ========================================================= */
-    .animated-schematic {
-      width: 100%;
-      height: 100%;
-      display: block;
-      overflow: visible;
-    }
-
-    .animated-schematic .pop   { opacity: 0; transform: scale(0.3); transform-box: fill-box; transform-origin: center; }
-    .animated-schematic .draw  { stroke-dasharray: 100; stroke-dashoffset: 100; }
-    .animated-schematic .fade  { opacity: 0; }
-
-    @keyframes popIn {
-      0%   { opacity: 0; transform: scale(0.3); }
-      60%  { opacity: 1; transform: scale(1.08); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes popOut {
-      0%   { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(0.4); }
-    }
-    @keyframes drawWire {
-      0%   { stroke-dashoffset: 100; }
-      100% { stroke-dashoffset: 0; }
-    }
-    @keyframes undrawWire {
-      0%   { stroke-dashoffset: 0; }
-      100% { stroke-dashoffset: 100; }
-    }
-    @keyframes fadeIn {
-      0%   { opacity: 0; }
-      100% { opacity: 1; }
-    }
-    @keyframes fadeOut {
-      0%   { opacity: 1; }
-      100% { opacity: 0; }
-    }
-    @keyframes sweep {
-      0%   { transform: translateX(0); opacity: 0; }
-      8%   { opacity: 1; }
-      92%  { opacity: 1; }
-      100% { transform: translateX(428px); opacity: 0; }
-    }
-    @keyframes glowPulse {
-      0%   { filter: drop-shadow(0 0 0px rgba(88,166,255,0)); }
-      40%  { filter: drop-shadow(0 0 4px rgba(88,166,255,0.9)) drop-shadow(0 0 12px rgba(88,166,255,0.5)); }
-      100% { filter: drop-shadow(0 0 3px rgba(88,166,255,0.7)); }
-    }
-
-    @keyframes sceneFade {
-      0%, 82%   { opacity: 1; }
-      86%, 100% { opacity: 0; }
-    }
-
-    .animated-schematic.playing .scene {
-      animation: sceneFade 14s linear forwards;
-    }
-
-    /* PHASE A — HYBRID */
-    .animated-schematic.playing .hw {
-      animation: drawWire 0.45s ease-out var(--d, 0s) forwards,
-                 undrawWire 0.4s ease-in 4.6s forwards;
-    }
-    .animated-schematic.playing .hp {
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards,
-                 popOut 0.4s ease-in 4.4s forwards;
-    }
-    .animated-schematic.playing .submod {
-      animation: popIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards,
-                 popOut 0.45s ease-in 4.6s forwards;
-    }
-    .animated-schematic.playing .hf {
-      animation: fadeIn 0.4s ease-out var(--d, 0s) forwards,
-                 fadeOut 0.35s ease-in 4.4s forwards;
-    }
-    .animated-schematic.playing .tag-hybrid {
-      animation: fadeIn 0.4s ease-out 0.3s forwards,
-                 fadeOut 0.35s ease-in 4.4s forwards;
-    }
-
-    /* PHASE B — FLAT */
-    .animated-schematic.playing .fw {
-      animation: drawWire 0.4s ease-out var(--d, 0s) forwards;
-    }
-    .animated-schematic.playing .fp {
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
-    }
-    .animated-schematic.playing .gate {
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
-    }
-    .animated-schematic.playing .tag-flat {
-      animation: fadeIn 0.4s ease-out 5.4s forwards,
-                 fadeOut 0.35s ease-in 8.6s forwards;
-    }
-
-    /* PHASE C — ANALYSIS */
-    .animated-schematic.playing .scan-line {
-      animation: sweep 2s ease-in-out 8.8s forwards;
-    }
-    .animated-schematic.playing .crit {
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards,
-                 glowPulse 0.8s ease-out 10s forwards;
-    }
-    .animated-schematic.playing .timing-badge {
-      animation: fadeIn 0.5s ease-out 9.5s forwards;
-    }
-    .animated-schematic.playing .tag-analysis {
-      animation: fadeIn 0.4s ease-out 8.8s forwards;
-    }
-
-    /* =========================================================
-       WHY section — founder story
-       ========================================================= */
-    .why-section {
-      max-width: 780px;
-      margin: 0 auto 72px auto;
-      padding: 0 24px;
-      z-index: 5;
-      position: relative;
-    }
-    .why-inner {
-      background: rgba(13, 17, 23, 0.6);
-      border: 1px solid #21262d;
-      border-left: 3px solid #58a6ff;
-      border-radius: 10px;
-      padding: 28px 32px;
-      backdrop-filter: blur(10px);
-    }
-    .why-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: #58a6ff;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-    .why-heading {
-      font-size: 26px;
-      font-weight: 800;
-      color: #f0f6fc;
-      letter-spacing: -0.6px;
-      line-height: 1.3;
-      margin-bottom: 18px;
-    }
-    .why-body {
-      font-size: 15px;
-      color: #c9d1d9;
-      line-height: 1.7;
-      margin-bottom: 14px;
-    }
-    .why-body em { color: #f0f6fc; font-style: italic; }
-    .why-signature {
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px solid #21262d;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: #8b949e;
-    }
-    .why-signature a {
-      color: #58a6ff;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .why-signature a:hover { text-decoration: underline; }
-    .why-signature-role { color: #6e7681; }
-
-    /* =========================================================
-       WHO section — audience buckets
-       ========================================================= */
-    .who-section {
-      max-width: 1100px;
-      margin: 0 auto 72px auto;
-      padding: 0 24px;
-      z-index: 5;
-      position: relative;
-    }
-    .who-inner { text-align: center; }
-    .who-heading {
-      font-size: 28px;
-      font-weight: 800;
-      color: #f0f6fc;
-      letter-spacing: -0.6px;
-      margin-bottom: 32px;
-    }
-    .who-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
-      text-align: left;
-    }
-    .who-card {
-      background: rgba(17, 20, 24, 0.75);
-      border: 1px solid #21262d;
-      border-radius: 12px;
-      padding: 24px;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-    .who-card:hover {
-      border-color: #30363d;
-      transform: translateY(-2px);
-    }
-    .who-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(56, 189, 248, 0.1);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 16px;
-    }
-    .who-card h3 {
-      font-size: 16px;
-      color: #f0f6fc;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .who-card p {
-      font-size: 13px;
-      color: #8b949e;
-      line-height: 1.65;
-    }
-
-    /* =========================================================
-       COMPARE section — positioning table
-       ========================================================= */
-    .compare-section {
-      max-width: 1000px;
-      margin: 0 auto 72px auto;
-      padding: 0 24px;
-      z-index: 5;
-      position: relative;
-    }
-    .compare-inner {
-      background: rgba(13, 17, 23, 0.6);
-      border: 1px solid #21262d;
-      border-radius: 12px;
-      padding: 28px 24px 24px;
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-    .compare-heading {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .compare-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: #a371f7;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .compare-heading h2 {
-      font-size: 26px;
-      font-weight: 800;
-      color: #f0f6fc;
-      letter-spacing: -0.6px;
-      margin-bottom: 8px;
-    }
-    .compare-heading p {
-      font-size: 14px;
-      color: #8b949e;
-      max-width: 560px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-    .compare-table-wrap {
-      overflow-x: auto;
-      margin: 0 -4px;
-    }
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-    }
-    .compare-table thead th {
-      padding: 12px 10px;
-      text-align: center;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #8b949e;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      border-bottom: 1px solid #21262d;
-      white-space: nowrap;
-    }
-    .compare-table thead th:first-child {
-      text-align: left;
-      padding-left: 16px;
-    }
-    .compare-table thead th.us {
-      color: #3fb950;
-      background: rgba(63, 185, 80, 0.06);
-    }
-    .compare-table tbody td {
-      padding: 11px 10px;
-      text-align: center;
-      border-bottom: 1px solid #161b22;
-      color: #c9d1d9;
-      font-size: 13px;
-    }
-    .compare-table tbody td:first-child {
-      text-align: left;
-      padding-left: 16px;
-      color: #e6edf3;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .compare-table tbody tr:last-child td { border-bottom: none; }
-    .compare-table tbody tr.highlight-row td {
-      background: rgba(63, 185, 80, 0.05);
-    }
-    .compare-table tbody tr.highlight-row td:first-child {
-      color: #3fb950;
-    }
-    .compare-table .yes { color: #3fb950; font-weight: 700; }
-    .compare-table .no  { color: #6e7681; }
-    .compare-table .partial { color: #e3b341; font-weight: 600; font-size: 11.5px; }
-    .compare-table .us-col {
-      background: rgba(63, 185, 80, 0.05);
-      font-weight: 600;
-    }
-    .compare-note {
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 1px solid #161b22;
-      font-size: 11.5px;
-      color: #6e7681;
-      line-height: 1.6;
-      text-align: center;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .compare-note b { color: #8b949e; }
-
-    /* Features */
-    .features-section {
-      max-width: 1100px;
-      margin: 0 auto 60px auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-    .feature-card {
-      background: rgba(17, 20, 24, 0.75);
-      border: 1px solid #21262d;
-      border-radius: 12px;
-      padding: 24px;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-    .feature-card:hover { border-color: #30363d; transform: translateY(-2px); }
-    .feature-icon {
-      width: 40px; height: 40px;
-      background: rgba(56, 189, 248, 0.1);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px; font-size: 18px;
-    }
-    .feature-card h3 { font-size: 15.5px; color: #f0f6fc; margin-bottom: 8px; font-weight: 700; }
-    .feature-card p { font-size: 13px; color: #8b949e; line-height: 1.65; }
-    .feature-card code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      background: #161b22;
-      padding: 1px 5px;
-      border-radius: 3px;
-      color: #79c0ff;
-    }
-
-    .metrics-strip {
-      max-width: 1100px;
-      margin: 0 auto 64px auto;
-      padding: 28px 20px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      border-top: 1px solid #21262d;
-      border-bottom: 1px solid #21262d;
-    }
-    .metric-item { text-align: center; padding: 0 12px; border-right: 1px solid #21262d; }
-    .metric-item:last-child { border-right: none; }
-    .metric-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 18px; font-weight: 700; color: #f0f6fc; letter-spacing: -0.3px;
-    }
-    .metric-value.accent-cyan { color: #38bdf8; }
-    .metric-value.accent-green { color: #3fb950; }
-    .metric-value.accent-purple { color: #a371f7; }
-    .metric-value.accent-orange { color: #e3b341; }
-    .metric-label { font-size: 11.5px; color: #8b949e; margin-top: 6px; line-height: 1.4; }
-
-    .section-heading {
-      max-width: 720px; margin: 0 auto 40px auto;
-      text-align: center; padding: 0 20px;
-    }
-    .section-heading h2 {
-      font-size: 30px; font-weight: 800; color: #f0f6fc;
-      letter-spacing: -0.6px; margin-bottom: 10px;
-    }
-    .section-heading p { font-size: 14.5px; color: #8b949e; line-height: 1.6; }
-
-    /* Stepper — 5 columns */
-    .stepper-section { max-width: 1100px; margin: 0 auto 80px auto; padding: 0 20px; }
-    .stepper-track {
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      gap: 16px; position: relative;
-    }
-    .stepper-track::before {
-      content: ""; position: absolute; top: 19px; left: 6%; right: 6%; height: 1px;
-      background: linear-gradient(to right, #21262d, #388bfd, #3fb950, #a371f7, #21262d);
-      opacity: 0.5; z-index: 0;
-    }
-    .step-item {
-      position: relative; z-index: 1;
-      background: #0d1117; border: 1px solid #21262d;
-      border-radius: 10px; padding: 18px 16px;
-      transition: border-color 0.4s ease, box-shadow 0.4s ease;
-    }
-    .step-item.is-active {
-      border-color: #388bfd;
-      box-shadow: 0 0 0 1px rgba(56, 139, 253, 0.25), 0 10px 30px rgba(56, 139, 253, 0.12);
-    }
-    .step-visual {
-      width: 100%; height: 72px; margin-bottom: 14px;
-      background: #090c10; border: 1px solid #21262d; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
-    }
-    .step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-
-    .anim-type .type-line { transform-origin: left center; animation: typeLine 2.4s ease-in-out infinite; }
-    .anim-type .type-line:nth-child(1) { animation-delay: 0s; }
-    .anim-type .type-line:nth-child(2) { animation-delay: 0.25s; }
-    .anim-type .type-line:nth-child(3) { animation-delay: 0.5s; }
-    .anim-type .type-cursor { animation: blinkCursor 0.9s steps(1) infinite; }
-    @keyframes typeLine {
-      0% { transform: scaleX(0); opacity: 0.3; }
-      35% { transform: scaleX(1); opacity: 1; }
-      80% { transform: scaleX(1); opacity: 1; }
-      100% { transform: scaleX(0); opacity: 0.3; }
-    }
-    @keyframes blinkCursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-
-    .anim-elaborate .elab-node { animation: nodePop 2.6s ease-in-out infinite; transform-origin: center; }
-    .anim-elaborate .elab-node:nth-child(1) { animation-delay: 0s; }
-    .anim-elaborate .elab-node:nth-child(3) { animation-delay: 0.3s; }
-    .anim-elaborate .elab-node:nth-child(5) { animation-delay: 0.6s; }
-    .anim-elaborate .elab-link { stroke-dasharray: 40; stroke-dashoffset: 40; animation: linkDraw 2.6s ease-in-out infinite; }
-    .anim-elaborate .elab-link:nth-child(2) { animation-delay: 0.15s; }
-    .anim-elaborate .elab-link:nth-child(4) { animation-delay: 0.45s; }
-    @keyframes nodePop {
-      0% { transform: scale(0); opacity: 0; }
-      25% { transform: scale(1); opacity: 1; }
-      85% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
-    @keyframes linkDraw {
-      0% { stroke-dashoffset: 40; opacity: 0; }
-      30% { stroke-dashoffset: 0; opacity: 1; }
-      85% { stroke-dashoffset: 0; opacity: 1; }
-      100% { stroke-dashoffset: -40; opacity: 0; }
-    }
-
-    .anim-route .route-path { stroke-dasharray: 160; stroke-dashoffset: 160; animation: routeDraw 2.8s ease-in-out infinite; }
-    .anim-route .route-path.p2 { animation-delay: 0.4s; }
-    .anim-route .route-joint { opacity: 0; animation: jointPop 2.8s ease-in-out infinite; }
-    .anim-route .route-joint.j2 { animation-delay: 0.4s; }
-    @keyframes routeDraw {
-      0% { stroke-dashoffset: 160; }
-      55% { stroke-dashoffset: 0; }
-      100% { stroke-dashoffset: 0; }
-    }
-    @keyframes jointPop {
-      0%, 40% { opacity: 0; transform: scale(0); }
-      55% { opacity: 1; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .anim-trace .trace-wire { stroke-dasharray: 6 5; animation: traceFlow 1.1s linear infinite; }
-    .anim-trace .trace-probe { animation: probeMove 2.6s ease-in-out infinite; }
-    .anim-trace .trace-ring { animation: ringPulse 2.6s ease-in-out infinite; transform-origin: center; }
-    @keyframes traceFlow { to { stroke-dashoffset: -22; } }
-    @keyframes probeMove { 0%, 15% { offset-distance: 0%; } 85%, 100% { offset-distance: 100%; } }
-    @keyframes ringPulse {
-      0%, 15% { transform: scale(0.6); opacity: 0.9; }
-      50% { transform: scale(1.4); opacity: 0; }
-      51%, 100% { transform: scale(0.6); opacity: 0; }
-      85%, 100% { opacity: 0.9; }
-    }
-
-    /* Waveform step visual */
-    .anim-wave .wave-clk    { stroke-dasharray: 200; stroke-dashoffset: 200; animation: waveDraw 2.4s ease-in-out infinite; }
-    .anim-wave .wave-data   { stroke-dasharray: 200; stroke-dashoffset: 200; animation: waveDraw 2.4s ease-in-out 0.3s infinite; }
-    .anim-wave .wave-cursor { animation: waveCursor 2.4s ease-in-out infinite; }
-    @keyframes waveDraw {
-      0% { stroke-dashoffset: 200; opacity: 0.4; }
-      40% { stroke-dashoffset: 0; opacity: 1; }
-      85% { stroke-dashoffset: 0; opacity: 1; }
-      100% { stroke-dashoffset: 0; opacity: 0.4; }
-    }
-    @keyframes waveCursor {
-      0% { transform: translateX(0); opacity: 0; }
-      20% { opacity: 1; }
-      80% { opacity: 1; }
-      100% { transform: translateX(96px); opacity: 0; }
-    }
-
-    .stepper-progress {
-      max-width: 1100px; margin: 20px auto 0 auto; padding: 0 20px;
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
-    }
-    .progress-track { height: 3px; background: #21262d; border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; width: 0%; background: #388bfd; border-radius: 2px; }
-    .progress-fill.filling { animation: fillBar 2.5s linear forwards; }
-    .progress-fill.filled { width: 100%; background: #3fb950; }
-    @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
-
-    .step-index {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: #161b22; border: 1px solid #388bfd; color: #58a6ff;
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
-    }
-    .step-item h3 { font-size: 14.5px; color: #f0f6fc; font-weight: 700; margin-bottom: 6px; }
-    .step-item p { font-size: 12.5px; color: #8b949e; line-height: 1.55; }
-    .step-item code {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      background: #161b22; padding: 1px 4px; border-radius: 3px; color: #79c0ff;
-    }
-
-    /* Footer */
-    .landing-footer { border-top: 1px solid #21262d; padding: 32px 20px; margin-top: auto; }
-    .footer-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 16px;
-    }
-    .footer-brand {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13.5px; font-weight: 700; color: #c9d1d9;
-    }
-    .footer-links { display: flex; align-items: center; gap: 22px; }
-    .footer-links a { color: #8b949e; text-decoration: none; font-size: 13px; transition: color 0.2s; }
-    .footer-links a:hover { color: #f0f6fc; }
-    .footer-license {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      color: #6e7681; border: 1px solid #21262d; padding: 3px 8px; border-radius: 4px;
-    }
-    .footer-meta { max-width: 1100px; margin: 16px auto 0 auto; font-size: 12px; color: #6e7681; }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 30px; min-height: 96px; letter-spacing: -0.8px; }
-      .landing-nav { padding: 0 16px; height: 56px; }
-      .btn-launch-header { padding: 6px 12px; font-size: 12px; }
-      .hero { padding: 40px 16px 16px; }
-      .hero p { font-size: 15px; margin-bottom: 28px; }
-      .hero-chip { font-size: 11px; padding: 5px 12px; }
-      .hero-tagline { font-size: 10.5px; margin-bottom: 28px; }
-      .hero-actions { flex-direction: column; align-items: stretch; padding: 0 16px; gap: 10px; }
-      .btn-primary-hero { justify-content: center; padding: 12px 20px; font-size: 14px; }
-      .hero-preview-window { margin: 0 16px 48px; border-radius: 10px; }
-      .window-body { height: 190px; flex-direction: column; }
-      .window-code-pane { display: none; }
-      .window-schematic-pane { width: 100%; height: 100%; }
-      .preview-badge-overlay { font-size: 9.5px; padding: 3px 8px; }
-
-      .why-section { padding: 0 16px; margin-bottom: 48px; }
-      .why-inner { padding: 22px 20px; }
-      .why-heading { font-size: 20px; }
-      .why-body { font-size: 14px; }
-
-      .who-section { padding: 0 16px; margin-bottom: 48px; }
-      .who-heading { font-size: 22px; margin-bottom: 24px; }
-      .who-grid { grid-template-columns: 1fr; }
-
-      .compare-section { padding: 0 16px; margin-bottom: 48px; }
-      .compare-inner { padding: 22px 16px 18px; }
-      .compare-heading h2 { font-size: 20px; }
-      .compare-heading p { font-size: 13px; }
-      .compare-table { font-size: 12px; }
-      .compare-table thead th { padding: 10px 6px; font-size: 10.5px; }
-      .compare-table tbody td { padding: 10px 6px; font-size: 12px; }
-      .compare-table tbody td:first-child,
-      .compare-table thead th:first-child { padding-left: 10px; }
-
-      .section-heading { margin-bottom: 28px; padding: 0 16px; }
-      .section-heading h2 { font-size: 22px; }
-      .section-heading p { font-size: 13.5px; }
-      .features-section { grid-template-columns: 1fr; gap: 14px; padding: 0 16px; margin-bottom: 44px; }
-      .feature-card { padding: 20px; }
-      .feature-card h3 { font-size: 14.5px; }
-      .metrics-strip {
-        grid-template-columns: repeat(2, 1fr); row-gap: 24px;
-        padding: 22px 16px; margin-bottom: 44px;
-      }
-      .metric-item { padding: 0 8px; }
-      .metric-item:nth-child(2) { border-right: none; }
-      .metric-item:nth-child(3), .metric-item:nth-child(4) {
-        border-top: 1px solid #21262d; padding-top: 20px;
-      }
-      .metric-value { font-size: 14px; }
-      .metric-label { font-size: 10.5px; }
-      .stepper-section { padding: 0 16px; margin-bottom: 56px; }
-      .stepper-track { grid-template-columns: 1fr; gap: 14px; }
-      .stepper-track::before { display: none; }
-      .step-item { padding: 14px; }
-      .step-visual { height: 60px; margin-bottom: 10px; }
-      .stepper-progress { display: none; }
-      .landing-footer { padding: 24px 16px; }
-      .footer-inner { flex-direction: column; align-items: flex-start; gap: 14px; }
-      .footer-links { flex-wrap: wrap; gap: 14px; }
-      .footer-meta { font-size: 11px; padding: 0 4px; }
-    }
-  </style>
+  <!-- GOOGLE ANALYTICS -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LT20GTPEL1');
+  </script>
 </head>
 <body>
 
@@ -907,32 +102,40 @@
         <span>RTL Bench</span>
         <span class="badge-pro">PRO</span>
       </a>
+      <nav class="header-links" id="site-menu" aria-label="Site links">
+        <a href="/" class="active">Home</a>
+        <a href="/about">About</a>
+        <a href="/learn">Learn</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="mailto:contact@rtlbench.com">Contact</a>
+      </nav>
       <a href="/studio" class="btn-launch-header">Open RTL Bench →</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-menu">
+        <span></span><span></span><span></span>
+      </button>
     </header>
 
     <main class="hero">
       <div class="hero-chip">
         <span class="pulse-dot"></span>
-        <span>Yosys-backed synthesis · Auto-TB simulation · Gate-level STA · In-browser</span>
+        <span>Real EDA pipeline · Testbenches · CDC + RDC analysis · sky130 · GF180 · IHP · No install</span>
       </div>
 
-      <h1>
-        From SystemVerilog source to<br/>
-        <span class="typewriter-wrapper">
-          <span id="typewriter-text"></span><span class="typewriter-cursor"></span>
-        </span>
-      </h1>
+     <h1>
+  From  RTL source to<br/>
+  <span class="typewriter-wrapper">
+    <span id="typewriter-text"></span><span class="typewriter-cursor"></span>
+  </span>
+</h1>
 
       <p>
-  Compile multi-file SystemVerilog and VHDL projects into interactive gate schematics — then simulate them.
-  Hierarchy-preserving submodule blocks, real vector bus collapsing, auto-generated
-  testbenches, in-browser waveforms, and on-demand gate-level timing analysis with
-  per-process-node estimation. No install, no license, right in your browser.
+  Multi-file SystemVerilog &amp; VHDL synthesis · Live gate-level schematics · Auto-detected testbenches · Real-time code &amp; waveform cross-probing · Structural CDC + RDC hazard analysis · Real Liberty-table STA on sky130, GF180 &amp; IHP · One-click WebSerial FPGA flashing · Zero install
 </p>
 
-      <p class="hero-tagline">
-        Free · Open-core · Runs on Yosys + Icarus + ELK 
-      </p>
+  <p class="hero-tagline">
+  Free · Open-source · Runs on Yosys + GHDL + nextpnr + Icarus + ELK
+</p>
 
       <div class="hero-actions">
         <a href="/studio" class="btn-primary-hero">▷ Launch RTL Bench</a>
@@ -970,8 +173,8 @@
               <g class="scene">
 
                 <!-- PHASE A — HYBRID -->
-                <path class="hw draw" pathLength="100" d="M 48 41 L 68 41 L 68 60" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 0.35s;"/>
-                <path class="hw draw" pathLength="100" d="M 48 73 L 68 73 L 68 72" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 0.55s;"/>
+<path class="hw draw" pathLength="100" d="M 48 41 L 65 41 L 65 60 L 85 60" stroke="#9da7b3" stroke-width="1.5" fill="none"/>
+<path class="hw draw" pathLength="100" d="M 48 73 L 65 73 L 65 72 L 85 72" stroke="#9da7b3" stroke-width="1.5" fill="none"/>
                 <path class="hw draw" pathLength="100" d="M 150 55 L 180 55" stroke="#9da7b3" stroke-width="1.8" fill="none" style="--d: 1.55s;"/>
                 <path class="hw draw" pathLength="100" d="M 245 55 L 275 55" stroke="#9da7b3" stroke-width="1.8" fill="none" style="--d: 2.25s;"/>
                 <path class="hw draw" pathLength="100" d="M 213 85 L 213 115 L 275 115" stroke="#9da7b3" stroke-width="1.5" fill="none" style="--d: 2.45s;"/>
@@ -1201,7 +404,8 @@
             <h3>Students &amp; self-learners</h3>
             <p>
               Learn RTL without fighting toolchains. Paste SystemVerilog, see it turn into
-              gates, run a testbench, watch the waveform — all before your first coffee.
+              gates, run an auto-generated testbench, watch the waveform — all before your
+              first coffee. Upload a real TB when you're ready for rigor.
             </p>
           </div>
 
@@ -1210,8 +414,8 @@
             <h3>Hardware engineers</h3>
             <p>
               Quick sanity checks on a module you're working on. Real sky130, GF180, and
-              IHP SG13G2 cell timing, per-cell critical-path breakdown, and vector SVG export
-              for design reviews.
+              IHP SG13G2 cell timing, per-cell critical-path breakdown, structural CDC + RDC
+              analysis, and vector SVG export for design reviews.
             </p>
           </div>
 
@@ -1220,7 +424,8 @@
             <h3>Researchers &amp; educators</h3>
             <p>
               Share a link instead of a repo. Every design loads a live synthesis, STA report,
-              and waveform — reproducible from any browser, no lab setup required.
+              CDC + RDC verification, and waveform — reproducible from any browser, no lab
+              setup required.
             </p>
           </div>
 
@@ -1234,15 +439,16 @@
         <div class="metric-label">Simple · Hybrid · Detailed — auto-switched by zoom level</div>
       </div>
       <div class="metric-item">
-        <div class="metric-value accent-green">Hierarchy + Flat</div>
-        <div class="metric-label">Dual graph model from a single compile</div>
+        <div class="metric-value accent-green">RTL → Silicon</div>
+        <div class="metric-label">Synthesis · simulation · timing · FPGA bitstreams</div>
       </div>
       <div class="metric-item">
         <div class="metric-value accent-orange">Real PDK Timing</div>
-        <div class="metric-label">SkyWater 130 nm · GF180MCU 180 nm · IHP SG13G2 · per-cell Liberty</div>      </div>
+        <div class="metric-label">SkyWater 130 nm · GF180MCU 180 nm · IHP SG13G2 · per-cell Liberty</div>
+      </div>
       <div class="metric-item">
-        <div class="metric-value accent-purple">Yosys + ELK</div>
-        <div class="metric-label">Open-source toolchain, fully in-browser</div>
+        <div class="metric-value accent-purple">RTL → FPGA</div>
+        <div class="metric-label">Tang Nano 9K · 20K · iCE40 UP5K · one-click bitstreams</div>
       </div>
     </section>
 
@@ -1294,6 +500,20 @@
   <td class="no">—</td>
   <td class="us-col yes">✓ Both</td>
 </tr>
+<tr>
+                <td>Clock Domain Crossing (CDC) checks</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓ Structural audit</td>
+              </tr>
+              <tr>
+                <td>Reset Domain Crossing (RDC) checks</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓ Structural audit</td>
+              </tr>
               <tr class="highlight-row">
                 <td>Real PDK timing (sky130 / GF180 / IHP)</td>
                 <td class="no">—</td>
@@ -1314,6 +534,13 @@
                 <td class="no">—</td>
                 <td class="no">—</td>
                 <td class="us-col yes">✓</td>
+              </tr>
+              <tr>
+                <td>User-supplied testbenches (tb_*.sv)</td>
+                <td class="partial">Manual</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓ Auto-detected</td>
               </tr>
               <tr>
                 <td>In-browser waveforms</td>
@@ -1342,6 +569,13 @@
                 <td class="yes">✓</td>
                 <td class="yes">✓</td>
                 <td class="us-col yes">✓</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>FPGA bitstream generation</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="no">—</td>
+                <td class="us-col yes">✓ Tang Nano · iCE40</td>
               </tr>
               <tr>
                 <td>Free to use</td>
@@ -1389,12 +623,37 @@
           a nanosecond estimate with top-K critical paths and a cell-by-cell breakdown.</p>
       </div>
       <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Bidirectional cross-probing</h3>
+        <p>Double-click any identifier in the code to highlight its gates on the schematic and dim non-target waveform traces to 18% opacity. Inspect data flows from source line to digital waveform seamlessly.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Structural Clock Domain Crossing (CDC)</h3>
+        <p>Topological back-tracing inspects every register clock boundary. Flags combinational hazards and missing synchronizers while verifying multi-stage flip-flop synchronizer chains. Full report page with a domain interaction matrix and per-path diagnostics.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔁</div>
+        <h3>Reset Domain Crossing (RDC) analysis</h3>
+        <p>Structural RDC detection across reset boundaries — catches the same-clock / different-reset bugs that CDC tools miss. Traces reset nets back to their source, verifies 2-FF reset synchronizer chains, and flags combinational reset generators and soft resets before tape-out.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>FPGA synthesis &amp; WebSerial flashing</h3>
+        <p>Go from RTL to physical silicon without terminal tools. Compiles with Yosys and nextpnr, auto-recovers from pin conflicts, and streams bitstreams directly to Tang Nano and iCE40 boards via WebSerial.</p>
+      </div>
+            <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>FPGA bitstream generation</h3>
+        <p>Take your design from RTL to physical silicon. One click compiles, places, routes, and packs a bitstream for <strong>Gowin Tang Nano 9K</strong>, <strong>Tang Nano 20K</strong>, and <strong>Lattice iCE40 UP5K</strong> boards — or download the binary and flash it yourself.</p>
+      </div>
+      <div class="feature-card">
         <div class="feature-icon">📈</div>
-        <h3>Auto-generated testbenches &amp; waveforms</h3>
-        <p>Every design gets a testbench on demand — the backend probes your top module's
-          real ports with Yosys, auto-detects clock and reset by name, and drives the rest
-          with a stimulus sweep. Simulate, then inspect the VCD in the built-in waveform
-          drawer. No manual <code>$dumpvars</code> required.</p>
+        <h3>Bring your own testbench — or auto-generate one</h3>
+        <p>Drop <code>tb_yourdesign.sv</code> next to your design and RTL Bench auto-detects it by filename or <code>$dumpvars</code> signature. The testbench is <strong>excluded from synthesis, STA, and FPGA builds</strong> but runs in simulation. No TB? It reads your top module's ports with Yosys and generates one: reset release, 60 random stimulus cycles, drain. Waveforms appear in the built-in drawer either way.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🧵</div>
@@ -1417,13 +676,7 @@
           the canvas — from a primary input through combinational logic to a register or
           output pin. Ideal for tracking feedback loops.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📐</div>
-        <h3>Orthogonal Manhattan routing</h3>
-        <p>Powered by the Eclipse Layout Kernel with <code>edgeRouting: ORTHOGONAL</code>.
-          Wires travel only on horizontal and vertical lanes with clean 90° corners — the
-          same visual convention used by commercial EDA tools.</p>
-      </div>
+      
     </section>
 
     <section class="stepper-section">
@@ -1534,83 +787,20 @@
         <a href="/learn">Learn</a>
 
         <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
 
         <span class="footer-license">MIT License</span>
       </div>
+    </div>
+    <div class="footer-meta" style="margin-bottom: 8px;">
+      Testbench-aware synthesis · CDC + RDC verification · STA on 3 open PDKs · FPGA bitstreams
     </div>
     <div class="footer-meta">
       Built by <a href="https://www.linkedin.com/in/raghavan-su-04r/" target="_blank" rel="noopener" style="color: #8b949e; text-decoration: underline;">Raghavan</a> · Inquiries: <a href="mailto:contact@rtlbench.com" style="color: #8b949e; text-decoration: underline;">contact@rtlbench.com</a> · Independent open-source project.
     </div>
   </footer>
+  <script src="/static/src/index.js?v=2.0.2"></script>
 
-  <script>
-    /* Typewriter */
-    const phrases = [
-      "SystemVerilog & VHDL Support",
-      "Real Gate-Level Schematics",
-      "Timing Analysis at 45nm / 90nm",
-      "Multi-File RTL Projects, Unified",
-      "Click-to-Trace Netlist Exploration",
-      "Auto-Generated Testbenches"
-    ];
-    let phraseIndex = 0, charIndex = 0, isDeleting = false;
-    const typewriterEl = document.getElementById("typewriter-text");
-    function typeWriterLoop() {
-      const p = phrases[phraseIndex];
-      if (isDeleting) { charIndex--; typewriterEl.textContent = p.substring(0, charIndex); }
-      else { charIndex++; typewriterEl.textContent = p.substring(0, charIndex); }
-      let typeSpeed = isDeleting ? 30 : 65;
-      if (!isDeleting && charIndex === p.length) { typeSpeed = 2200; isDeleting = true; }
-      else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 400; }
-      setTimeout(typeWriterLoop, typeSpeed);
-    }
-    document.addEventListener("DOMContentLoaded", typeWriterLoop);
 
-    /* Stepper — 5 steps */
-    const STEP_DURATION = 2600;
-    const stepItems = Array.from(document.querySelectorAll(".step-item"));
-    const progressFills = Array.from(document.querySelectorAll(".progress-fill"));
-    let activeStep = 0;
-    function setActiveStep(index) {
-      stepItems.forEach((el, i) => el.classList.toggle("is-active", i === index));
-      progressFills.forEach((el, i) => {
-        el.classList.remove("filling", "filled");
-        if (i < index) el.classList.add("filled");
-        else if (i === index) { void el.offsetWidth; el.classList.add("filling"); }
-      });
-    }
-    if (stepItems.length && progressFills.length) {
-      setActiveStep(0);
-      setInterval(() => {
-        activeStep = (activeStep + 1) % stepItems.length;
-        setActiveStep(activeStep);
-      }, STEP_DURATION);
-    }
-
-    /* Animated schematic — infinite loop driven by rAF */
-    (function () {
-      const svg = document.querySelector(".animated-schematic");
-      if (!svg) return;
-      const CYCLE_MS = 14000;
-      let lastRestart = 0;
-
-      function restart() {
-        svg.classList.remove("playing");
-        void svg.getBoundingClientRect().width;
-        svg.classList.add("playing");
-        lastRestart = performance.now();
-      }
-
-      function tick(now) {
-        if (now - lastRestart >= CYCLE_MS) {
-          restart();
-        }
-        requestAnimationFrame(tick);
-      }
-
-      restart();
-      requestAnimationFrame(tick);
-    })();
-  </script>
 </body>
 </html>

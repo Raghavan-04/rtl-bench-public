@@ -220,6 +220,119 @@
 
       .footer-note { font-size: 11px; padding: 12px 14px; }
     }
+
+    /* ---- Site menu (matches home / about) — added ---- */
+    #navbar { position: relative; }
+    .nav-links { display: flex; align-items: center; gap: 22px; margin: 0 auto; }
+    .nav-links a { color: #8b949e; font-size: 12px; font-weight: 600; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #f0f6fc; text-decoration: none; }
+    .nav-links a.active { color: #58a6ff; }
+    .nav-links a:focus-visible, .menu-toggle:focus-visible { outline: 2px solid #2ea043; outline-offset: 2px; }
+    .menu-toggle { display: none; }
+    .back-link, .nav-btn { white-space: nowrap; }
+
+    @media (max-width: 768px) {
+      #navbar { z-index: 30; justify-content: flex-start; padding: 0 14px; }
+      .back-link { margin-left: 0; }
+      .brand-wrap, .brand { margin-right: auto; }
+      .brand-wrap .brand { margin-right: 0; }
+      .menu-toggle {
+        display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 5px; order: -1; width: 36px; height: 36px; margin: 0 8px 0 -8px; padding: 0;
+        background: none; border: 0; cursor: pointer; flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .menu-toggle span {
+        display: block; width: 20px; height: 2px; background: #c9d1d9; border-radius: 2px;
+        transition: transform 0.28s cubic-bezier(.4,0,.2,1), opacity 0.2s, background 0.2s, width 0.2s;
+      }
+      .menu-toggle span:nth-child(2) { width: 14px; align-self: flex-start; margin-left: 8px; }
+      .menu-toggle[aria-expanded="true"] span { background: #38bdf8; }
+      .menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: translateX(-6px); }
+      .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      .nav-links {
+        position: absolute; top: calc(100% + 8px); left: 12px; right: 12px;
+        flex-direction: column; align-items: stretch; gap: 2px; margin: 0; padding: 8px;
+        background: linear-gradient(180deg, rgba(14, 22, 30, 0.92), rgba(8, 10, 13, 0.96));
+        -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+        border: 1px solid rgba(56, 189, 248, 0.18); border-radius: 14px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 40px rgba(56, 189, 248, 0.08);
+        z-index: 40;
+        opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.98);
+        transform-origin: top left; pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+      }
+      .nav-links.is-open {
+        opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+        transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s;
+      }
+      .nav-links a {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 14px; font-size: 15px; color: #c9d1d9; border-radius: 10px;
+        opacity: 0; transform: translateY(-4px);
+        transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s, color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .nav-links a::after { content: "\2192"; color: #6e7681; transition: transform 0.2s, color 0.2s; }
+      .nav-links.is-open a { opacity: 1; transform: none; }
+      .nav-links.is-open a:nth-child(1) { transition-delay: 0.04s; }
+      .nav-links.is-open a:nth-child(2) { transition-delay: 0.08s; }
+      .nav-links.is-open a:nth-child(3) { transition-delay: 0.12s; }
+      .nav-links.is-open a:nth-child(4) { transition-delay: 0.16s; }
+      .nav-links.is-open a:nth-child(5) { transition-delay: 0.20s; }
+      .nav-links.is-open a:nth-child(6) { transition-delay: 0.24s; }
+      .nav-links a:hover, .nav-links a:active { background: rgba(56, 189, 248, 0.08); color: #fff; }
+      .nav-links a:hover::after, .nav-links a:active::after { color: #38bdf8; transform: translateX(3px); }
+      .nav-links a.active, .nav-links a.active::after { color: #58a6ff; }
+    }
+
+    /* ---- Footer with Terms link + extra mobile polish — added ---- */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .container a, code, td, p, li { overflow-wrap: anywhere; }
+    .page-footer {
+      margin-top: 48px; padding-top: 22px; border-top: 1px solid #21262d;
+      font-size: 12px; color: #6e7681;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .page-footer nav { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    .page-footer a { color: #8b949e; }
+    .page-footer a:hover { color: #f0f6fc; }
+    .page-footer a.active { color: #58a6ff; }
+    @media (max-width: 700px) {
+      .page-footer { flex-direction: column; align-items: flex-start; margin-top: 36px; }
+      .page-footer nav a { padding: 6px 0; }
+    }
+  </style>
+  <style>
+    /* ---- Unified header (identical on every page) — added ---- */
+    .brand { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 0.5px; text-decoration: none; }
+    .brand:hover { text-decoration: none; }
+    .badge-pro { font-size: 10px; padding: 2px 6px; }
+
+    .btn-launch-header {
+      background: #238636; border: 1px solid #2ea043; color: #fff; padding: 8px 18px; border-radius: 6px;
+      font-weight: 600; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center;
+      gap: 6px; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-launch-header:hover { background: #2ea043; transform: translateY(-1px); text-decoration: none; color: #fff; }
+
+    @media (min-width: 769px) {
+      #navbar {
+        height: 64px;
+        padding: 0 max(32px, calc((100% - 1200px) / 2 + 32px));
+        background: rgba(8, 10, 13, 0.85);
+        -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        justify-content: space-between;
+      }
+      .nav-links a { font-size: 13px; }
+    }
+    @media (max-width: 768px) {
+      #navbar { height: 56px; padding: 0 16px; background: rgba(8, 10, 13, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+      .btn-launch-header { padding: 6px 12px; font-size: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -229,7 +342,18 @@
       <span>RTL Bench</span>
       <span class="badge-pro">PRO</span>
     </a>
-    <a href="/" id="back-btn" class="back-link">← Back</a>
+  <nav class="nav-links" id="site-menu" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/learn">Learn</a>
+        <a href="/privacy" class="active">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="mailto:contact@rtlbench.com">Contact</a>
+  </nav>
+  <a href="/studio" class="btn-launch-header">Open RTL Bench →</a>
+  <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-menu">
+    <span></span><span></span><span></span>
+  </button>
   </div>
 
   <div class="container">
@@ -400,7 +524,29 @@
     <div class="footer-note">
       <strong>Legal Disclaimer:</strong> This text represents a transparent disclosure of our operational telemetry patterns and is provided for informational objectives. It does not constitute formal legal counsel. Entities deploying customized forks of this codebase into commercial production environments must consult certified legal counsel to verify regional regulatory adherence.
     </div>
+
+    <footer class="page-footer">
+      <span>&copy; 2026 RTL Bench. Independent Open-Access EDA Workbench.</span>
+      <nav aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/privacy" class="active">Privacy</a>
+        <a href="/terms">Terms of Service</a>
+      </nav>
+    </footer>
   </div>
+
+  <script>
+    (function () {
+      var t = document.getElementById("menu-toggle"), m = document.getElementById("site-menu");
+      if (!t || !m) return;
+      function set(open) { m.classList.toggle("is-open", open); t.setAttribute("aria-expanded", open ? "true" : "false"); }
+      t.addEventListener("click", function (e) { e.stopPropagation(); set(!m.classList.contains("is-open")); });
+      m.addEventListener("click", function (e) { if (e.target.tagName === "A") set(false); });
+      document.addEventListener("click", function (e) { if (!m.contains(e.target)) set(false); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+      window.addEventListener("resize", function () { if (window.innerWidth > 768) set(false); });
+    })();
+  </script>
 
   <script>
     (function () {

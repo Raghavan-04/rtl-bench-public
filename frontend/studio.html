@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Prevent indexing, snippet extraction, and archiving in Google, Gemini, and search engines -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>RTL Bench — Workbench</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-LT20GTPEL1"></script>
@@ -15,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/src/studio.min.css?v=2.0.1" />
+  <link rel="stylesheet" href="/static/src/studio.css?v=2.0.3" />
   <script src="https://cdn.jsdelivr.net/npm/elkjs@0.12.0/lib/elk.bundled.js"></script>
 </head>
 <body>
@@ -62,29 +65,38 @@
 
     <div class="examples-wrapper">
       <button class="btn" id="btn-examples" onclick="toggleExamplesMenu(event)">📁 Examples ▾</button>
-      <div id="examples-popover">
-        <div class="example-option" onclick="selectPreset('stress_test')">
-          <div class="example-title">Accumulator & Decoders</div>
-          <div class="example-desc">Sequential accumulator loop with magnitude comparators & decoder trees.</div>
-        </div>
-        <div class="example-option" onclick="selectPreset('rv32_alu_multi')">
-          <div class="example-title">RISC-V 32-bit ALU <span style="color:#3fb950; font-size:10px; font-weight:700;">(multi-file)</span></div>
-          <div class="example-desc">Same ALU, split into 4 submodules: adder/sub, logic ops, SLT, top. Demonstrates hierarchy view + file chips.</div>
-        </div>
-        <div class="example-option" onclick="selectPreset('fsm_seq')">
-          <div class="example-title">4-State Sequence Detector</div>
-          <div class="example-desc">Mealy/Moore FSM state transitions & synchronous registered registers.</div>
-        </div>
-        <div class="example-option" onclick="selectPreset('fifo_sync')">
-          <div class="example-title">Synchronous FIFO Buffer</div>
-          <div class="example-desc">Dual circular pointers with memory registers and full/empty flags.</div>
-        </div>
-        <div style="height: 1px; background: #262c36; margin: 4px 0;"></div>
-        <div class="example-option" onclick="selectPreset('blank')">
-          <div class="example-title" style="color: #3fb950;">✨ Blank HDL Module</div>
-          <div class="example-desc">Clear the workspace and write your own SystemVerilog from scratch.</div>
-        </div>
-      </div>
+     <!-- Move this OUT of #navbar so Safari doesn't clip it -->
+<div id="examples-popover">
+  <div class="example-option" onclick="selectPreset('stress_test')">
+    <div class="example-title">Accumulator &amp; Decoders</div>
+    <div class="example-desc">Sequential accumulator loop with magnitude comparators &amp; decoder trees.</div>
+  </div>
+  <div class="example-option" onclick="selectPreset('rv32_alu_multi')">
+    <div class="example-title">RISC-V 32-bit ALU <span style="color:#3fb950; font-size:10px; font-weight:700;">(multi-file)</span></div>
+    <div class="example-desc">Same ALU, split into 4 submodules: adder/sub, logic ops, SLT, top. Demonstrates hierarchy view + file chips.</div>
+  </div>
+  <div class="example-option" onclick="selectPreset('fsm_seq')">
+    <div class="example-title">4-State Sequence Detector</div>
+    <div class="example-desc">Mealy/Moore FSM state transitions &amp; synchronous registered registers.</div>
+  </div>
+  <div class="example-option" onclick="selectPreset('fifo_sync')">
+    <div class="example-title">Synchronous FIFO Buffer</div>
+    <div class="example-desc">Dual circular pointers with memory registers and full/empty flags.</div>
+  </div>
+    <div class="example-option" onclick="selectPreset('cdc_demo')">
+    <div class="example-title">CDC Analyzer Demo <span style="color:#58a6ff; font-size:10px; font-weight:700;">(clock domains)</span></div>
+    <div class="example-desc">Two clock domains with one unsafe direct crossing and one correct 2-FF synchronizer. Detects 1 hazard + 1 SYNC OK.</div>
+  </div>
+  <div class="example-option" onclick="selectPreset('rdc_demo')">
+    <div class="example-title">RDC Analyzer Demo <span style="color:#a371f7; font-size:10px; font-weight:700;">(reset domains)</span></div>
+    <div class="example-desc">Two reset domains on a shared clock. Catches the RDC bug that CDC misses. Shows 1 hazard + 1 reset synchronizer.</div>
+  </div>
+  <div style="height: 1px; background: #262c36; margin: 4px 0;"></div>
+  <div class="example-option" onclick="selectPreset('blank')">
+    <div class="example-title" style="color: #3fb950;">✨ Blank HDL Module</div>
+    <div class="example-desc">Clear the workspace and write your own SystemVerilog from scratch.</div>
+  </div>
+</div>
     </div>
 
     <div class="divider"></div>
@@ -104,6 +116,15 @@
     <button id="btn-simple" class="btn" onclick="setMode('simple')">Block view</button>
     <button id="btn-hybrid" class="btn active" onclick="setMode('hybrid')">Hybrid</button>
     <button id="btn-detailed" class="btn" onclick="setMode('detailed')">Gate view</button>
+    <!-- Inside #navbar in studio.html -->
+         <div style="flex: 1;"></div>
+
+<button class="btn" id="btn-goto-fpga"
+        style="border-color: #2ea043; color: #3fb950;"
+        title="Synthesize and Flash to connected FPGA"
+        onclick="openFPGAPage(event)">
+  FPGA
+</button>
 
     <div style="flex: 1;"></div>
     <button class="btn" onclick="exportSVG()">⬇ Export SVG</button>
@@ -118,12 +139,17 @@
       <div class="pane-header">
         <span>• HDL Source</span>
         <div class="pane-header-controls">
-          <span class="strip-label" style="margin:0;">TOP:</span>
-          <select id="top-module-select" class="top-select" onchange="onTopModuleChange(this.value)">
-            <option value="">auto-detect</option>
-          </select>
-          <span style="font-size:9px; color:#58a6ff;" id="lang-indicator">SYSTEMVERILOG</span>
-        </div>
+  <span class="strip-label" style="margin:0;">TOP:</span>
+  <select id="top-module-select" class="top-select" onchange="onTopModuleChange(this.value)">
+    <option value="">auto-detect</option>
+  </select>
+  <button id="autocompile-toggle" class="autocompile-pill live"
+          title="Auto-compile on idle (click to switch to manual)">
+    <span class="ac-dot"></span>
+    <span class="ac-label">Live</span>
+  </button>
+  <span style="font-size:9px; color:#58a6ff;" id="lang-indicator">SYSTEMVERILOG</span>
+</div>
       </div>
 
       <div id="file-strip" class="file-strip" style="display:none;">
@@ -132,11 +158,19 @@
           <span class="strip-label">Structure:</span>
           <button id="btn-hierarchy" class="btn-mini active" onclick="setStructure('hierarchy')">Hierarchy</button>
           <button id="btn-flatten" class="btn-mini" onclick="setStructure('flatten')">Flat</button>
+          <button class="btn-mini" onclick="createTestbench()"
+        title="Generate a testbench skeleton for the current top module"
+        style="color:#a371f7;border-color:#48326a;">
+  + TB
+</button>
           <button class="btn-mini danger" style="margin-left:auto;" onclick="clearAllFiles()">Clear All</button>
         </div>
       </div>
 
-      <textarea id="code-input" spellcheck="false"></textarea>
+            <div id="editor-wrap">
+        <div id="line-numbers" aria-hidden="true">1</div>
+        <textarea id="code-input" spellcheck="false"></textarea>
+      </div>
     </div>
 
     <div id="splitter" title="Drag to resize"></div>
@@ -209,7 +243,8 @@
         </div>
         <div class="drawer-actions" onclick="event.stopPropagation()">
           <button class="ctrl-btn" id="drawer-expand-btn" title="Maximize / Restore" onclick="toggleDrawerMaximize(event)">🗖</button>
-          <button class="btn-mini btn-run" onclick="runSimulation(true)">▶ Run Testbench</button>
+<span id="tb-mode-badge" class="tb-mode-badge" title="Which testbench will run">AUTO</span>
+<button class="btn-mini btn-run" onclick="runSimulation(true)">▶ Run Testbench</button>
           <button class="ctrl-btn" style="display:inline-flex; width:22px; height:22px;" onclick="toggleSimDrawer()">✕</button>
         </div>
       </div>
@@ -268,6 +303,16 @@
         </button>
         <div id="lint-popover" class="lint-popover"></div>
       </div>
+
+      <!-- Add this CDC button container right here -->
+     <a id="cdc-chip" class="cdc-chip ok" onclick="openCDCPage(event)" title="Click to view full CDC report">
+        <span class="cdc-badge-dot">●</span>
+        <span>CDC&nbsp;<b id="stat-cdc-val">0 HAZARD</b></span>
+      </a>
+      <a id="rdc-chip" class="cdc-chip ok" onclick="openRDCPage(event)" title="Click to view full RDC report">
+        <span class="cdc-badge-dot">●</span>
+        <span>RDC&nbsp;<b id="stat-rdc-val">0 HAZARD</b></span>
+      </a>
       <div class="stats-sep"></div>
 
       <div><span style="color:#58a6ff; font-weight:700;" id="stat-regs">0</span> Regs</div>
@@ -298,7 +343,7 @@
 
   </div>
 
-  <script src="/static/src/main.min.js"></script>
+<script src="/static/src/main.min.js?v=2.1.2"></script>
 
   <div id="mobile-warning" class="mobile-warning" style="display:none;">
     <div class="mobile-warning-card">
@@ -353,6 +398,6 @@
   </div>
 </div>
 
-  <script src="/static/src/studio.min.js?v=2.0.1"></script>
+  <script src="/static/src/studio.js?v=2.1.0"></script>
 </body>
 </html>
