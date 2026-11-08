@@ -14,7 +14,7 @@
 
 ---
 
-## 🖼️ At a glance
+## At a glance
 
 | | |
 |---|---|
@@ -27,7 +27,7 @@
 
 ---
 
-## ✨ Features
+##  Features
 
 ### Synthesis & Visualization
 
@@ -68,7 +68,7 @@
 
 ---
 
-## 🏗️ The pipeline
+##  The pipeline
 
 Every design runs through the same open-source stack professionals use:
 
@@ -88,7 +88,7 @@ Every design runs through the same open-source stack professionals use:
 
 ---
 
-## 🚀 Getting started (frontend only)
+## Getting started (frontend only)
 
 This repository contains the **frontend UI and landing page** for RTL Bench.
 
@@ -117,7 +117,7 @@ npm run dev
 
 ---
 
-## 🧩 Open-core model
+##  Open-core model
 
 RTL Bench operates on an **open-core** model:
 
@@ -130,7 +130,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 
 ---
 
-## 🛠️ Tech stack
+##  Tech stack
 
 **Open-source engines powering the backend:**
 
@@ -155,7 +155,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 
 ---
 
-## 👥 Who it's for
+##  Who it's for
 
 - **Students & self-learners.** Learn RTL without fighting toolchains. Paste SystemVerilog, see gates, run a testbench, watch the waveform.
 - **Hardware engineers.** Quick sanity checks. Real sky130/GF180/IHP cell timing, per-cell critical-path breakdown, CDC/RDC audits, SVG export for design reviews.
@@ -163,7 +163,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 - [ ] Public design permalinks (`rtlbench.com/d/<id>`)
 - [ ] `localStorage` autosave + "Recent designs"
@@ -175,7 +175,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome — bug reports, feature requests, UI improvements, and pull requests.
 
@@ -191,7 +191,7 @@ Please read `CONTRIBUTING.md` for code of conduct and PR guidelines.
 
 ---
 
-## 📄 License
+##  License
 
 MIT License — see [LICENSE](LICENSE).
 
@@ -199,7 +199,7 @@ MIT License — see [LICENSE](LICENSE).
 
 ---
 
-## 👤 Author
+##  Author
 
 **Raghavan S U**
 
@@ -212,7 +212,7 @@ Built for the open-source hardware community.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - [Yosys Open SYnthesis Suite](https://yosyshq.net/yosys/)
 - [Icarus Verilog](https://steveicarus.github.io/iverilog/)
