@@ -1,11 +1,12 @@
+
 # RTL Bench — Browser-Based Verilog, SystemVerilog & VHDL Simulator with Live Schematic and STA
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/Status-Active-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Web-cyan.svg)
-![Made with](https://img.shields.io/badge/Stack-Yosys%20%C2%B7%20Icarus%20%C2%B7%20GHDL%20%C2%B7%20nextpnr-blueviolet.svg)
+![Made with](https://img.shields.io/badge/Stack-Yosys%20%C2%B7%20Icarus%20%C2%B7%20Verilator%20%C2%B7%20GHDL%20%C2%B7%20nextpnr-blueviolet.svg)
 
-**RTL Bench** is a free, browser-based EDA workbench. Write multi-file SystemVerilog, Verilog or VHDL — or drop a folder of sources — and get an interactive gate-level schematic, real simulation with waveform cursors, structural CDC and RDC hazard analysis, per-cell static timing analysis on open-source PDKs, and one-click FPGA bitstreams, all without a single install.
+**RTL Bench** is a free, browser-based EDA workbench. Write multi-file SystemVerilog, Verilog or VHDL — or drop a folder of sources — and get an interactive gate-level schematic, dual-engine simulation (Icarus + Verilator) with waveform cursors, structural CDC and RDC hazard analysis, per-cell static timing analysis on open-source PDKs, and one-click FPGA bitstreams with full SDC timing constraint support, all without a single install.
 
 **No license. No setup. No account. Open the URL and design a chip.**
 
@@ -18,10 +19,10 @@
 | | |
 |---|---|
 | **Synthesis** | Yosys · multi-file · hierarchy-preserving · flat/techmapped modes |
-| **Simulation** | Icarus Verilog · auto-generated testbenches · custom `tb_*.sv` support |
+| **Simulation** | Icarus Verilog · Verilator (auto-routed) · auto-generated testbenches · custom `tb_*.sv` support |
 | **Verification** | Structural CDC analyzer · Structural RDC analyzer · lint warnings |
 | **Timing** | Real Liberty-table STA on SkyWater sky130, GF180MCU, IHP SG13G2 |
-| **FPGA** | Gowin Tang Nano 9K / 20K · Lattice iCE40 UP5K · WebSerial flashing |
+| **FPGA** | Gowin Tang Nano 9K / 20K · Lattice iCE40 UP5K · WebSerial flashing · SDC multi-clock constraints · ZIP export |
 | **Languages** | SystemVerilog · Verilog · VHDL (via GHDL) · mixed-language projects |
 
 ---
@@ -41,6 +42,7 @@
 
 ### Simulation & Verification
 
+- **Dual-engine simulation.** Small designs run instantly on Icarus Verilog; designs past ~30,000 cells are automatically routed to Verilator for C++-compiled speed, with a seamless fallback to Icarus if Verilator fails.
 - **Built-in waveform viewer** with A/B measurement cursors, delta readout, and derived frequency.
 - **Auto-generated testbenches.** No TB? The backend reads the top module's ports with Yosys and generates one: reset release, warmup cycle, 60 random stimulus cycles, drain.
 - **Bring your own testbench.** Drop `tb_yourdesign.sv` next to your design — auto-detected by filename convention or `$dumpvars` signature, excluded from synthesis/STA/FPGA, run in simulation.
@@ -55,11 +57,13 @@
 - **Per-path breakdown.** Every timing path shows a cell-by-cell delay table with cumulative arrival times.
 - **Stale-result guard.** Change the source → the STA chip shows a yellow "stale" indicator until you re-run.
 
-### FPGA
+### FPGA & Hardware
 
 - **One-click bitstream generation** for Gowin Tang Nano 9K, Tang Nano 20K, and Lattice iCE40 UP5K.
+- **Standard SDC timing constraints.** Input multi-clock `.sdc` files to evaluate real setup/hold slack during place-and-route.
 - **Auto-pin assignment** with conflict recovery. If nextpnr rejects a pin, the flow retries with an alternative.
 - **WebSerial flashing** directly from the browser. No `openFPGALoader`, no vendor toolchain.
+- **Project ZIP export.** Instantly download a complete project archive containing the compiled `.bin`, the generated `.cst` (pinout), and `.sdc` (timing) files for use in external IDEs like Gowin EDA.
 - **Post-PnR metrics.** LUT usage, FF count, BRAM usage, and Fmax reported from the actual place-and-route log.
 
 ---
@@ -68,20 +72,18 @@
 
 Every design runs through the same open-source stack professionals use:
 
-
-
 ```
 ┌──────────────┐    ┌──────────┐    ┌─────────┐    ┌──────────┐
 │  Upload RTL  │──▶│  Yosys   │──▶│   ELK   │──▶│ Analyze  │
 │  (multi-file)│    │ elaborate│    │ layout  │    │ + export │
 └──────────────┘    └──────────┘    └─────────┘    └──────────┘
                           │
-                          ├──▶ Icarus  ──▶ VCD  ──▶ Waveform viewer
-                          ├──▶ GHDL    ──▶ (VHDL sim)
+                          ├──▶ Icarus / Verilator ──▶ VCD ──▶ Waveform viewer
+                          ├──▶ GHDL         ──▶ (VHDL sim)
                           ├──▶ CDC engine   ──▶ Hazard report
                           ├──▶ RDC engine   ──▶ Hazard report
                           ├──▶ Liberty walk ──▶ STA report
-                          └──▶ nextpnr      ──▶ FPGA bitstream ──▶ WebSerial
+                          └──▶ SDC + nextpnr──▶ Bitstream ──▶ WebSerial / ZIP
 ```
 
 ---
@@ -122,7 +124,7 @@ RTL Bench operates on an **open-core** model:
 | Part | Status | What it includes |
 |---|---|---|
 | **Frontend** (this repo) | Open source, MIT | UI, landing page, schematic renderer, waveform viewer, all HTML/CSS/JS |
-| **Backend engine** | Proprietary | Yosys orchestration, Icarus/GHDL invocation, Liberty STA, CDC/RDC analyzers, FPGA build flow |
+| **Backend engine** | Proprietary | Yosys orchestration, Icarus/GHDL/Verilator invocation, Liberty STA, CDC/RDC analyzers, FPGA build flow |
 
 We welcome contributions to the frontend, UI/UX, and client-side tooling. For backend integration or commercial licensing, contact **contact@rtlbench.com**.
 
@@ -134,6 +136,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 
 - [Yosys](https://yosyshq.net/yosys/) — RTL synthesis
 - [Icarus Verilog](https://steveicarus.github.io/iverilog/) — SystemVerilog simulation
+- [Verilator](https://www.veripool.org/verilator/) — High-speed C++ simulation
 - [GHDL](https://github.com/ghdl/ghdl) — VHDL simulation
 - [nextpnr](https://github.com/YosysHQ/nextpnr) — FPGA place & route
 - [Eclipse Layout Kernel](https://www.eclipse.org/elk/) — schematic layout
@@ -165,7 +168,7 @@ We welcome contributions to the frontend, UI/UX, and client-side tooling. For ba
 - [ ] Public design permalinks (`rtlbench.com/d/<id>`)
 - [ ] `localStorage` autosave + "Recent designs"
 - [ ] Formal verification (SymbiYosys integration)
-- [ ] Verilator backend for faster simulation
+- [x] Verilator backend for faster simulation
 - [ ] Design gallery with tags (`fsm`, `cpu`, `dsp`, `cdc`)
 - [ ] SVA assertion surfacing
 - [ ] On-prem enterprise deployment
@@ -196,7 +199,7 @@ MIT License — see [LICENSE](LICENSE).
 
 ---
 
-##  Author
+## 👤 Author
 
 **Raghavan S U**
 
@@ -209,10 +212,11 @@ Built for the open-source hardware community.
 
 ---
 
-##  Acknowledgments
+## 🙏 Acknowledgments
 
 - [Yosys Open SYnthesis Suite](https://yosyshq.net/yosys/)
 - [Icarus Verilog](https://steveicarus.github.io/iverilog/)
+- [Verilator](https://www.veripool.org/verilator/)
 - [GHDL](https://github.com/ghdl/ghdl)
 - [nextpnr](https://github.com/YosysHQ/nextpnr)
 - [Eclipse Layout Kernel](https://www.eclipse.org/elk/)
@@ -220,5 +224,4 @@ Built for the open-source hardware community.
 
 ---
 
- **If RTL Bench helped you, consider starring the repo — it helps other engineers find it.**
- 
+**If RTL Bench helped you, consider starring the repo — it helps other engineers find it.**
